@@ -30,12 +30,15 @@ func (t ReactionTool) Description() string {
 }
 
 func (t ReactionTool) Call(ctx context.Context, input string) (string, error) {
+	input = GetInputString(input)
+
 	var args ReactionInput
 	if t.CallbacksHandler != nil {
 		t.CallbacksHandler.HandleToolStart(ctx, input)
 	}
 
 	if err := json.Unmarshal([]byte(input), &args); err != nil {
+		fmt.Println(input)
 		if t.CallbacksHandler != nil {
 			t.CallbacksHandler.HandleToolError(ctx, err)
 		}
