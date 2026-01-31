@@ -53,19 +53,17 @@ func (a *Agent) Respond(history []*sessiondb.SessionMessage, message *sessiondb.
 	handler.OnToolCall = func(toolCall tools.ToolCall) {
 		onResponse("", "assistant", toolCall.ToJson())
 	}
-	handler.OnToolResult = func(toolResult tools.ToolResult) {
-		if toolResult.Error != "" {
-			onResponse("", "assistant", toolResult.ToJson())
-		} else {
-			onResponse("", "assistant", toolResult.ToJson())
-		}
-	}
+	// handler.OnToolResult = func(toolResult tools.ToolResult) {
+	// 	onResponse("", "tool", toolResult.ToJson())
+	// }
 
 	agent := agents.NewOpenAIFunctionsAgent(
 		a.provider,
 		append(
 			a.tools,
-			tools.NewReactionTool(onReact),
+			tools.NewReactionTool(onReact, func(toolResult tools.ToolResult) {
+				onResponse("", "tool", toolResult.ToJson())
+			}),
 		),
 		agents.NewOpenAIOption().WithExtraMessages([]prompts.MessageFormatter{
 			input.NewHistoryInput(),
@@ -84,7 +82,6 @@ func (a *Agent) Respond(history []*sessiondb.SessionMessage, message *sessiondb.
 			"input":       message.String(),
 			"ChatHistory": string(bytes),
 		},
-		// message.String(),
 	)
 	fmt.Println()
 	if err != nil {

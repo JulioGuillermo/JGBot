@@ -52,7 +52,17 @@ func (s *SessionCtl) OnNewMessage(channel string, chatID uint, chatName string, 
 		history,
 		msg,
 		func(text, role, extra string) error {
-			sessiondb.NewSessionMessage(channel, chatID, chatName, senderID, role, messageID, text, role, extra)
+			sessiondb.NewSessionMessage(
+				channel,
+				chatID,
+				chatName,
+				senderID,
+				role,
+				messageID,
+				text,
+				role,
+				extra,
+			)
 			if text == "" {
 				return nil
 			}

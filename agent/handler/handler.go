@@ -10,7 +10,7 @@ import (
 )
 
 type AgentHandler struct {
-	toolCall     tools.ToolCall
+	ToolCall     tools.ToolCall
 	OnToolCall   func(toolCall tools.ToolCall)
 	OnToolResult func(toolResult tools.ToolResult)
 }
@@ -46,10 +46,11 @@ func (h *AgentHandler) HandleChainStart(ctx context.Context, inputs map[string]a
 
 func (h *AgentHandler) HandleChainEnd(ctx context.Context, outputs map[string]any) {
 	// fmt.Println(outputs)
+	fmt.Println("### Chain end", outputs)
 }
 
 func (h *AgentHandler) HandleChainError(ctx context.Context, err error) {
-	// fmt.Println(err)
+	fmt.Println(err)
 }
 
 func (h *AgentHandler) HandleToolStart(ctx context.Context, input string) {
@@ -60,7 +61,7 @@ func (h *AgentHandler) HandleToolEnd(ctx context.Context, output string) {
 	fmt.Printf("Tool Result: %s\n", output)
 	if h.OnToolResult != nil {
 		toolResult := tools.ToolResult{
-			ToolCall: h.toolCall,
+			ToolCall: h.ToolCall,
 			Output:   output,
 			Error:    "",
 		}
@@ -72,7 +73,7 @@ func (h *AgentHandler) HandleToolError(ctx context.Context, error error) {
 	fmt.Printf("ERROR: %s", error.Error())
 	if h.OnToolResult != nil {
 		toolResult := tools.ToolResult{
-			ToolCall: h.toolCall,
+			ToolCall: h.ToolCall,
 			Output:   "",
 			Error:    error.Error(),
 		}
@@ -81,7 +82,7 @@ func (h *AgentHandler) HandleToolError(ctx context.Context, error error) {
 }
 
 func (h *AgentHandler) HandleAgentAction(ctx context.Context, action schema.AgentAction) {
-	h.toolCall = tools.ToolCall{
+	h.ToolCall = tools.ToolCall{
 		ID:    action.ToolID,
 		Tool:  action.Tool,
 		Input: action.ToolInput,
@@ -89,12 +90,12 @@ func (h *AgentHandler) HandleAgentAction(ctx context.Context, action schema.Agen
 	}
 	fmt.Printf("\nTool Call: %s[%s](Args: %s) Log: %s\n", action.Tool, action.ToolID, action.ToolInput, action.Log)
 	if h.OnToolCall != nil {
-		h.OnToolCall(h.toolCall)
+		h.OnToolCall(h.ToolCall)
 	}
 }
 
 func (h *AgentHandler) HandleAgentFinish(ctx context.Context, finish schema.AgentFinish) {
-	// fmt.Println(finish)
+	fmt.Println("Agent end", finish)
 }
 
 func (h *AgentHandler) HandleRetrieverStart(ctx context.Context, query string) {
@@ -106,5 +107,5 @@ func (h *AgentHandler) HandleRetrieverEnd(ctx context.Context, query string, doc
 }
 
 func (h *AgentHandler) HandleStreamingFunc(ctx context.Context, chunk []byte) {
-	fmt.Print(string(chunk))
+	// fmt.Print(string(chunk))
 }
