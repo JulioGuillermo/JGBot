@@ -75,7 +75,7 @@ func (h *AgentHandler) HandleAgentAction(ctx context.Context, action schema.Agen
 		ID:    action.ToolID,
 		Tool:  action.Tool,
 		Input: action.ToolInput,
-		Log:   action.Log,
+		// Log:   action.Log,
 	}
 	fmt.Printf("\nTool Call: %s[%s](Args: %s) Log: %s\n", action.Tool, action.ToolID, action.ToolInput, action.Log)
 	if h.OnToolCall != nil {

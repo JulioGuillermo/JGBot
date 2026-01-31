@@ -42,6 +42,7 @@ func (t ReactionTool) Call(ctx context.Context, input string) (string, error) {
 		return fmt.Sprintf("ERROR: Invalid JSON format: %s", err.Error()), nil
 	}
 
+	fmt.Println("### Reacting...", input, args.MessageID, args.Reaction)
 	err := t.OnReact(args.MessageID, args.Reaction)
 	if err != nil {
 		if t.CallbacksHandler != nil {

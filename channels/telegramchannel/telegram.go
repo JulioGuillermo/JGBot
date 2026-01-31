@@ -2,6 +2,7 @@ package telegramchannel
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -47,6 +48,7 @@ func (ctl *TelegramCtl) SendMessage(chatID int64, message string) error {
 }
 
 func (ctl *TelegramCtl) ReactMessage(chatID int64, messageID int, reaction string) error {
+	fmt.Println(messageID, reaction)
 	_, err := ctl.client.SetMessageReaction(ctl.ctx, &bot.SetMessageReactionParams{
 		ChatID:    chatID,
 		MessageID: messageID,
@@ -57,6 +59,11 @@ func (ctl *TelegramCtl) ReactMessage(chatID int64, messageID int, reaction strin
 					Type:  models.ReactionTypeTypeEmoji,
 					Emoji: reaction,
 				},
+				// Type: models.ReactionTypeTypeCustomEmoji,
+				// ReactionTypeCustomEmoji: &models.ReactionTypeCustomEmoji{
+				// 	Type:          models.ReactionTypeTypeCustomEmoji,
+				// 	CustomEmojiID: reaction,
+				// },
 			},
 		},
 	})
