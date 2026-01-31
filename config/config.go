@@ -10,6 +10,8 @@ type Config struct {
 	LogLevel string
 
 	Channels Channels
+
+	Provider Provider
 }
 
 func newConfig() *Config {
@@ -18,6 +20,8 @@ func newConfig() *Config {
 		LogLevel: "Info",
 
 		Channels: *newChannels(),
+
+		Provider: Provider{},
 	}
 }
 

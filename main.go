@@ -1,6 +1,7 @@
 package main
 
 import (
+	"JGBot/agent"
 	"JGBot/channels/channelctl"
 	"JGBot/config"
 	"JGBot/database"
@@ -26,25 +27,20 @@ func main() {
 		os.Exit(1)
 	}
 
+	log.Info("Initializing agent...")
+	agent, err := agent.NewAgent()
+	if err != nil {
+		log.Error("Fail to initialize agent", "error", err)
+		os.Exit(1)
+	}
+	agent.Run()
+
 	log.Info("Initializing channels...")
 	channelCtl, err := channelctl.InitChannelCtl()
 	if err != nil {
 		log.Error("Fail to initialize channels", "error", err)
 		os.Exit(1)
 	}
-
-	// whatsapp, err := whatsappchannel.NewWhatsAppCtl("db/whatsmeow.db")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// whatsapp.OnMsg = func(msg *events.Message) {
-	// 	fmt.Println("\033[36m  ### Received a message >>>\033[0m", msg.Message.GetConversation())
-	// 	fmt.Println(msg.Info.PushName)
-	// 	// fmt.Println(msg.Message)
-	// 	whatsapp.SendMessage(msg.Info.Chat, "Hi..."+msg.Message.GetConversation())
-	// 	whatsapp.ReactMessage(msg.Info.Chat, msg.Info.Sender, msg.Info.ID, "👋")
-	// }
 
 	channelCtl.OnMessage(func(channel string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
 		fmt.Println("\033[36m  ### Received a message >>>\033[0m", channel, chatID, chatName, senderID, senderName, messageID, message)

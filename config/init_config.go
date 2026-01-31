@@ -41,5 +41,6 @@ func loadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	conf.Save()
 	return &conf, nil
 }
