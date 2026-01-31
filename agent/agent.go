@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/tmc/langchaingo/callbacks"
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/prompts"
 	agentTools "github.com/tmc/langchaingo/tools"
@@ -23,7 +24,6 @@ type Agent struct {
 	logger   *slog.Logger
 	ctx      context.Context
 	provider llms.Model
-	tools    []agentTools.Tool
 }
 
 func NewAgent(logger *slog.Logger, customTools ...agentTools.Tool) (*Agent, error) {
@@ -38,11 +38,6 @@ func NewAgent(logger *slog.Logger, customTools ...agentTools.Tool) (*Agent, erro
 	}
 	agent.provider = provider
 
-	agent.tools, err = tools.GetTools(customTools)
-	if err != nil {
-		return nil, err
-	}
-
 	return agent, nil
 }
 
@@ -53,28 +48,22 @@ func (a *Agent) Respond(history []*sessiondb.SessionMessage, message *sessiondb.
 	handler.OnToolCall = func(toolCall tools.ToolCall) {
 		onResponse("", "assistant", toolCall.ToJson())
 	}
-	// handler.OnToolResult = func(toolResult tools.ToolResult) {
-	// 	onResponse("", "tool", toolResult.ToJson())
-	// }
+	handler.OnToolResult = func(toolResult tools.ToolResult) {
+		onResponse("", "tool", toolResult.ToJson())
+	}
 
-	agent := agents.NewOpenAIFunctionsAgent(
-		a.provider,
-		append(
-			a.tools,
-			tools.NewReactionTool(onReact, func(toolResult tools.ToolResult) {
-				onResponse("", "tool", toolResult.ToJson())
-			}),
-		),
-		agents.NewOpenAIOption().WithExtraMessages([]prompts.MessageFormatter{
-			input.NewHistoryInput(),
-		}),
+	executor := a.getAgent(
+		handler,
+		tools.ReactionTool{
+			CallbacksHandler: handler,
+			OnReact:          onReact,
+		},
+		agentTools.Calculator{
+			CallbacksHandler: handler,
+		},
 	)
-	executor := agents.NewExecutor(
-		agent,
-		agents.WithCallbacksHandler(handler),
-	)
+
 	bytes, _ := json.Marshal(history)
-
 	result, err := chains.Predict(
 		a.ctx,
 		executor,
@@ -90,4 +79,18 @@ func (a *Agent) Respond(history []*sessiondb.SessionMessage, message *sessiondb.
 	}
 	fmt.Println(result)
 	onResponse(result, "assistant", "")
+}
+
+func (a *Agent) getAgent(handler callbacks.Handler, tools ...agentTools.Tool) *agents.Executor {
+	agent := agents.NewOpenAIFunctionsAgent(
+		a.provider,
+		tools,
+		agents.NewOpenAIOption().WithExtraMessages([]prompts.MessageFormatter{
+			input.NewHistoryInput(),
+		}),
+	)
+	return agents.NewExecutor(
+		agent,
+		agents.WithCallbacksHandler(handler),
+	)
 }

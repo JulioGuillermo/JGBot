@@ -20,41 +20,30 @@ func NewAgentHandler() *AgentHandler {
 }
 
 func (h *AgentHandler) HandleText(ctx context.Context, text string) {
-	// fmt.Println(text)
 }
 
 func (h *AgentHandler) HandleLLMStart(ctx context.Context, prompts []string) {
-	// fmt.Println(prompts)
-	fmt.Println()
 }
 
 func (h *AgentHandler) HandleLLMGenerateContentStart(ctx context.Context, ms []llms.MessageContent) {
-	// fmt.Println(ms)
 }
 
 func (h *AgentHandler) HandleLLMGenerateContentEnd(ctx context.Context, res *llms.ContentResponse) {
-	// fmt.Println(res.Choices)
 }
 
 func (h *AgentHandler) HandleLLMError(ctx context.Context, err error) {
-	fmt.Println("\n\nLLM error:", err)
 }
 
 func (h *AgentHandler) HandleChainStart(ctx context.Context, inputs map[string]any) {
-	// fmt.Println(inputs)
 }
 
 func (h *AgentHandler) HandleChainEnd(ctx context.Context, outputs map[string]any) {
-	// fmt.Println(outputs)
-	fmt.Println("### Chain end", outputs)
 }
 
 func (h *AgentHandler) HandleChainError(ctx context.Context, err error) {
-	fmt.Println(err)
 }
 
 func (h *AgentHandler) HandleToolStart(ctx context.Context, input string) {
-	// fmt.Println(input)
 }
 
 func (h *AgentHandler) HandleToolEnd(ctx context.Context, output string) {
@@ -70,7 +59,7 @@ func (h *AgentHandler) HandleToolEnd(ctx context.Context, output string) {
 }
 
 func (h *AgentHandler) HandleToolError(ctx context.Context, error error) {
-	fmt.Printf("ERROR: %s", error.Error())
+	fmt.Printf("Tool Error: %s", error.Error())
 	if h.OnToolResult != nil {
 		toolResult := tools.ToolResult{
 			ToolCall: h.ToolCall,
@@ -95,15 +84,12 @@ func (h *AgentHandler) HandleAgentAction(ctx context.Context, action schema.Agen
 }
 
 func (h *AgentHandler) HandleAgentFinish(ctx context.Context, finish schema.AgentFinish) {
-	fmt.Println("Agent end", finish)
 }
 
 func (h *AgentHandler) HandleRetrieverStart(ctx context.Context, query string) {
-	// fmt.Println(query)
 }
 
 func (h *AgentHandler) HandleRetrieverEnd(ctx context.Context, query string, documents []schema.Document) {
-	// fmt.Println(documents)
 }
 
 func (h *AgentHandler) HandleStreamingFunc(ctx context.Context, chunk []byte) {

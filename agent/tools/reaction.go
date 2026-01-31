@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/tmc/langchaingo/tools"
+	"github.com/tmc/langchaingo/callbacks"
 )
 
 type ReactionInput struct {
@@ -14,15 +14,8 @@ type ReactionInput struct {
 }
 
 type ReactionTool struct {
-	onReact  func(msg uint, reaction string) error
-	onResult func(toolResult ToolResult)
-}
-
-func NewReactionTool(onReact func(msg uint, reaction string) error, onResult func(toolResult ToolResult)) tools.Tool {
-	return ReactionTool{
-		onReact:  onReact,
-		onResult: onResult,
-	}
+	CallbacksHandler callbacks.Handler
+	OnReact          func(msg uint, reaction string) error
 }
 
 func (t ReactionTool) Name() string {
@@ -38,28 +31,29 @@ func (t ReactionTool) Description() string {
 
 func (t ReactionTool) Call(ctx context.Context, input string) (string, error) {
 	var args ReactionInput
-
-	if err := json.Unmarshal([]byte(input), &args); err != nil {
-		errMsg := fmt.Sprintf("ERROR: Invalid JSON format: %s", err.Error())
-		t.onResult(ToolResult{
-			Error: errMsg,
-		})
-		return errMsg, nil
+	if t.CallbacksHandler != nil {
+		t.CallbacksHandler.HandleToolStart(ctx, input)
 	}
 
-	err := t.onReact(args.MessageID, args.Reaction)
+	if err := json.Unmarshal([]byte(input), &args); err != nil {
+		if t.CallbacksHandler != nil {
+			t.CallbacksHandler.HandleToolError(ctx, err)
+		}
+		return fmt.Sprintf("ERROR: Invalid JSON format: %s", err.Error()), nil
+	}
+
+	err := t.OnReact(args.MessageID, args.Reaction)
 	if err != nil {
-		errMsg := fmt.Sprintf("FAILURE: Could not apply reaction. Reason: %s.", err.Error())
-		t.onResult(ToolResult{
-			Error: errMsg,
-		})
-		return errMsg, nil
+		if t.CallbacksHandler != nil {
+			t.CallbacksHandler.HandleToolError(ctx, err)
+		}
+		return fmt.Sprintf("FAILURE: Could not apply reaction. Reason: %s.", err.Error()), nil
 	}
 
 	output := fmt.Sprintf("SUCCESS: Reaction %s applied to %d", args.Reaction, args.MessageID)
-	t.onResult(ToolResult{
-		Output: output,
-	})
+	if t.CallbacksHandler != nil {
+		t.CallbacksHandler.HandleToolEnd(ctx, output)
+	}
 
 	return output, nil
 }
