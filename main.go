@@ -6,6 +6,7 @@ import (
 	"JGBot/config"
 	"JGBot/database"
 	"JGBot/logger"
+	"JGBot/session"
 	"fmt"
 	"os"
 	"os/signal"
@@ -28,12 +29,11 @@ func main() {
 	}
 
 	log.Info("Initializing agent...")
-	agent, err := agent.NewAgent()
+	agent, err := agent.NewAgent(log)
 	if err != nil {
 		log.Error("Fail to initialize agent", "error", err)
 		os.Exit(1)
 	}
-	agent.Run()
 
 	log.Info("Initializing channels...")
 	channelCtl, err := channelctl.InitChannelCtl()
@@ -42,11 +42,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	channelCtl.OnMessage(func(channel string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
-		fmt.Println("\033[36m  ### Received a message >>>\033[0m", channel, chatID, chatName, senderID, senderName, messageID, message)
-		channelCtl.SendMessage(channel, chatID, "Hi..."+senderName)
-		channelCtl.ReactMessage(channel, chatID, messageID, "👍")
-	})
+	log.Info("Initializing session ctl...")
+	session, err := session.NewSessionCtl(
+		log,
+		channelCtl,
+		agent,
+	)
+	if err != nil || session == nil {
+		log.Error("Fail to initialize session", "error", err)
+		os.Exit(1)
+	}
+
+	// channelCtl.OnMessage(func(channel string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
+	// 	fmt.Println("\033[36m  ### Received a message >>>\033[0m", channel, chatID, chatName, senderID, senderName, messageID, message)
+	// 	channelCtl.SendMessage(channel, chatID, "Hi..."+senderName)
+	// 	channelCtl.ReactMessage(channel, chatID, messageID, "👍")
+	// })
 
 	log.Info("System ready and running...")
 
