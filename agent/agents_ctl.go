@@ -3,6 +3,7 @@ package agent
 import (
 	"JGBot/agent/handler"
 	"JGBot/agent/provider"
+	"JGBot/agent/toolconf"
 	"JGBot/agent/tools"
 	"JGBot/log"
 	"JGBot/session/sessionconf/sc"
@@ -10,26 +11,31 @@ import (
 	"context"
 	"fmt"
 
-	agentTools "github.com/tmc/langchaingo/tools"
-
 	"github.com/tmc/langchaingo/llms"
 )
 
 type AgentsCtl struct {
-	ctx      context.Context
-	provider map[string]llms.Model
+	ctx       context.Context
+	providers map[string]llms.Model
+	toolsConf map[string]toolconf.ToolInitializerConf
 }
 
-func NewAgentsCtl(customTools ...agentTools.Tool) (*AgentsCtl, error) {
+func NewAgentsCtl() (*AgentsCtl, error) {
 	agent := &AgentsCtl{}
 	agent.ctx = context.Background()
-	agent.provider = provider.GetProviders(agent.ctx)
+	agent.providers = provider.GetProviders(agent.ctx)
+	agent.toolsConf = toolconf.GetToolMap()
+
+	fmt.Println("··· Tools ···")
+	for _, tool := range agent.toolsConf {
+		fmt.Printf("- %s\n", tool.Name())
+	}
 
 	return agent, nil
 }
 
 func (a *AgentsCtl) getProvider(provider string) (llms.Model, error) {
-	prov, ok := a.provider[provider]
+	prov, ok := a.providers[provider]
 	if !ok {
 		return nil, fmt.Errorf("Provider %s not found", provider)
 	}
@@ -58,15 +64,23 @@ func (a *AgentsCtl) Respond(sessionConf *sc.SessionConf, history []*sessiondb.Se
 		Handler:  handler,
 		Provider: provider,
 	}
-	agent.AddTools(
-		tools.ReactionTool{
-			CallbacksHandler: handler,
-			OnReact:          onReact,
-		},
-		agentTools.Calculator{
-			CallbacksHandler: handler,
-		},
-	)
+
+	for _, toolConf := range sessionConf.Tools {
+		if !toolConf.Enabled {
+			continue
+		}
+
+		toolInitializer, ok := a.toolsConf[toolConf.Name]
+		if !ok {
+			log.Warn("Tool not found", "tool", toolConf.Name)
+			continue
+		}
+
+		tool := toolInitializer.ToolInitializer(sessionConf, history, message, onResponse, onReact)
+		tool.SetHandler(handler)
+
+		agent.AddTools(tool)
+	}
 	agent.Init()
 
 	result, err := agent.Run(history, message)

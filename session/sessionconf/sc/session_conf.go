@@ -10,6 +10,8 @@ type SessionConf struct {
 
 	HistorySize int
 	Provider    string
+
+	Tools []Tool
 }
 
 func NewSessionConf(name, id, origin string) SessionConf {
@@ -22,6 +24,12 @@ func NewSessionConf(name, id, origin string) SessionConf {
 		HistorySize: 50,
 		Respond: Respond{
 			Always: true,
+		},
+		Tools: []Tool{
+			{
+				Name:    "message_reaction",
+				Enabled: true,
+			},
 		},
 	}
 }

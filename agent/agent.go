@@ -25,6 +25,11 @@ type Agent struct {
 }
 
 func (a *Agent) AddTools(tool ...tools.Tool) {
+	if a.tools == nil {
+		a.tools = tool
+		return
+	}
+	a.tools = append(a.tools, tool...)
 }
 
 func (a *Agent) Init() {
