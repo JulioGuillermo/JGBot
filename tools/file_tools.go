@@ -51,6 +51,9 @@ func WriteFile(filePath string, bytes []byte) error {
 
 func ReadJSONFile(filePath string, v any) error {
 	bytes, err := ReadFile(filePath)
+	if err != nil && os.IsNotExist(err) {
+		return WriteJSONFile(filePath, v)
+	}
 	if err != nil {
 		return err
 	}

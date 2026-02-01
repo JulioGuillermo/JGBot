@@ -3,7 +3,9 @@ package session
 import (
 	"JGBot/agent"
 	"JGBot/channels/channelctl"
+	"JGBot/session/sessionconf"
 	"JGBot/session/sessiondb"
+	"fmt"
 	"log/slog"
 )
 
@@ -11,15 +13,22 @@ type SessionCtl struct {
 	logger     *slog.Logger
 	channelCtl *channelctl.ChannelCtl
 	agent      *agent.Agent
+	sessionCtl *sessionconf.SessionCtl
 }
 
 func NewSessionCtl(logger *slog.Logger, channelCtl *channelctl.ChannelCtl, agent *agent.Agent) (*SessionCtl, error) {
 	sessiondb.Migrate()
 
+	sessionCtl, err := sessionconf.NewSessionCtl()
+	if err != nil {
+		return nil, err
+	}
+
 	ctl := &SessionCtl{
 		logger:     logger,
 		channelCtl: channelCtl,
 		agent:      agent,
+		sessionCtl: sessionCtl,
 	}
 
 	channelCtl.OnMessage(ctl.OnNewMessage)
@@ -30,6 +39,16 @@ func NewSessionCtl(logger *slog.Logger, channelCtl *channelctl.ChannelCtl, agent
 func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
 	if message == "" {
 		s.logger.Info("Empty msg")
+		return
+	}
+
+	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
+	if sessionConf == nil {
+		s.logger.Info("Not config session", "origin", origin)
+		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin)
+		return
+	} else if !sessionConf.Allowed {
+		s.logger.Info("Session not allowed", "origin", origin)
 		return
 	}
 

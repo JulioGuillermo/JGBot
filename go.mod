@@ -3,6 +3,7 @@ module JGBot
 go 1.25.5
 
 require (
+	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-telegram/bot v1.18.0
 	github.com/lmittmann/tint v1.1.2
 	github.com/mattn/go-sqlite3 v1.14.33
