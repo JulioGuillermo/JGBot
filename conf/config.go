@@ -10,7 +10,7 @@ type Config struct {
 
 	Channels Channels
 
-	Provider Provider
+	Providers []Provider
 }
 
 func newConfig() *Config {
@@ -20,7 +20,7 @@ func newConfig() *Config {
 
 		Channels: *newChannels(),
 
-		Provider: Provider{},
+		Providers: []Provider{},
 	}
 }
 

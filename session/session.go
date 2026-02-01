@@ -11,11 +11,11 @@ import (
 
 type SessionCtl struct {
 	channelCtl *channelctl.ChannelCtl
-	agent      *agent.Agent
+	agent      *agent.AgentsCtl
 	sessionCtl *sessionconf.SessionCtl
 }
 
-func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.Agent) (*SessionCtl, error) {
+func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*SessionCtl, error) {
 	sessiondb.Migrate()
 
 	sessionCtl, err := sessionconf.NewSessionCtl()
@@ -50,7 +50,7 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
-	history, err := sessiondb.GetHistory(channel, chatID, 50)
+	history, err := sessiondb.GetHistory(channel, chatID, sessionConf.HistorySize)
 	if err != nil {
 		log.Error("Get history error", "err", err)
 		return
@@ -69,7 +69,7 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
-	s.agent.Respond(
+	err = s.agent.Respond(
 		sessionConf,
 		history,
 		msg,
@@ -94,4 +94,7 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 			return s.channelCtl.ReactMessage(channel, chatID, msg, reaction)
 		},
 	)
+	if err != nil {
+		log.Error("Agent respond error", "err", err)
+	}
 }

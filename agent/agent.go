@@ -3,92 +3,60 @@ package agent
 import (
 	"JGBot/agent/handler"
 	"JGBot/agent/input"
-	"JGBot/agent/provider"
-	"JGBot/agent/tools"
-	"JGBot/log"
-	"JGBot/session/sessionconf/sc"
 	"JGBot/session/sessiondb"
 	"context"
 	"encoding/json"
-	"fmt"
-
-	"github.com/tmc/langchaingo/callbacks"
-	"github.com/tmc/langchaingo/chains"
-	"github.com/tmc/langchaingo/prompts"
-	agentTools "github.com/tmc/langchaingo/tools"
 
 	"github.com/tmc/langchaingo/agents"
+	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/llms"
+	"github.com/tmc/langchaingo/prompts"
+	"github.com/tmc/langchaingo/tools"
 )
 
 type Agent struct {
-	ctx      context.Context
-	provider llms.Model
+	Ctx      context.Context
+	Name     string
+	Handler  *handler.AgentHandler
+	Provider llms.Model
+	tools    []tools.Tool
+	agent    agents.Agent
+	executor *agents.Executor
 }
 
-func NewAgent(customTools ...agentTools.Tool) (*Agent, error) {
-	agent := &Agent{}
-	agent.ctx = context.Background()
-
-	provider, err := provider.GetProvider(agent.ctx)
-	if err != nil {
-		return nil, err
-	}
-	agent.provider = provider
-
-	return agent, nil
+func (a *Agent) AddTools(tool ...tools.Tool) {
 }
 
-func (a *Agent) Respond(sessionConf *sc.SessionConf, history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage, onResponse func(text, role, extra string) error, onReact func(msg uint, reaction string) error) {
-	log.Info("Agent responding...")
-
-	handler := handler.NewAgentHandler()
-	handler.OnToolCall = func(toolCall tools.ToolCall) {
-		onResponse("", "assistant", toolCall.ToJson())
-	}
-	handler.OnToolResult = func(toolResult tools.ToolResult) {
-		onResponse("", "tool", toolResult.ToJson())
-	}
-
-	executor := a.getAgent(
-		handler,
-		tools.ReactionTool{
-			CallbacksHandler: handler,
-			OnReact:          onReact,
-		},
-		agentTools.Calculator{
-			CallbacksHandler: handler,
-		},
-	)
-
-	bytes, _ := json.Marshal(history)
-	result, err := chains.Predict(
-		a.ctx,
-		executor,
-		map[string]any{
-			"input":       message.String(),
-			"ChatHistory": string(bytes),
-		},
-	)
-	fmt.Println()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(result)
-	onResponse(result, "assistant", "")
+func (a *Agent) Init() {
+	a.initAgent()
+	a.initExecutor()
 }
 
-func (a *Agent) getAgent(handler callbacks.Handler, tools ...agentTools.Tool) *agents.Executor {
-	agent := agents.NewOpenAIFunctionsAgent(
-		a.provider,
-		tools,
+func (a *Agent) initAgent() {
+	a.agent = agents.NewOpenAIFunctionsAgent(
+		a.Provider,
+		a.tools,
 		agents.NewOpenAIOption().WithExtraMessages([]prompts.MessageFormatter{
 			input.NewHistoryInput(),
 		}),
 	)
-	return agents.NewExecutor(
-		agent,
-		agents.WithCallbacksHandler(handler),
+}
+
+func (a *Agent) initExecutor() {
+	a.executor = agents.NewExecutor(
+		a.agent,
+		agents.WithCallbacksHandler(a.Handler),
+	)
+}
+
+func (a *Agent) Run(history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage) (string, error) {
+	bytes, _ := json.Marshal(history)
+	return chains.Predict(
+		a.Ctx,
+		a.executor,
+		map[string]any{
+			"input":       message.String(),
+			"ChatHistory": string(bytes),
+		},
 	)
 }

@@ -1,15 +1,33 @@
 package provider
 
 import (
+	"JGBot/conf"
+	"JGBot/log"
 	"context"
 	"fmt"
 
 	"github.com/tmc/langchaingo/llms"
 )
 
-func GetProvider(ctx context.Context) (llm llms.Model, err error) {
+func GetProviders(ctx context.Context) map[string]llms.Model {
 	conf := GetConfig()
 
+	providers := map[string]llms.Model{}
+	var prov llms.Model
+	var err error
+	for _, conf := range conf {
+		prov, err = GetProvider(ctx, conf)
+		if err != nil {
+			log.Error("Fail to initialize provider", "provider", conf.Name, "error", err)
+			continue
+		}
+		providers[conf.Name] = prov
+	}
+
+	return providers
+}
+
+func GetProvider(ctx context.Context, conf conf.Provider) (llms.Model, error) {
 	switch conf.Type {
 	case "openai":
 		return GetOpenAI(conf)

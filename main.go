@@ -29,7 +29,7 @@ func main() {
 	}
 
 	log.Info("Initializing agent...")
-	agent, err := agent.NewAgent()
+	agent, err := agent.NewAgentsCtl()
 	if err != nil {
 		log.Error("Fail to initialize agent", "error", err)
 		os.Exit(1)
