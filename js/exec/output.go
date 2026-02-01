@@ -8,5 +8,5 @@ type Output struct {
 }
 
 func (o *Output) String() string {
-	return fmt.Sprintf("LOGS:\n\n%s\n\n\nRESULT:\n\n%s", o.Logs, o.Result)
+	return fmt.Sprintf("LOGS:\n\n%s\n\nRESULT:\n\n%s", o.Logs, o.Result)
 }
