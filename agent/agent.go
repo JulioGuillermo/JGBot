@@ -19,6 +19,7 @@ type Agent struct {
 	Name     string
 	Handler  *handler.AgentHandler
 	Provider llms.Model
+	MaxIters int
 	tools    []tools.Tool
 	agent    agents.Agent
 	executor *agents.Executor
@@ -51,6 +52,7 @@ func (a *Agent) initExecutor() {
 	a.executor = agents.NewExecutor(
 		a.agent,
 		agents.WithCallbacksHandler(a.Handler),
+		agents.WithMaxIterations(a.MaxIters),
 	)
 }
 

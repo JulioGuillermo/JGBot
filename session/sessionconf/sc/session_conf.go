@@ -11,7 +11,8 @@ type SessionConf struct {
 	HistorySize int
 	Provider    string
 
-	Tools []Tool
+	AgentMaxIters int
+	Tools         []Tool
 }
 
 func NewSessionConf(name, id, origin string) SessionConf {
@@ -29,6 +30,10 @@ func NewSessionConf(name, id, origin string) SessionConf {
 			{
 				Name:    "message_reaction",
 				Enabled: true,
+			},
+			{
+				Name:    "javascript",
+				Enabled: false,
 			},
 		},
 	}

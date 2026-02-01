@@ -77,7 +77,7 @@ func (HistoryInput) FormatMessages(values map[string]any) ([]llms.ChatMessage, e
 			chatMsg = m
 		default: // user
 			chatMsg = llms.HumanChatMessage{
-				Content: msg.Message,
+				Content: msg.String(),
 			}
 		}
 

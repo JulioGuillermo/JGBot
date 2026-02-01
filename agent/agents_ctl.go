@@ -58,6 +58,7 @@ func (a *AgentsCtl) Respond(sessionConf *sc.SessionConf, history []*sessiondb.Se
 		Ctx:      a.ctx,
 		Handler:  handler,
 		Provider: provider,
+		MaxIters: max(sessionConf.AgentMaxIters, 3),
 	}
 
 	for _, toolConf := range sessionConf.Tools {
