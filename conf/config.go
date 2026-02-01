@@ -1,8 +1,7 @@
 package conf
 
 import (
-	"encoding/json"
-	"os"
+	"JGBot/tools"
 )
 
 type Config struct {
@@ -26,21 +25,5 @@ func newConfig() *Config {
 }
 
 func (conf *Config) Save() error {
-	jsonFile, err := os.Create(ConfigFile)
-	if err != nil {
-		return err
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := json.MarshalIndent(conf, "", "    ")
-	if err != nil {
-		return err
-	}
-
-	_, err = jsonFile.Write(byteValue)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return tools.WriteJSONFile(ConfigFile, conf)
 }

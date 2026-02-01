@@ -2,8 +2,7 @@ package database
 
 import (
 	"JGBot/conf"
-	"os"
-	"path/filepath"
+	"JGBot/tools"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -20,8 +19,7 @@ func InitConnection() error {
 		}
 	}
 
-	dbDir := filepath.Dir(conf.Conf.Database)
-	err := os.MkdirAll(dbDir, 0755)
+	err := tools.CreateParentDir(conf.Conf.Database)
 	if err != nil {
 		return err
 	}
