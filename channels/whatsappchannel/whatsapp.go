@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mdp/qrterminal/v3"
@@ -102,6 +103,12 @@ func (ctl *WhatsAppCtl) GetContactInfo(jit types.JID) (types.ContactInfo, error)
 }
 
 func (ctl *WhatsAppCtl) init(dbName string) error {
+	dbDir := filepath.Dir(dbName)
+	err := os.MkdirAll(dbDir, 0755)
+	if err != nil {
+		return err
+	}
+
 	ctl.dbLog = waLog.Stdout("DATABASE", "DEBUG", true)
 	ctl.ctx = context.Background()
 	container, err := sqlstore.New(

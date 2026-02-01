@@ -26,7 +26,7 @@ func newConfig() *Config {
 }
 
 func (conf *Config) Save() error {
-	jsonFile, err := os.Create("config.json")
+	jsonFile, err := os.Create(ConfigFile)
 	if err != nil {
 		return err
 	}

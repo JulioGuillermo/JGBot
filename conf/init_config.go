@@ -11,6 +11,11 @@ var Conf *Config
 func InitConfig() error {
 	var err error
 
+	err = os.MkdirAll(ConfigDir, 0755)
+	if err != nil {
+		return err
+	}
+
 	Conf, err = loadConfig()
 	if err != nil && !os.IsNotExist(err) {
 		return err
@@ -25,7 +30,7 @@ func InitConfig() error {
 }
 
 func loadConfig() (*Config, error) {
-	jsonFile, err := os.Open("config.json")
+	jsonFile, err := os.Open(ConfigFile)
 	if err != nil {
 		return nil, err
 	}
