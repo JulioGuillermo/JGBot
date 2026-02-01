@@ -27,7 +27,7 @@ func NewSessionCtl(logger *slog.Logger, channelCtl *channelctl.ChannelCtl, agent
 	return ctl, nil
 }
 
-func (s *SessionCtl) OnNewMessage(channel string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
+func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
 	if message == "" {
 		s.logger.Info("Empty msg")
 		return

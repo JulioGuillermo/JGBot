@@ -4,6 +4,7 @@ import (
 	"JGBot/channels"
 	"JGBot/channels/telegramchannel/telegramdb"
 	"JGBot/logger"
+	"fmt"
 
 	"log/slog"
 
@@ -74,7 +75,16 @@ func (ch *TelegramChannel) handler(msg *models.Message) {
 	}
 
 	if ch.onMsg != nil {
-		ch.onMsg(ch.GetName(), chat.ID, chat.ChatName, sender.ID, sender.String(), message.ID, message.Text)
+		ch.onMsg(
+			ch.GetName(),
+			fmt.Sprintf("%s:%d", ch.GetName(), chat.ChatID),
+			chat.ID,
+			chat.ChatName,
+			sender.ID,
+			sender.String(),
+			message.ID,
+			message.Text,
+		)
 	}
 }
 

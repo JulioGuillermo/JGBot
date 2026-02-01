@@ -4,6 +4,7 @@ import (
 	"JGBot/channels"
 	"JGBot/channels/whatsappchannel/whatsappdb"
 	"JGBot/logger"
+	"fmt"
 	"log/slog"
 
 	"go.mau.fi/whatsmeow/types/events"
@@ -68,7 +69,16 @@ func (ch *WhatsAppChannel) handler(msg *events.Message) {
 	}
 
 	if ch.onMsg != nil {
-		ch.onMsg(ch.GetName(), chat.ID, chat.Name, sender.ID, sender.Name, message.ID, message.Text)
+		ch.onMsg(
+			ch.GetName(),
+			fmt.Sprintf("%s:%s", ch.GetName(), chat.String()),
+			chat.ID,
+			chat.Name,
+			sender.ID,
+			sender.Name,
+			message.ID,
+			message.Text,
+		)
 	}
 }
 
