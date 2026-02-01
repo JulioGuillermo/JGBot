@@ -3,17 +3,15 @@ package whatsappchannel
 import (
 	"JGBot/channels"
 	"JGBot/channels/whatsappchannel/whatsappdb"
-	"JGBot/logger"
+	"JGBot/log"
 	"fmt"
-	"log/slog"
 
 	"go.mau.fi/whatsmeow/types/events"
 )
 
 type WhatsAppChannel struct {
-	Logger *slog.Logger
-	Ctl    *WhatsAppCtl
-	onMsg  channels.OnMessageHandler
+	Ctl   *WhatsAppCtl
+	onMsg channels.OnMessageHandler
 }
 
 func NewWhatsAppChannel() (*WhatsAppChannel, error) {
@@ -24,7 +22,6 @@ func NewWhatsAppChannel() (*WhatsAppChannel, error) {
 
 	ch := &WhatsAppChannel{}
 	conf := GetWhatsappConf()
-	ch.Logger = logger.GetLogger(conf.LogLevel)
 
 	ctl, err := NewWhatsAppCtl(conf.DBPath)
 	if err != nil {
@@ -40,7 +37,7 @@ func NewWhatsAppChannel() (*WhatsAppChannel, error) {
 func (ch *WhatsAppChannel) handler(msg *events.Message) {
 	sender, err := whatsappdb.ReceivedSender(&msg.Info.Sender, msg.Info.PushName)
 	if err != nil {
-		ch.Logger.Error("Error receiving sender", "Error", err)
+		log.Error("Error receiving sender", "Error", err)
 		return
 	}
 
@@ -48,7 +45,7 @@ func (ch *WhatsAppChannel) handler(msg *events.Message) {
 	if msg.Info.IsGroup {
 		group, err := ch.Ctl.GetGroupInfo(msg.Info.Chat)
 		if err != nil {
-			ch.Logger.Error("Error getting group info", "Error", err)
+			log.Error("Error getting group info", "Error", err)
 			chatName = "Unknown group"
 		} else {
 			chatName = group.Name
@@ -58,13 +55,13 @@ func (ch *WhatsAppChannel) handler(msg *events.Message) {
 	}
 	chat, err := whatsappdb.ReceivedChat(&msg.Info.Chat, chatName)
 	if err != nil {
-		ch.Logger.Error("Error receiving chat", "Error", err)
+		log.Error("Error receiving chat", "Error", err)
 		return
 	}
 
 	message, err := whatsappdb.ReceivedMessage(chat, sender, msg.Info.ID, msg.Message.GetConversation())
 	if err != nil {
-		ch.Logger.Error("Error receiving message", "Error", err)
+		log.Error("Error receiving message", "Error", err)
 		return
 	}
 
@@ -93,13 +90,13 @@ func (ch *WhatsAppChannel) OnMessage(handler channels.OnMessageHandler) {
 func (ch *WhatsAppChannel) SendMessage(chatID uint, message string) error {
 	chat, err := whatsappdb.GetChat(chatID)
 	if err != nil {
-		ch.Logger.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
 		return err
 	}
 
 	err = ch.Ctl.SendMessage(*chat.ToJID(), message)
 	if err != nil {
-		ch.Logger.Error("Fail to send message to chat", "chatID", chatID, "error", err)
+		log.Error("Fail to send message to chat", "chatID", chatID, "error", err)
 		return err
 	}
 
@@ -109,19 +106,19 @@ func (ch *WhatsAppChannel) SendMessage(chatID uint, message string) error {
 func (ch *WhatsAppChannel) ReactMessage(chatID uint, messageID uint, reaction string) error {
 	chat, err := whatsappdb.GetChat(chatID)
 	if err != nil {
-		ch.Logger.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
 		return err
 	}
 
 	msg, err := whatsappdb.GetMessage(messageID)
 	if err != nil {
-		ch.Logger.Error("Fail to find the message", "messageID", messageID, "error", err)
+		log.Error("Fail to find the message", "messageID", messageID, "error", err)
 		return err
 	}
 
 	err = ch.Ctl.ReactMessage(*chat.ToJID(), *msg.Sender.ToJID(), msg.MessageID, reaction)
 	if err != nil {
-		ch.Logger.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
+		log.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
 		return err
 	}
 	return nil

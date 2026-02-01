@@ -1,9 +1,8 @@
 package conf
 
 type Channel struct {
-	Enabled  bool
-	LogLevel string
-	Config   map[string]string
+	Enabled bool
+	Config  map[string]string
 }
 
 type Channels struct {
@@ -15,14 +14,12 @@ type Channels struct {
 func newChannels() *Channels {
 	return &Channels{
 		Telegram: Channel{
-			Enabled:  false,
-			LogLevel: "info",
-			Config:   map[string]string{},
+			Enabled: false,
+			Config:  map[string]string{},
 		},
 		Whatsapp: Channel{
-			Enabled:  false,
-			LogLevel: "info",
-			Config:   map[string]string{},
+			Enabled: false,
+			Config:  map[string]string{},
 		},
 	}
 }

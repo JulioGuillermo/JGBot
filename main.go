@@ -5,7 +5,7 @@ import (
 	"JGBot/channels/channelctl"
 	"JGBot/conf"
 	"JGBot/database"
-	"JGBot/logger"
+	"JGBot/log"
 	"JGBot/session"
 	"fmt"
 	"os"
@@ -19,7 +19,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	log := logger.GetLogger(conf.Conf.LogLevel)
+	log.InitLogger(conf.Conf.LogLevel)
 
 	log.Info("Initializing database...")
 	err = database.InitConnection()
@@ -29,7 +29,7 @@ func main() {
 	}
 
 	log.Info("Initializing agent...")
-	agent, err := agent.NewAgent(log)
+	agent, err := agent.NewAgent()
 	if err != nil {
 		log.Error("Fail to initialize agent", "error", err)
 		os.Exit(1)
@@ -44,7 +44,6 @@ func main() {
 
 	log.Info("Initializing session ctl...")
 	session, err := session.NewSessionCtl(
-		log,
 		channelCtl,
 		agent,
 	)

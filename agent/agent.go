@@ -5,11 +5,12 @@ import (
 	"JGBot/agent/input"
 	"JGBot/agent/provider"
 	"JGBot/agent/tools"
+	"JGBot/log"
+	"JGBot/session/sessionconf/sc"
 	"JGBot/session/sessiondb"
 	"context"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 
 	"github.com/tmc/langchaingo/callbacks"
 	"github.com/tmc/langchaingo/chains"
@@ -21,15 +22,12 @@ import (
 )
 
 type Agent struct {
-	logger   *slog.Logger
 	ctx      context.Context
 	provider llms.Model
 }
 
-func NewAgent(logger *slog.Logger, customTools ...agentTools.Tool) (*Agent, error) {
-	agent := &Agent{
-		logger: logger,
-	}
+func NewAgent(customTools ...agentTools.Tool) (*Agent, error) {
+	agent := &Agent{}
 	agent.ctx = context.Background()
 
 	provider, err := provider.GetProvider(agent.ctx)
@@ -41,8 +39,8 @@ func NewAgent(logger *slog.Logger, customTools ...agentTools.Tool) (*Agent, erro
 	return agent, nil
 }
 
-func (a *Agent) Respond(history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage, onResponse func(text, role, extra string) error, onReact func(msg uint, reaction string) error) {
-	a.logger.Info("Agent responding...")
+func (a *Agent) Respond(sessionConf *sc.SessionConf, history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage, onResponse func(text, role, extra string) error, onReact func(msg uint, reaction string) error) {
+	log.Info("Agent responding...")
 
 	handler := handler.NewAgentHandler()
 	handler.OnToolCall = func(toolCall tools.ToolCall) {

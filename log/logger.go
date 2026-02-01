@@ -1,4 +1,4 @@
-package logger
+package log
 
 import (
 	"log/slog"
@@ -26,4 +26,8 @@ func GetLogger(logLevel string) *slog.Logger {
 		TimeFormat: time.Kitchen,
 	}))
 	return logger
+}
+
+func InitLogger(logLevel string) {
+	slog.SetDefault(GetLogger(logLevel))
 }

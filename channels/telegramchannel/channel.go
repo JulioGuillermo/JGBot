@@ -3,18 +3,15 @@ package telegramchannel
 import (
 	"JGBot/channels"
 	"JGBot/channels/telegramchannel/telegramdb"
-	"JGBot/logger"
+	"JGBot/log"
 	"fmt"
-
-	"log/slog"
 
 	"github.com/go-telegram/bot/models"
 )
 
 type TelegramChannel struct {
-	Ctl    *TelegramCtl
-	Logger *slog.Logger
-	onMsg  channels.OnMessageHandler
+	Ctl   *TelegramCtl
+	onMsg channels.OnMessageHandler
 }
 
 func NewTelegramChannel() (*TelegramChannel, error) {
@@ -25,7 +22,6 @@ func NewTelegramChannel() (*TelegramChannel, error) {
 
 	ch := &TelegramChannel{}
 	conf := GetTelegramConf()
-	ch.Logger = logger.GetLogger(conf.LogLevel)
 
 	ctl, err := NewTelegramCtl(conf.Token)
 	if err != nil {
@@ -46,7 +42,7 @@ func (ch *TelegramChannel) handler(msg *models.Message) {
 		msg.From.Username,
 	)
 	if err != nil {
-		ch.Logger.Error("Error receiving sender", "error", err)
+		log.Error("Error receiving sender", "error", err)
 		return
 	}
 
@@ -64,13 +60,13 @@ func (ch *TelegramChannel) handler(msg *models.Message) {
 	}
 	chat, err := telegramdb.ReceivedChat(msg.Chat.ID, chatName)
 	if err != nil {
-		ch.Logger.Error("Error receiving chat", "error", err)
+		log.Error("Error receiving chat", "error", err)
 		return
 	}
 
 	message, err := telegramdb.ReceivedMessage(chat, sender, msg.ID, msg.Text)
 	if err != nil {
-		ch.Logger.Error("Error receiving message", "error", err)
+		log.Error("Error receiving message", "error", err)
 		return
 	}
 
@@ -99,13 +95,13 @@ func (ch *TelegramChannel) OnMessage(handler channels.OnMessageHandler) {
 func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
 	chat, err := telegramdb.GetChat(chatID)
 	if err != nil {
-		ch.Logger.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
 		return err
 	}
 
 	err = ch.Ctl.SendMessage(chat.ChatID, message)
 	if err != nil {
-		ch.Logger.Error("Fail to send message to chat", "chatID", chatID, "error", err)
+		log.Error("Fail to send message to chat", "chatID", chatID, "error", err)
 		return err
 	}
 
@@ -115,19 +111,19 @@ func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
 func (ch *TelegramChannel) ReactMessage(chatID uint, messageID uint, reaction string) error {
 	chat, err := telegramdb.GetChat(chatID)
 	if err != nil {
-		ch.Logger.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
 		return err
 	}
 
 	msg, err := telegramdb.GetMessage(messageID)
 	if err != nil {
-		ch.Logger.Error("Fail to find the message", "messageID", messageID, "error", err)
+		log.Error("Fail to find the message", "messageID", messageID, "error", err)
 		return err
 	}
 
 	err = ch.Ctl.ReactMessage(chat.ChatID, msg.MessageID, reaction)
 	if err != nil {
-		ch.Logger.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
+		log.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
 		return err
 	}
 	return nil

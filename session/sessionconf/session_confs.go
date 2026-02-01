@@ -1,30 +1,23 @@
 package sessionconf
 
 import (
+	"JGBot/session/sessionconf/sc"
 	"JGBot/tools"
 
 	"github.com/fsnotify/fsnotify"
 )
 
-type SessionConf struct {
-	Name   string
-	ID     string
-	Origin string
-
-	Allowed bool
-}
-
 type SessionConfs struct {
 	filePath string
 	watcher  *tools.FileWatcher
-	Sessions []SessionConf
+	Sessions []sc.SessionConf
 	OnChange func()
 }
 
 func NewSessionConfs(filePath string) (*SessionConfs, error) {
 	sessions := &SessionConfs{
 		filePath: filePath,
-		Sessions: []SessionConf{},
+		Sessions: []sc.SessionConf{},
 	}
 	err := sessions.Load()
 	if err != nil {
@@ -62,7 +55,7 @@ func (s *SessionConfs) Close() {
 	}
 }
 
-func (s *SessionConfs) Add(session SessionConf) {
+func (s *SessionConfs) Add(session sc.SessionConf) {
 	s.Sessions = append(s.Sessions, session)
 	s.Save()
 }
@@ -76,7 +69,7 @@ func (s *SessionConfs) GetOriginIndex(origin string) int {
 	return -1
 }
 
-func (s *SessionConfs) GetOrigin(origin string) *SessionConf {
+func (s *SessionConfs) GetOrigin(origin string) *sc.SessionConf {
 	idx := s.GetOriginIndex(origin)
 	if idx == -1 {
 		return nil

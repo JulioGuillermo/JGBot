@@ -1,6 +1,9 @@
 package sessionconf
 
-import "JGBot/conf"
+import (
+	"JGBot/conf"
+	"JGBot/session/sessionconf/sc"
+)
 
 type SessionCtl struct {
 	Config   *SessionConfs
@@ -27,7 +30,7 @@ func NewSessionCtl() (*SessionCtl, error) {
 	return ctl, nil
 }
 
-func (s *SessionCtl) GetConfigOrigin(origin string) *SessionConf {
+func (s *SessionCtl) GetConfigOrigin(origin string) *sc.SessionConf {
 	return s.Config.GetOrigin(origin)
 }
 
@@ -35,11 +38,7 @@ func (s *SessionCtl) AddUnconfig(name string, id string, origin string) {
 	if s.Unconfig.HasOrigin(origin) {
 		return
 	}
-	s.Unconfig.Add(SessionConf{
-		Name:   name,
-		ID:     id,
-		Origin: origin,
-	})
+	s.Unconfig.Add(sc.NewSessionConf(name, id, origin))
 }
 
 func (s *SessionCtl) onConfigChange() {

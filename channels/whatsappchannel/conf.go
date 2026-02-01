@@ -3,8 +3,7 @@ package whatsappchannel
 import "JGBot/conf"
 
 type WhatsappConf struct {
-	DBPath   string
-	LogLevel string
+	DBPath string
 }
 
 func GetWhatsappConf() *WhatsappConf {
@@ -17,15 +16,8 @@ func GetWhatsappConf() *WhatsappConf {
 		change = true
 	}
 
-	config.LogLevel = conf.Conf.Channels.Whatsapp.LogLevel
-	if config.LogLevel == "" {
-		config.LogLevel = "info"
-		change = true
-	}
-
 	if change {
 		conf.Conf.Channels.Whatsapp.Config["DBPath"] = config.DBPath
-		conf.Conf.Channels.Whatsapp.LogLevel = config.LogLevel
 		conf.Conf.Save()
 	}
 
