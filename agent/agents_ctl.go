@@ -26,11 +26,6 @@ func NewAgentsCtl() (*AgentsCtl, error) {
 	agent.providers = provider.GetProviders(agent.ctx)
 	agent.toolsConf = toolconf.GetToolMap()
 
-	fmt.Println("··· Tools ···")
-	for _, tool := range agent.toolsConf {
-		fmt.Printf("- %s\n", tool.Name())
-	}
-
 	return agent, nil
 }
 
@@ -88,6 +83,6 @@ func (a *AgentsCtl) Respond(sessionConf *sc.SessionConf, history []*sessiondb.Se
 		return err
 	}
 
-	fmt.Println(result)
+	log.Info("AGENT RESPONDED", "result", result)
 	return onResponse(result, "assistant", "")
 }

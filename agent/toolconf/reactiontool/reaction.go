@@ -24,7 +24,6 @@ func (c *ReactionInitializerConf) ToolInitializer(sessionConf *sc.SessionConf, h
 		ToolName:        c.Name(),
 		ToolDescription: "Use this tool to add or update a reaction to a specific message.",
 		ToolFunc: func(ctx context.Context, args ReactionArgs) (string, error) {
-			fmt.Println(args)
 			err := onReact(args.MessageID, args.Reaction)
 			if err != nil {
 				return "", fmt.Errorf("FAILURE: Could not apply reaction. Reason: %s.", err.Error())

@@ -1,6 +1,7 @@
 package whatsappchannel
 
 import (
+	"JGBot/log"
 	"JGBot/tools"
 	"context"
 	"fmt"
@@ -158,7 +159,7 @@ func (ctl *WhatsAppCtl) clientConnect() error {
 			fmt.Println("QR CODE:", evt.Code)
 			qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, os.Stdout)
 		} else {
-			fmt.Println("LOGIN EVENT:", evt.Event)
+			log.Info("LOGIN EVENT:", "event", evt.Event)
 		}
 	}
 

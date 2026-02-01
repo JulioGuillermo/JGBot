@@ -2,8 +2,8 @@ package handler
 
 import (
 	"JGBot/agent/tools"
+	"JGBot/log"
 	"context"
-	"fmt"
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/schema"
@@ -47,7 +47,7 @@ func (h *AgentHandler) HandleToolStart(ctx context.Context, input string) {
 }
 
 func (h *AgentHandler) HandleToolEnd(ctx context.Context, output string) {
-	fmt.Printf("Tool Result: %s\n", output)
+	log.Info("TOOL RESULT", "output", output)
 	if h.OnToolResult != nil {
 		toolResult := tools.ToolResult{
 			ToolCall: h.ToolCall,
@@ -59,7 +59,7 @@ func (h *AgentHandler) HandleToolEnd(ctx context.Context, output string) {
 }
 
 func (h *AgentHandler) HandleToolError(ctx context.Context, error error) {
-	fmt.Printf("Tool Error: %s", error.Error())
+	log.Error("TOOL ERROR", "error", error)
 	if h.OnToolResult != nil {
 		toolResult := tools.ToolResult{
 			ToolCall: h.ToolCall,
@@ -77,7 +77,7 @@ func (h *AgentHandler) HandleAgentAction(ctx context.Context, action schema.Agen
 		Input: action.ToolInput,
 		// Log:   action.Log,
 	}
-	fmt.Printf("\nTool Call: %s[%s](Args: %s) Log: %s\n", action.Tool, action.ToolID, action.ToolInput, action.Log)
+	log.Info("TOOL CALL", "tool", action.Tool, "id", action.ToolID, "input", action.ToolInput, "log", action.Log)
 	if h.OnToolCall != nil {
 		h.OnToolCall(h.ToolCall)
 	}
