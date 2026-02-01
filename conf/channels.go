@@ -1,4 +1,4 @@
-package config
+package conf
 
 type Channel struct {
 	Enabled  bool

@@ -1,6 +1,6 @@
 package whatsappchannel
 
-import "JGBot/config"
+import "JGBot/conf"
 
 type WhatsappConf struct {
 	DBPath   string
@@ -8,26 +8,26 @@ type WhatsappConf struct {
 }
 
 func GetWhatsappConf() *WhatsappConf {
-	conf := &WhatsappConf{}
+	config := &WhatsappConf{}
 	change := false
 
-	conf.DBPath = config.Conf.Channels.Whatsapp.Config["DBPath"]
-	if conf.DBPath == "" {
-		conf.DBPath = "db/whatsapp.db"
+	config.DBPath = conf.Conf.Channels.Whatsapp.Config["DBPath"]
+	if config.DBPath == "" {
+		config.DBPath = "db/whatsapp.db"
 		change = true
 	}
 
-	conf.LogLevel = config.Conf.Channels.Whatsapp.LogLevel
-	if conf.LogLevel == "" {
-		conf.LogLevel = "info"
+	config.LogLevel = conf.Conf.Channels.Whatsapp.LogLevel
+	if config.LogLevel == "" {
+		config.LogLevel = "info"
 		change = true
 	}
 
 	if change {
-		config.Conf.Channels.Whatsapp.Config["DBPath"] = conf.DBPath
-		config.Conf.Channels.Whatsapp.LogLevel = conf.LogLevel
-		config.Conf.Save()
+		conf.Conf.Channels.Whatsapp.Config["DBPath"] = config.DBPath
+		conf.Conf.Channels.Whatsapp.LogLevel = config.LogLevel
+		conf.Conf.Save()
 	}
 
-	return conf
+	return config
 }

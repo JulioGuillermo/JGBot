@@ -1,12 +1,12 @@
 package provider
 
 import (
-	"JGBot/config"
+	"JGBot/conf"
 
 	"github.com/tmc/langchaingo/llms/mistral"
 )
 
-func GetMistral(conf config.Provider) (*mistral.Model, error) {
+func GetMistral(conf conf.Provider) (*mistral.Model, error) {
 	opts := []mistral.Option{}
 
 	if conf.ApiKey != nil {

@@ -4,7 +4,7 @@ import (
 	"JGBot/channels"
 	"JGBot/channels/telegramchannel"
 	"JGBot/channels/whatsappchannel"
-	"JGBot/config"
+	"JGBot/conf"
 	"fmt"
 )
 
@@ -17,7 +17,7 @@ func InitChannelCtl() (*ChannelCtl, error) {
 		channels: make(map[string]channels.Channel),
 	}
 
-	if config.Conf.Channels.Telegram.Enabled {
+	if conf.Conf.Channels.Telegram.Enabled {
 		channel, err := telegramchannel.NewTelegramChannel()
 		if err != nil {
 			return nil, err
@@ -25,7 +25,7 @@ func InitChannelCtl() (*ChannelCtl, error) {
 		ctl.channels[channel.GetName()] = channel
 	}
 
-	if config.Conf.Channels.Whatsapp.Enabled {
+	if conf.Conf.Channels.Whatsapp.Enabled {
 		channel, err := whatsappchannel.NewWhatsAppChannel()
 		if err != nil {
 			return nil, err

@@ -1,6 +1,6 @@
 package telegramchannel
 
-import "JGBot/config"
+import "JGBot/conf"
 
 type TelegramConf struct {
 	Token    string
@@ -8,25 +8,25 @@ type TelegramConf struct {
 }
 
 func GetTelegramConf() *TelegramConf {
-	conf := &TelegramConf{}
+	config := &TelegramConf{}
 	changed := false
 
-	conf.Token = config.Conf.Channels.Telegram.Config["token"]
-	if conf.Token == "" {
-		conf.Token = ""
+	config.Token = conf.Conf.Channels.Telegram.Config["token"]
+	if config.Token == "" {
+		config.Token = ""
 		changed = true
 	}
 
-	conf.LogLevel = config.Conf.Channels.Telegram.LogLevel
-	if conf.LogLevel == "" {
-		conf.LogLevel = "info"
+	config.LogLevel = conf.Conf.Channels.Telegram.LogLevel
+	if config.LogLevel == "" {
+		config.LogLevel = "info"
 		changed = true
 	}
 
 	if changed {
-		config.Conf.Channels.Telegram.Config["token"] = conf.Token
-		config.Conf.Channels.Telegram.LogLevel = conf.LogLevel
-		config.Conf.Save()
+		conf.Conf.Channels.Telegram.Config["token"] = config.Token
+		conf.Conf.Channels.Telegram.LogLevel = config.LogLevel
+		conf.Conf.Save()
 	}
-	return conf
+	return config
 }

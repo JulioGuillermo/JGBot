@@ -1,12 +1,12 @@
 package provider
 
 import (
-	"JGBot/config"
+	"JGBot/conf"
 
 	"github.com/tmc/langchaingo/llms/ollama"
 )
 
-func GetOllama(conf config.Provider) (*ollama.LLM, error) {
+func GetOllama(conf conf.Provider) (*ollama.LLM, error) {
 	opts := []ollama.Option{}
 
 	if conf.BaseUrl != nil {

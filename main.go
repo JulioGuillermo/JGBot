@@ -3,7 +3,7 @@ package main
 import (
 	"JGBot/agent"
 	"JGBot/channels/channelctl"
-	"JGBot/config"
+	"JGBot/conf"
 	"JGBot/database"
 	"JGBot/logger"
 	"JGBot/session"
@@ -15,11 +15,11 @@ import (
 
 func main() {
 	fmt.Println("Starting system...")
-	err := config.InitConfig()
+	err := conf.InitConfig()
 	if err != nil {
 		panic(err)
 	}
-	log := logger.GetLogger(config.Conf.LogLevel)
+	log := logger.GetLogger(conf.Conf.LogLevel)
 
 	log.Info("Initializing database...")
 	err = database.InitConnection()

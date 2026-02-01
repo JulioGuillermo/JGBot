@@ -1,13 +1,13 @@
 package provider
 
 import (
-	"JGBot/config"
+	"JGBot/conf"
 	"context"
 
 	"github.com/tmc/langchaingo/llms/googleai"
 )
 
-func GetGoogle(ctx context.Context, conf config.Provider) (*googleai.GoogleAI, error) {
+func GetGoogle(ctx context.Context, conf conf.Provider) (*googleai.GoogleAI, error) {
 	opts := []googleai.Option{}
 
 	if conf.ApiKey != nil {

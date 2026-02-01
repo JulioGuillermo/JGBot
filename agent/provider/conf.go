@@ -1,7 +1,7 @@
 package provider
 
-import "JGBot/config"
+import "JGBot/conf"
 
-func GetConfig() config.Provider {
-	return config.Conf.Provider
+func GetConfig() conf.Provider {
+	return conf.Conf.Provider
 }

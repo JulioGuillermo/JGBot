@@ -1,12 +1,12 @@
 package provider
 
 import (
-	"JGBot/config"
+	"JGBot/conf"
 
 	"github.com/tmc/langchaingo/llms/anthropic"
 )
 
-func GetAnthropic(conf config.Provider) (*anthropic.LLM, error) {
+func GetAnthropic(conf conf.Provider) (*anthropic.LLM, error) {
 	opts := []anthropic.Option{}
 
 	if conf.ApiKey != nil {

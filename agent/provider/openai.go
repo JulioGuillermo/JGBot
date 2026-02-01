@@ -1,12 +1,12 @@
 package provider
 
 import (
-	"JGBot/config"
+	"JGBot/conf"
 
 	"github.com/tmc/langchaingo/llms/openai"
 )
 
-func GetOpenAI(conf config.Provider) (*openai.LLM, error) {
+func GetOpenAI(conf conf.Provider) (*openai.LLM, error) {
 	opts := []openai.Option{}
 
 	if conf.BaseUrl != nil {
