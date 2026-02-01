@@ -65,6 +65,10 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
+	if !sessionConf.Respond.Respond(message) {
+		return
+	}
+
 	s.agent.Respond(
 		sessionConf,
 		history,
