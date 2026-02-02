@@ -58,3 +58,12 @@ func NewSessionConf(name, id, origin string) SessionConf {
 		Skills: skConf,
 	}
 }
+
+func (c *SessionConf) GetSkillConf(name string) *Skill {
+	for _, skill := range c.Skills {
+		if skill.Name == name {
+			return &skill
+		}
+	}
+	return nil
+}

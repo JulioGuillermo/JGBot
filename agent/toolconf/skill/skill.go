@@ -3,6 +3,7 @@ package skill
 import (
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
+	"JGBot/log"
 	"JGBot/skill"
 	"JGBot/skill/skillexec"
 	"context"
@@ -22,20 +23,36 @@ func (c *SkillInitializerConf) Name() string {
 	return "skill"
 }
 
-func (c *SkillInitializerConf) listSkills() string {
+func (c *SkillInitializerConf) listSkills(rCtx *ctxs.RespondCtx) string {
 	var sb strings.Builder
 	sb.WriteString("# Available skills:\n")
-	for _, skill := range skill.Skills {
-		fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
+	for _, skillConf := range rCtx.SessionConf.Skills {
+		if !skillConf.Enabled {
+			continue
+		}
+
+		skill, ok := skill.Skills[skillConf.Name]
+		if !ok {
+			log.Warn("Skill not found", "skill", skillConf.Name)
+			continue
+		}
+
 		if skill.HasTool {
-			fmt.Fprintf(&sb, "    This skill has a skill tool.\n")
+			fmt.Fprintf(&sb, "- %s: [Skill Tool available] %s\n", skill.Name, skill.Description)
+		} else {
+			fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
 		}
 	}
 	return sb.String()
 }
 
-func (c *SkillInitializerConf) readSkill(name string) string {
-	skill, ok := skill.Skills[name]
+func (c *SkillInitializerConf) readSkill(rCtx *ctxs.RespondCtx, name string) string {
+	skillConf := rCtx.SessionConf.GetSkillConf(name)
+	if skillConf == nil || !skillConf.Enabled {
+		return fmt.Sprintf("Skill %s not available", name)
+	}
+
+	skill, ok := skill.Skills[skillConf.Name]
 	if !ok {
 		return fmt.Sprintf("Skill %s not found", name)
 	}
@@ -46,12 +63,17 @@ func (c *SkillInitializerConf) readSkill(name string) string {
 }
 
 func (c *SkillInitializerConf) execSkill(rCtx *ctxs.RespondCtx, name string, args skillexec.SkillArgs) (string, error) {
-	sk, ok := skill.Skills[name]
+	skillConf := rCtx.SessionConf.GetSkillConf(name)
+	if skillConf == nil || !skillConf.Enabled {
+		return "", fmt.Errorf("Skill %s not available", name)
+	}
+
+	sk, ok := skill.Skills[skillConf.Name]
 	if !ok {
-		return "", fmt.Errorf("Skill %s not found", name)
+		return "", fmt.Errorf("Skill %s not found", skillConf.Name)
 	}
 	if !sk.HasTool {
-		return "", fmt.Errorf("Skill %s has not skill tool", name)
+		return "", fmt.Errorf("Skill %s has not skill tool", skillConf.Name)
 	}
 	return skillexec.ExecSkillTool(sk.Dir, args, rCtx)
 }
@@ -63,9 +85,9 @@ func (c *SkillInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool
 		ToolFunc: func(ctx context.Context, args SkillArgs) (string, error) {
 			switch args.Action {
 			case "list":
-				return c.listSkills(), nil
+				return c.listSkills(rCtx), nil
 			case "read":
-				return c.readSkill(args.Name), nil
+				return c.readSkill(rCtx, args.Name), nil
 			case "exec":
 				return c.execSkill(rCtx, args.Name, args.Args)
 			}
