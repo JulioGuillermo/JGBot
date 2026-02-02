@@ -2,6 +2,7 @@ package session
 
 import (
 	"JGBot/agent"
+	"JGBot/channels"
 	"JGBot/channels/channelctl"
 	"JGBot/ctxs"
 	"JGBot/log"
@@ -111,6 +112,9 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 			return s.channelCtl.ReactMessage(channel, chatID, msg, reaction)
 		},
 	}
+
+	s.channelCtl.Status(channel, chatID, channels.Writing)
+	defer s.channelCtl.Status(channel, chatID, channels.Normal)
 
 	err = s.agent.Respond(respCtx)
 	if err != nil {

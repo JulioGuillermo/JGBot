@@ -1,6 +1,7 @@
 package telegramchannel
 
 import (
+	"JGBot/channels"
 	"JGBot/log"
 	"context"
 
@@ -39,7 +40,21 @@ func NewTelegramCtl(botToken string) (*TelegramCtl, error) {
 	return ctl, nil
 }
 
+func (ctl *TelegramCtl) Status(chatID int64, status channels.Status) error {
+	switch status {
+	case channels.Writing:
+		_, err := ctl.client.SendChatAction(ctl.ctx, &bot.SendChatActionParams{
+			ChatID: chatID,
+			Action: models.ChatActionTyping,
+		})
+		return err
+	}
+	return nil
+}
+
 func (ctl *TelegramCtl) SendMessage(chatID int64, message string) error {
+	ctl.Status(chatID, channels.Normal)
+
 	_, err := ctl.client.SendMessage(ctl.ctx, &bot.SendMessageParams{
 		ChatID: chatID,
 		Text:   message,
@@ -48,6 +63,8 @@ func (ctl *TelegramCtl) SendMessage(chatID int64, message string) error {
 }
 
 func (ctl *TelegramCtl) ReactMessage(chatID int64, messageID int, reaction string) error {
+	ctl.Status(chatID, channels.Normal)
+
 	log.Info("Reacting to message", "chatID", chatID, "messageID", messageID, "reaction", reaction)
 	_, err := ctl.client.SetMessageReaction(ctl.ctx, &bot.SetMessageReactionParams{
 		ChatID:    chatID,

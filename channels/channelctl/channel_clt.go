@@ -50,6 +50,15 @@ func (ctl *ChannelCtl) AutoEnableSession(channel string) bool {
 	return ch.AutoEnableSession()
 }
 
+func (ctl *ChannelCtl) Status(channel string, chatID uint, status channels.Status) error {
+	ch, ok := ctl.channels[channel]
+	if !ok {
+		return fmt.Errorf("Not channel found with this name: %s", channel)
+	}
+
+	return ch.Status(chatID, status)
+}
+
 func (ctl *ChannelCtl) SendMessage(channel string, chatID uint, message string) error {
 	ch, ok := ctl.channels[channel]
 	if !ok {

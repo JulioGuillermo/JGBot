@@ -95,6 +95,22 @@ func (ch *TelegramChannel) OnMessage(handler channels.OnMessageHandler) {
 	ch.onMsg = handler
 }
 
+func (ch *TelegramChannel) Status(chatID uint, status channels.Status) error {
+	chat, err := telegramdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.Status(chat.ChatID, status)
+	if err != nil {
+		log.Error("Fail to send status to chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	return nil
+}
+
 func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
 	chat, err := telegramdb.GetChat(chatID)
 	if err != nil {

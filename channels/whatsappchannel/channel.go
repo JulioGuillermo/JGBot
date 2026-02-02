@@ -90,6 +90,22 @@ func (ch *WhatsAppChannel) OnMessage(handler channels.OnMessageHandler) {
 	ch.onMsg = handler
 }
 
+func (ch *WhatsAppChannel) Status(chatID uint, status channels.Status) error {
+	chat, err := whatsappdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.Status(*chat.ToJID(), status)
+	if err != nil {
+		log.Error("Fail to send status to chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	return nil
+}
+
 func (ch *WhatsAppChannel) SendMessage(chatID uint, message string) error {
 	chat, err := whatsappdb.GetChat(chatID)
 	if err != nil {
