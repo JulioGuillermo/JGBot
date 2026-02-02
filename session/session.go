@@ -43,8 +43,13 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 
 	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
 	if sessionConf == nil {
-		log.Info("Not config session", "origin", origin)
-		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin)
+		if s.channelCtl.AutoEnableSession(channel) {
+			log.Warn("Auto enable session", "origin", origin)
+			s.sessionCtl.AddConfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin)
+		} else {
+			log.Info("Not config session", "origin", origin)
+			s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin)
+		}
 		return
 	} else if !sessionConf.Allowed {
 		log.Info("Session not allowed", "origin", origin)

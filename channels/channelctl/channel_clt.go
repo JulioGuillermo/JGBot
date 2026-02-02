@@ -42,6 +42,14 @@ func (ctl *ChannelCtl) OnMessage(handler channels.OnMessageHandler) {
 	}
 }
 
+func (ctl *ChannelCtl) AutoEnableSession(channel string) bool {
+	ch, ok := ctl.channels[channel]
+	if !ok {
+		return false
+	}
+	return ch.AutoEnableSession()
+}
+
 func (ctl *ChannelCtl) SendMessage(channel string, chatID uint, message string) error {
 	ch, ok := ctl.channels[channel]
 	if !ok {

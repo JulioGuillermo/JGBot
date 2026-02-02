@@ -1,8 +1,9 @@
 package conf
 
 type Channel struct {
-	Enabled bool
-	Config  map[string]string
+	Enabled           bool
+	AutoEnableSession bool
+	Config            map[string]string
 }
 
 type Channels struct {
@@ -14,12 +15,14 @@ type Channels struct {
 func newChannels() *Channels {
 	return &Channels{
 		Telegram: Channel{
-			Enabled: false,
-			Config:  map[string]string{},
+			Enabled:           false,
+			AutoEnableSession: false,
+			Config:            map[string]string{},
 		},
 		Whatsapp: Channel{
-			Enabled: false,
-			Config:  map[string]string{},
+			Enabled:           false,
+			AutoEnableSession: false,
+			Config:            map[string]string{},
 		},
 	}
 }

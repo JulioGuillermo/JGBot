@@ -10,8 +10,9 @@ import (
 )
 
 type WhatsAppChannel struct {
-	Ctl   *WhatsAppCtl
-	onMsg channels.OnMessageHandler
+	Ctl               *WhatsAppCtl
+	autoEnableSession bool
+	onMsg             channels.OnMessageHandler
 }
 
 func NewWhatsAppChannel() (*WhatsAppChannel, error) {
@@ -20,8 +21,10 @@ func NewWhatsAppChannel() (*WhatsAppChannel, error) {
 		return nil, err
 	}
 
-	ch := &WhatsAppChannel{}
 	conf := GetWhatsappConf()
+	ch := &WhatsAppChannel{
+		autoEnableSession: conf.AutoEnableSession,
+	}
 
 	ctl, err := NewWhatsAppCtl(conf.DBPath)
 	if err != nil {
@@ -122,6 +125,10 @@ func (ch *WhatsAppChannel) ReactMessage(chatID uint, messageID uint, reaction st
 		return err
 	}
 	return nil
+}
+
+func (ch *WhatsAppChannel) AutoEnableSession() bool {
+	return ch.autoEnableSession
 }
 
 func (ch *WhatsAppChannel) Close() {

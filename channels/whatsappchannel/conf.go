@@ -3,7 +3,8 @@ package whatsappchannel
 import "JGBot/conf"
 
 type WhatsappConf struct {
-	DBPath string
+	DBPath            string
+	AutoEnableSession bool
 }
 
 func GetWhatsappConf() *WhatsappConf {
@@ -20,6 +21,8 @@ func GetWhatsappConf() *WhatsappConf {
 		conf.Conf.Channels.Whatsapp.Config["DBPath"] = config.DBPath
 		conf.Conf.Save()
 	}
+
+	config.AutoEnableSession = conf.Conf.Channels.Whatsapp.AutoEnableSession
 
 	return config
 }

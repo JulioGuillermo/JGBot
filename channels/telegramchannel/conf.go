@@ -3,7 +3,8 @@ package telegramchannel
 import "JGBot/conf"
 
 type TelegramConf struct {
-	Token string
+	Token             string
+	AutoEnableSession bool
 }
 
 func GetTelegramConf() *TelegramConf {
@@ -20,5 +21,8 @@ func GetTelegramConf() *TelegramConf {
 		conf.Conf.Channels.Telegram.Config["token"] = config.Token
 		conf.Conf.Save()
 	}
+
+	config.AutoEnableSession = conf.Conf.Channels.Telegram.AutoEnableSession
+
 	return config
 }

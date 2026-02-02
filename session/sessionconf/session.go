@@ -38,6 +38,10 @@ func (s *SessionCtl) AddUnconfig(name string, id string, origin string) {
 	s.Unconfig.SetSession(sc.NewSessionConf(name, id, origin))
 }
 
+func (s *SessionCtl) AddConfig(name string, id string, origin string) {
+	s.Config.SetSession(sc.NewSessionConf(name, id, origin))
+}
+
 func (s *SessionCtl) onConfigChange() {
 	for _, conf := range s.Config.Sessions {
 		s.Unconfig.RemoveOrigin(conf.Origin)

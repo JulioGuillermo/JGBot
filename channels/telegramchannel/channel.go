@@ -10,8 +10,9 @@ import (
 )
 
 type TelegramChannel struct {
-	Ctl   *TelegramCtl
-	onMsg channels.OnMessageHandler
+	Ctl               *TelegramCtl
+	autoEnableSession bool
+	onMsg             channels.OnMessageHandler
 }
 
 func NewTelegramChannel() (*TelegramChannel, error) {
@@ -20,8 +21,10 @@ func NewTelegramChannel() (*TelegramChannel, error) {
 		return nil, err
 	}
 
-	ch := &TelegramChannel{}
 	conf := GetTelegramConf()
+	ch := &TelegramChannel{
+		autoEnableSession: conf.AutoEnableSession,
+	}
 
 	ctl, err := NewTelegramCtl(conf.Token)
 	if err != nil {
@@ -127,6 +130,10 @@ func (ch *TelegramChannel) ReactMessage(chatID uint, messageID uint, reaction st
 		return err
 	}
 	return nil
+}
+
+func (ch *TelegramChannel) AutoEnableSession() bool {
+	return ch.autoEnableSession
 }
 
 func (ch *TelegramChannel) Close() {

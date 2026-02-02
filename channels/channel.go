@@ -7,5 +7,6 @@ type Channel interface {
 	OnMessage(handler OnMessageHandler)
 	SendMessage(chatID uint, message string) error
 	ReactMessage(chatID uint, messageID uint, reaction string) error
+	AutoEnableSession() bool
 	Close()
 }
