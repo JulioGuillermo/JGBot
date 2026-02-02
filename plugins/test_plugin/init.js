@@ -27,4 +27,4 @@ async function fn() {
   return d;
 }
 
-export default await fn();
+export default fn();

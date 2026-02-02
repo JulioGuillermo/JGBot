@@ -45,5 +45,5 @@ func ExecSkillTool(name string, args SkillArgs, rCtx *ctxs.RespondCtx) (string, 
 	}
 
 	fmt.Println(output.Result)
-	return output.Result, nil
+	return output.String(), nil
 }

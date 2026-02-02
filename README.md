@@ -1,60 +1,56 @@
 # JGBot
 
-A modular AI-powered chatbot framework with multi-channel support, custom skills, and extensible architecture.
+A modular, AI-powered chatbot framework featuring multi-channel support, a custom skill system, and an extensible architecture.
 
 ## Features
 
-- **Multi-Channel Support**: Telegram, WhatsApp.
-- **Custom Skills**: Extend bot functionality with skills and JavaScript skills tools.
-- **AI Agents**: Powered by LangChainGo with support for multiple LLM providers.
-- **Database Integration**: SQLite with GORM for data persistence.
-- **Virtual File System**: Session-specific and shared file storage.
-- **HTTP Client**: Built-in HTTP functionality for skills.
-- **Modular Architecture**: Easy to extend and customize.
+- **Multi-Channel Support**: Seamless integration with Telegram and WhatsApp.
+- **Custom Skills**: Extend functionality using JavaScript-based skills and tools.
+- **AI Agents**: Robust conversation handling powered by LangChainGo, supporting multiple LLM providers.
+- **Database Integration**: Reliable data persistence using SQLite with GORM.
+- **Virtual File System (VFS)**: Isolated file storage for sessions, including private and shared access.
+- **HTTP Client**: Built-in, fluent HTTP functionality for external API interactions.
+- **Modular & Extensible**: Designed for easy customization and growth.
 
 ## Installation
 
 ### Prerequisites
 
-- Go 1.25.5 or higher
-- Git
+- **Go**: Version 1.25.5 or higher.
+- **Git**: For repository management.
 
 ### Setup
 
-1. Clone the repository:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/JulioGuillermo/JGBot
+   cd JGBot
+   ```
 
-```bash
-git clone https://github.com/JulioGuillermo/JGBot
-cd JGBot
-```
+2. **Install dependencies**:
+   ```bash
+   go mod tidy
+   ```
 
-2. Install dependencies:
+3. **Build the application**:
+   ```bash
+   go build
+   ```
 
-```bash
-go mod tidy
-```
+4. **Run the application**:
+   ```bash
+   ./JGBot
+   ```
 
-3. Build the application:
-
-```bash
-go build
-```
-
-4. Run the application:
-
-```bash
-./JGBot
-```
-
-The first time you run the application, it will create all configuration files and new database file. You can specify the database file path in the configuration file.
+*Note: On the first run, the application generates default configuration files and a new database file. You can customize the database path in the configuration.*
 
 ## Custom Skills
 
-JGBot supports custom skills that extend its capabilities. See [CUSTOM_SKILL.md](doc/CUSTOM_SKILL.md) for detailed documentation on creating custom skills.
+JGBot enables you to extend its capabilities through custom skills. For a deep dive into skill development, see the [Custom Skills Development Guide](doc/CUSTOM_SKILL.md).
 
 ### Quick Skill Example
 
-Create a new skill in the `skills/` directory:
+Create a new skill directory in `skills/`:
 
 ```
 skills/my_skill/
@@ -62,25 +58,22 @@ skills/my_skill/
 └── init.js
 ```
 
-**SKILL.md**:
-
+**SKILL.md** (Metadata and Context):
 ```yaml
 ---
 name: my_skill
-description: A custom skill example
+description: A simple demonstration skill
 ---
 
-# My Custom Skill
+# Hello Skill
+This skill greets the user and echoes their input.
 
-This skill demonstrates basic functionality.
-
-## Inputs
-
-{input}
+## Usage
+When the user wants to say hello or test the bot, use this skill.
+Inputs: {input}
 ```
 
-**init.js**:
-
+**init.js** (Logic):
 ```javascript
 const args = GetArgs();
 
@@ -89,6 +82,7 @@ async function main() {
   return `You said: ${input}`;
 }
 
+// The result of the last expression is returned to the AI
 await main();
 ```
 
@@ -96,61 +90,58 @@ await main();
 
 ### Core Components
 
-1. **Agent System**: AI-powered conversation handling
-2. **Channel Controller**: Manages different communication channels
-3. **Session Manager**: Handles conversation sessions
-4. **Skill System**: Loads and executes custom skills
-5. **Database**: Persistent data storage
+1. **Agent System**: Manages AI-driven logic and conversation flows.
+2. **Channel Controller**: Abstracts communication with different platforms (Telegram, WhatsApp).
+3. **Session Manager**: Maintains state and history for individual conversations.
+4. **Skill System**: Discovers, loads, and executes custom JavaScript skills.
+5. **Database**: Handles persistent storage for sessions and configurations.
 
 ### Directory Structure
 
 ```
 JGBot/
-├── agent/          # AI agent implementation
-├── channels/       # Channel implementations
-├── conf/           # Configuration
-├── database/       # Database models and connections
-├── doc/            # Documentation
-├── js/             # JavaScript runtime
-├── plugins/        # Plugin system (coming soon)
-├── session/        # Session management
-├── skill/          # Skill system
-├── skills/         # Custom skills directory
-├── main.go         # Application entry point
-└── go.mod          # Go module file
+├── agent/          # AI agent and tool implementations
+├── channels/       # Channel-specific logic (Telegram, WhatsApp)
+├── conf/           # Configuration management
+├── database/       # Database models and GORM setup
+├── doc/            # Detailed documentation
+├── js/             # JavaScript runtime and Go-JS bridge
+├── plugins/        # Future plugin system
+├── session/        # Session logic and lifecycle
+├── skill/          # Skill loader and executor
+├── skills/         # Directory for user-defined skills
+├── main.go         # Entry point
+└── go.mod          # Go module definitions
 ```
 
 ## Supported Channels
 
 ### Telegram
-
-Built-in Telegram bot support with message handling, reactions, and file uploads.
+Full-featured support including message handling, reactions, and file uploads.
 
 ### WhatsApp
-
-WhatsApp integration for messaging functionality.
+Integration for messaging across WhatsApp chats and groups.
 
 ## AI Providers
 
-JGBot supports multiple LLM providers:
+JGBot supports a wide range of LLM providers via LangChainGo:
 
-- OpenAI (Can be used with any OpenAI compatible API)
-- Anthropic
-- Google
-- Ollama (local models)
-- Mistral
+- **OpenAI**: Compatible with GPT-4, GPT-3.5, and OpenAI-compliant APIs.
+- **Anthropic**: Support for Claude 3 models.
+- **Google**: Integration with Gemini Pro.
+- **Ollama**: For running local models.
+- **Mistral**: Support for Mistral AI models.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+We welcome contributions!
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Submit a Pull Request.
 
 ## Support
 
-For issues and questions:
+- Explore the detailed guides in the `doc/` directory.
+- Review existing GitHub issues or create a new one for bugs and feature requests.
 
-- Check the documentation in `doc/`
-- Review existing issues on GitHub
-- Create a new issue if needed

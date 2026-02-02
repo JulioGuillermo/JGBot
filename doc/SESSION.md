@@ -1,79 +1,66 @@
-# SESSION.md - JGBot Session Configuration Guide
+# Session Configuration Guide
 
-This document describes the session configuration system for the JGBot project, covering both configured and unconfigured sessions.
+This document explains the session management system in JGBot, covering the configuration of active and newly detected sessions.
 
 ## Overview
 
-The JGBot uses two separate configuration files to manage session settings:
+JGBot manages sessions using two distinct configuration files to separate customized settings from default ones:
 
-1. **Configured Sessions** (`config/session.json`) - Sessions with custom configurations
-2. **Unconfigured Sessions** (`config/unconfig_session.json`) - Sessions using default settings
-
-## File Locations
-
-- **Configured Sessions**: `config/session.json`
-- **Unconfigured Sessions**: `config/unconfig_session.json`
+1. **Configured Sessions** (`config/session.json`):
+   - Contains sessions with explicitly defined settings.
+2. **Unconfigured Sessions** (`config/unconfig_session.json`):
+   - Contains new sessions using default parameters. This file is automatically created when a new session is detected, and new session are added to this file. This file is not used by the bot, but it is useful for tracking new sessions.
 
 ## Purpose of Each File
 
 ### Configured Sessions (`session.json`)
 
-This file stores sessions that have been explicitly configured by the user or administrator. Each session in this file has custom settings and overrides the default behavior.
+This file contains sessions that have been explicitly modified or approved.
 
 **Key Features:**
 
-- Hot-reload support (changes are automatically detected and applied)
-- Persistent custom configurations
-- Session-specific settings like allowed status, history size, provider selection, etc.
-- Tools and skills configuration per session
+- **Hot-Reloading**: Changes to this file are detected in real-time and applied without restarting the bot.
+- **Persistence**: Stores custom settings for allowed status, history size, and specific LLM providers.
+- **Granular Control**: Enable or disable specific tools and skills on a per-session basis.
 
 ### Unconfigured Sessions (`unconfig_session.json`)
 
-This file serves as a temporary storage for sessions that haven't been explicitly configured yet. When a new session is detected, it's initially created here with default settings.
+When a new interaction is detected from a previously unknown origin (e.g., a new Telegram group or WhatsApp chat), JGBot automatically adds it to this file.
 
 **Key Features:**
 
-- Default configuration for new sessions
-- Temporary storage before user configuration
-- Sessions are automatically moved to `session.json` when configured
-- Allows users to see and manage unconfigured sessions
+- **Automatic Discovery**: New sessions are captured without manual intervention.
+- **Default Baseline**: Uses the global default settings for initial interaction.
+- **Auto-Remove**: Any session added to `session.json` is automatically removed from this file.
+- **Workflow**: Move an entry from this file to `session.json` to customize its behavior.
 
 ## Session Configuration Structure
 
-### Basic Session Structure
+### Example Session entry
 
 ```json
 {
-  "name": "Session Name",
-  "id": "unique_session_id",
-  "origin": "channel_chat_identifier",
+  "name": "Project Alpha Group",
+  "id": "abc-123-def",
+  "origin": "123456789@g.us",
   "allowed": true,
   "historySize": 50,
   "provider": "openai",
-  "agentMaxIters": 3,
+  "agentMaxIters": 10,
   "respond": {
     "always": true,
     "match": ".*"
   },
   "tools": [
-    {
-      "name": "message_reaction",
-      "enabled": true
-    },
-    {
-      "name": "javascript",
-      "enabled": false
-    },
-    {
-      "name": "skills",
-      "enabled": false
-    }
+    { "name": "message_reaction", "enabled": true },
+    { "name": "javascript", "enabled": true },
+    { "name": "skills", "enabled": true }
   ],
   "skills": [
     {
-      "name": "test_skill",
-      "enabled": false,
-      "description": "A testing skill that greets the user."
+      "name": "weather_skill",
+      "enabled": true,
+      "description": "Provides real-time weather updates."
     }
   ]
 }
@@ -81,197 +68,50 @@ This file serves as a temporary storage for sessions that haven't been explicitl
 
 ### Configuration Options
 
-#### Basic Information
+#### Metadata
+- **`name`**: The name of the chat. Allow user to identify the chat of this session, but is not used by the bot.
+- **`id`**: A system-generated unique identifier.
+- **`origin`**: A system-generated unique origin.
 
-- **name** (string): Display name for the session
-- **id** (string): Unique identifier for the session
-- **origin** (string): Channel-specific chat identifier (e.g., Telegram chat ID, WhatsApp JID)
+#### Access Control
+- **`allowed`** (boolean): Set to `true` to allow the bot to process messages from this session.
+  - **Default**: `false` (for unconfigured sessions).
 
-#### Session Control
+#### Agent Behavior
+- **`historySize`** (integer): The number of previous messages included in the context for the LLM.
+- **`provider`** (string): The name of the LLM provider to use (must match a provider in `config.json`).
+- **`agentMaxIters`** (integer): The maximum number of tool-use iterations the agent can perform per response.
 
-- **allowed** (boolean): Whether the session is allowed to interact with the bot
-  - Default: `false`
-  - Example: `true`
+#### Response Triggering
+- **`respond.always`** (boolean): If `true`, the bot evaluates every message.
+- **`respond.match`** (string): A regex pattern. The bot only responds if the message matches this pattern.
 
-#### Agent Configuration
+#### Tools & Skills
+- **`tools`**: Control access to core system capabilities like `message_reaction`, raw `javascript` execution, or the `skills` system.
+- **`skills`**: A list of available custom skills. You can enable/disable them individually for each session.
 
-- **historySize** (integer): Number of messages to keep in conversation history
-  - Default: `50`
-  - Example: `100`
+## The Hot-Reload Workflow
 
-- **provider** (string): LLM provider to use for this session
-  - Options: `"openai"`, `"anthropic"`, `"google"`, `"ollama"`, `"mistral"`
-  - Example: `"anthropic"`
+JGBot continuously monitors `config/session.json`. This allows for seamless administration:
 
-- **agentMaxIters** (integer): Maximum iterations for the agent to respond
-  - Default: `3`
-  - Example: `5`
+1. **Modify**: Open `config/session.json` and make your changes (e.g., toggle `allowed` to `true`).
+2. **Save**: Save the file.
+3. **Applied**: The bot immediately updates its internal state for that session. No restart is needed.
 
-#### Response Configuration
-
-- **respond.always** (boolean): Whether the bot should always respond
-  - Default: `true`
-  - Example: `false`
-
-- **respond.match** (string): Regex pattern for messages to respond to
-  - Default: `.*` (respond to all messages)
-  - Example: `"^hello|hi$"` (only respond to greetings)
-
-#### Tools Configuration
-
-- **tools** (array): Available tools for the session
-  - **message_reaction**: Message reaction tool
-    - `enabled`: Whether to allow message reactions
-  - **javascript**: JavaScript execution tool
-    - `enabled`: Whether to allow JavaScript execution
-  - **skills**: Skills execution tool
-    - `enabled`: Whether to allow skills execution
-
-#### Skills Configuration
-
-- **skills** (array): Available skills for the session
-  - **name**: Skill name
-  - **enabled**: Whether the skill is enabled for this session
-  - **description**: Description of the skill
-
-## Hot-Reload Feature
-
-The configured sessions file (`session.json`) supports hot-reloading:
-
-### How It Works
-
-1. **File Watching**: The system monitors `session.json` for changes
-2. **Automatic Reload**: When changes are detected, the configuration is automatically reloaded
-3. **Session Update**: All active sessions using the configuration are updated immediately
-4. **No Restart Required**: Changes take effect without restarting the bot
-
-### Supported Changes
-
-- Adding new sessions
-- Modifying existing session settings
-- Enabling/disabling tools and skills
-- Changing response patterns
-- Updating allowed status
-
-### Limitations
-
-- Session removal requires active session cleanup
-- Large file changes may cause brief delays
-- Invalid JSON will cause reload errors
+> [!CAUTION]
+> If you introduce a JSON syntax error while editing, the hot-reload will fail, and an error will be logged. The bot will continue using the last valid configuration until the file is fixed.
 
 ## Session Lifecycle
 
-### 1. New Session Detection
-
-When a new chat is detected:
-
-- Session is created in `unconfig_session.json` with default settings
-- User can see it in the unconfigured sessions list
-
-### 2. Session Configuration
-
-User can configure a session by:
-
-- Moving it from `unconfig_session.json` to `session.json`
-- Setting custom parameters
-- Enabling/disabling specific tools and skills
-
-### 3. Active Session
-
-Once configured:
-
-- Session uses custom settings from `session.json`
-- Benefits from hot-reload for configuration updates
-- Can be modified at any time
-
-### 4. Session Removal
-
-Sessions can be removed by:
-
-- Deleting them from `session.json`
-- System will automatically recreate them in `unconfig_session.json` if they become active again
-
-## Default Configuration
-
-When a session is first created in `unconfig_session.json`, it uses these defaults:
-
-```json
-{
-  "name": "New Session",
-  "id": "generated_id",
-  "origin": "channel_origin",
-  "allowed": false,
-  "historySize": 50,
-  "provider": "default_from_main_config",
-  "agentMaxIters": 3,
-  "respond": {
-    "always": true,
-    "match": ".*"
-  },
-  "tools": [
-    {
-      "name": "message_reaction",
-      "enabled": true
-    },
-    {
-      "name": "javascript",
-      "enabled": false
-    },
-    {
-      "name": "skills",
-      "enabled": false
-    }
-  ],
-  "skills": [
-    {
-      "name": "skill_name",
-      "enabled": false,
-      "description": "Skill description"
-    }
-  ]
-}
-```
-
-## Management Commands
-
-### View Unconfigured Sessions
-
-```bash
-cat config/unconfig_session.json
-```
-
-### View Configured Sessions
-
-```bash
-cat config/session.json
-```
-
-### Configure a Session
-
-1. Edit `config/session.json` to add/modify session configuration
-2. Save the file (hot-reload will automatically apply changes)
-
-### Reset Session to Defaults
-
-1. Remove the session from `session.json`
-2. It will reappear in `unconfig_session.json` with defaults
+1. **Detection**: An unknown chat sends a message. It appears in `unconfig_session.json`.
+2. **Approval**: You copy the session entry into `session.json`.
+3. **Configuration**: You set `allowed: true`, choose a provider, and enable specific skills.
+4. **Maintenance**: You can update the history size or disable skills at any time via `session.json`.
+5. **Removal**: Deleting a session from `session.json` stops the bot from responding; if that chat sends another message, it will reappear in `unconfig_session.json`.
 
 ## Best Practices
 
-### Security Considerations
+- **Security**: For public groups, keep `javascript` disabled unless absolutely necessary.
+- **Resource Management**: Large `historySize` values consume more tokens and memory. Aim for a balance (typically 20–50).
+- **Organization**: Use clear semantic names for sessions to simplify management as the number of chats grows.
 
-- Set `allowed: false` for sessions that shouldn't interact
-- Disable JavaScript execution for untrusted sessions
-- Use specific response patterns to limit interactions
-
-### Performance Optimization
-
-- Keep `historySize` reasonable for memory usage
-- Disable unused tools to reduce processing overhead
-- Use appropriate `agentMaxIters` to balance response quality vs performance
-
-### Management Tips
-
-- Regularly review and clean up unconfigured sessions
-- Use descriptive session names for easier management
-- Test response patterns before deploying to production
