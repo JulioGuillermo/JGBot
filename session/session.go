@@ -6,6 +6,7 @@ import (
 	"JGBot/log"
 	"JGBot/session/sessionconf"
 	"JGBot/session/sessiondb"
+	"JGBot/skill"
 	"fmt"
 )
 
@@ -13,9 +14,10 @@ type SessionCtl struct {
 	channelCtl *channelctl.ChannelCtl
 	agent      *agent.AgentsCtl
 	sessionCtl *sessionconf.SessionCtl
+	skills     []*skill.Skill
 }
 
-func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*SessionCtl, error) {
+func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl, skills []*skill.Skill) (*SessionCtl, error) {
 	sessiondb.Migrate()
 
 	sessionCtl, err := sessionconf.NewSessionCtl()
@@ -27,6 +29,7 @@ func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*
 		channelCtl: channelCtl,
 		agent:      agent,
 		sessionCtl: sessionCtl,
+		skills:     skills,
 	}
 
 	channelCtl.OnMessage(ctl.OnNewMessage)
@@ -43,7 +46,7 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
 	if sessionConf == nil {
 		log.Info("Not config session", "origin", origin)
-		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin)
+		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin, s.skills)
 		return
 	} else if !sessionConf.Allowed {
 		log.Info("Session not allowed", "origin", origin)

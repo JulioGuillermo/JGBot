@@ -109,7 +109,7 @@ func (ctl *WhatsAppCtl) init(dbName string) error {
 		return err
 	}
 
-	ctl.dbLog = waLog.Stdout("DATABASE", "DEBUG", true)
+	ctl.dbLog = waLog.Stdout("DATABASE", "ERROR", true)
 	ctl.ctx = context.Background()
 	container, err := sqlstore.New(
 		ctl.ctx,
@@ -130,7 +130,7 @@ func (ctl *WhatsAppCtl) connect() error {
 		return err
 	}
 
-	ctl.clientLog = waLog.Stdout("CLIENT", "DEBUG", true)
+	ctl.clientLog = waLog.Stdout("CLIENT", "ERROR", true)
 	ctl.client = whatsmeow.NewClient(device, ctl.clientLog)
 	ctl.client.AddEventHandler(ctl.handler)
 

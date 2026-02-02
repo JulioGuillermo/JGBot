@@ -1,5 +1,7 @@
 package sc
 
+import "JGBot/skill"
+
 type SessionConf struct {
 	Name   string
 	ID     string
@@ -13,16 +15,27 @@ type SessionConf struct {
 
 	AgentMaxIters int
 	Tools         []Tool
+	Skills        []Skill
 }
 
-func NewSessionConf(name, id, origin string) SessionConf {
+func NewSessionConf(name, id, origin string, skills []*skill.Skill) SessionConf {
+	skConf := make([]Skill, 0)
+	for _, skill := range skills {
+		skConf = append(skConf, Skill{
+			Name:        skill.Name,
+			Enabled:     false,
+			Description: skill.Description,
+		})
+	}
+
 	return SessionConf{
 		Name:   name,
 		ID:     id,
 		Origin: origin,
 
-		Allowed:     false,
-		HistorySize: 50,
+		Allowed:       false,
+		HistorySize:   50,
+		AgentMaxIters: 3,
 		Respond: Respond{
 			Always: true,
 		},
@@ -35,6 +48,11 @@ func NewSessionConf(name, id, origin string) SessionConf {
 				Name:    "javascript",
 				Enabled: false,
 			},
+			{
+				Name:    "skills",
+				Enabled: false,
+			},
 		},
+		Skills: skConf,
 	}
 }

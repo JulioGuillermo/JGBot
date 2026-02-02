@@ -8,6 +8,7 @@ import (
 	"JGBot/log"
 	"JGBot/session/sessionconf/sc"
 	"JGBot/session/sessiondb"
+	"JGBot/skill"
 	"context"
 	"fmt"
 
@@ -18,10 +19,13 @@ type AgentsCtl struct {
 	ctx       context.Context
 	providers map[string]llms.Model
 	toolsConf map[string]toolconf.ToolInitializerConf
+	skills    []*skill.Skill
 }
 
-func NewAgentsCtl() (*AgentsCtl, error) {
-	agent := &AgentsCtl{}
+func NewAgentsCtl(skills []*skill.Skill) (*AgentsCtl, error) {
+	agent := &AgentsCtl{
+		skills: skills,
+	}
 	agent.ctx = context.Background()
 	agent.providers = provider.GetProviders(agent.ctx)
 	agent.toolsConf = toolconf.GetToolMap()

@@ -60,6 +60,16 @@ func (s *SessionConfs) Add(session sc.SessionConf) {
 	s.Save()
 }
 
+func (s *SessionConfs) SetSession(session sc.SessionConf) {
+	idx := s.GetOriginIndex(session.Origin)
+	if idx == -1 {
+		s.Add(session)
+		return
+	}
+	s.Sessions[idx] = session
+	s.Save()
+}
+
 func (s *SessionConfs) GetOriginIndex(origin string) int {
 	for i, conf := range s.Sessions {
 		if conf.Origin == origin {
