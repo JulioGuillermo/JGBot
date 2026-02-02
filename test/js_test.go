@@ -1,4 +1,4 @@
-package exec_test
+package test
 
 import (
 	"JGBot/js/exec"
@@ -6,7 +6,8 @@ import (
 )
 
 func TestJS(t *testing.T) {
-	output, err := exec.Exec("test.js", `// Test JS
+	output, err := exec.RunCode(`// Test JS
+		import { log } from "JGBot/js/log"
 console.log("Hello World")
 export default { a: 1 }
 `)

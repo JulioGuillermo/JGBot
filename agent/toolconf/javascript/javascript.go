@@ -24,7 +24,7 @@ func (c *JavaScriptInitializerConf) ToolInitializer(sessionConf *sc.SessionConf,
 		ToolName:        c.Name(),
 		ToolDescription: "Executes sandboxed JavaScript code (ES2023). Ideal for complex math, data parsing, or logic.",
 		ToolFunc: func(ctx context.Context, args JavaScriptArgs) (string, error) {
-			output, err := exec.Exec("main.js", args.Code)
+			output, err := exec.RunCode(args.Code)
 			if err != nil {
 				return "", fmt.Errorf("ERROR: Fail to execute the JavaScript code: %s.", err.Error())
 			}
