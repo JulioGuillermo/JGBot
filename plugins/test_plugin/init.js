@@ -1,6 +1,9 @@
 import { getDate } from "/date.js";
 
+const args = GetArgs();
+
 async function fn() {
+  print(args);
   console.Log("Running #### 123");
 
   const formData = HttpFormData()

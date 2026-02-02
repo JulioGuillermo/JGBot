@@ -1,4 +1,4 @@
 const args = GetArgs();
-console.log(args);
+print(args);
 
 export default `Hello, ${args.name}!`;

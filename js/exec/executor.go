@@ -54,6 +54,10 @@ func (e *Executor) initConsole() error {
 		return err
 	}
 	e.ctx.Global().SetPropertyStr("console", jsConsole)
+	e.ctx.SetFunc("print", func(ctx *qjs.This) (*qjs.Value, error) {
+		e.console.Log(ctx.Args()...)
+		return nil, nil
+	})
 	return nil
 }
 

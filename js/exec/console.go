@@ -17,6 +17,19 @@ func (c *Console) print(text string) {
 	c.sb.WriteRune('\n')
 }
 
+func (c *Console) Print(args ...any) {
+	var sb strings.Builder
+
+	sb.WriteString("··· PRINT START ···\n")
+	for _, arg := range args {
+		fmt.Fprint(&sb, arg)
+		sb.WriteRune('\n')
+	}
+	sb.WriteString("··· PRINT END ···")
+
+	c.print(sb.String())
+}
+
 func (c *Console) newLog(start, end string, args ...*qjs.Value) {
 	var sb strings.Builder
 

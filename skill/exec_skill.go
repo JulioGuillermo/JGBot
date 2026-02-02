@@ -10,7 +10,7 @@ import (
 	"github.com/fastschema/qjs"
 )
 
-type SkillArgs map[string]string
+type SkillArgs map[string]any
 
 func ExecSkillTool(name string, args SkillArgs) (string, error) {
 	output, err := runners.RunModule(
@@ -29,7 +29,6 @@ func ExecSkillTool(name string, args SkillArgs) (string, error) {
 		return "", err
 	}
 
-	fmt.Println(output.String())
-
+	fmt.Println(output.Result)
 	return output.Result, nil
 }
