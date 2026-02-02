@@ -18,9 +18,9 @@ type SessionConf struct {
 	Skills        []Skill
 }
 
-func NewSessionConf(name, id, origin string, skills []*skill.Skill) SessionConf {
+func NewSessionConf(name, id, origin string) SessionConf {
 	skConf := make([]Skill, 0)
-	for _, skill := range skills {
+	for _, skill := range skill.Skills {
 		skConf = append(skConf, Skill{
 			Name:        skill.Name,
 			Enabled:     false,

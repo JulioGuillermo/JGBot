@@ -3,10 +3,10 @@ package session
 import (
 	"JGBot/agent"
 	"JGBot/channels/channelctl"
+	"JGBot/ctxs"
 	"JGBot/log"
 	"JGBot/session/sessionconf"
 	"JGBot/session/sessiondb"
-	"JGBot/skill"
 	"fmt"
 )
 
@@ -14,10 +14,9 @@ type SessionCtl struct {
 	channelCtl *channelctl.ChannelCtl
 	agent      *agent.AgentsCtl
 	sessionCtl *sessionconf.SessionCtl
-	skills     []*skill.Skill
 }
 
-func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl, skills []*skill.Skill) (*SessionCtl, error) {
+func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*SessionCtl, error) {
 	sessiondb.Migrate()
 
 	sessionCtl, err := sessionconf.NewSessionCtl()
@@ -29,7 +28,6 @@ func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl, sk
 		channelCtl: channelCtl,
 		agent:      agent,
 		sessionCtl: sessionCtl,
-		skills:     skills,
 	}
 
 	channelCtl.OnMessage(ctl.OnNewMessage)
@@ -46,7 +44,7 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
 	if sessionConf == nil {
 		log.Info("Not config session", "origin", origin)
-		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin, s.skills)
+		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin)
 		return
 	} else if !sessionConf.Allowed {
 		log.Info("Session not allowed", "origin", origin)
@@ -83,11 +81,11 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
-	err = s.agent.Respond(
-		sessionConf,
-		history,
-		msg,
-		func(text, role, extra string) error {
+	respCtx := &ctxs.RespondCtx{
+		SessionConf: sessionConf,
+		History:     history,
+		Message:     msg,
+		OnResponse: func(text, role, extra string) error {
 			sessiondb.NewSessionMessage(
 				channel,
 				chatID,
@@ -104,10 +102,12 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 			}
 			return s.channelCtl.SendMessage(channel, chatID, text)
 		},
-		func(msg uint, reaction string) error {
+		OnReact: func(msg uint, reaction string) error {
 			return s.channelCtl.ReactMessage(channel, chatID, msg, reaction)
 		},
-	)
+	}
+
+	err = s.agent.Respond(respCtx)
 	if err != nil {
 		log.Error("Agent respond error", "err", err)
 	}

@@ -5,27 +5,24 @@ import (
 	"JGBot/agent/provider"
 	"JGBot/agent/toolconf"
 	"JGBot/agent/tools"
+	"JGBot/ctxs"
 	"JGBot/log"
-	"JGBot/session/sessionconf/sc"
-	"JGBot/session/sessiondb"
-	"JGBot/skill"
 	"context"
 	"fmt"
 
+	"github.com/tmc/langchaingo/callbacks"
 	"github.com/tmc/langchaingo/llms"
+	lcTools "github.com/tmc/langchaingo/tools"
 )
 
 type AgentsCtl struct {
 	ctx       context.Context
 	providers map[string]llms.Model
 	toolsConf map[string]toolconf.ToolInitializerConf
-	skills    []*skill.Skill
 }
 
-func NewAgentsCtl(skills []*skill.Skill) (*AgentsCtl, error) {
-	agent := &AgentsCtl{
-		skills: skills,
-	}
+func NewAgentsCtl() (*AgentsCtl, error) {
+	agent := &AgentsCtl{}
 	agent.ctx = context.Background()
 	agent.providers = provider.GetProviders(agent.ctx)
 	agent.toolsConf = toolconf.GetToolMap()
@@ -41,18 +38,18 @@ func (a *AgentsCtl) getProvider(provider string) (llms.Model, error) {
 	return prov, nil
 }
 
-func (a *AgentsCtl) Respond(sessionConf *sc.SessionConf, history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage, onResponse func(text, role, extra string) error, onReact func(msg uint, reaction string) error) error {
+func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	log.Info("Agent responding...")
 
 	handler := handler.NewAgentHandler()
 	handler.OnToolCall = func(toolCall tools.ToolCall) {
-		onResponse("", "assistant", toolCall.ToJson())
+		ctx.OnResponse("", "assistant", toolCall.ToJson())
 	}
 	handler.OnToolResult = func(toolResult tools.ToolResult) {
-		onResponse("", "tool", toolResult.ToJson())
+		ctx.OnResponse("", "tool", toolResult.ToJson())
 	}
 
-	provider, err := a.getProvider(sessionConf.Provider)
+	provider, err := a.getProvider(ctx.SessionConf.Provider)
 	if err != nil {
 		return err
 	}
@@ -62,10 +59,26 @@ func (a *AgentsCtl) Respond(sessionConf *sc.SessionConf, history []*sessiondb.Se
 		Ctx:      a.ctx,
 		Handler:  handler,
 		Provider: provider,
-		MaxIters: max(sessionConf.AgentMaxIters, 3),
+		MaxIters: max(ctx.SessionConf.AgentMaxIters, 3),
 	}
 
-	for _, toolConf := range sessionConf.Tools {
+	tools := a.GetTools(ctx, handler)
+	agent.AddTools(tools...)
+	agent.Init()
+
+	result, err := agent.Run(ctx.History, ctx.Message)
+	if err != nil {
+		return err
+	}
+
+	log.Info("AGENT RESPONDED", "result", result)
+	return ctx.OnResponse(result, "assistant", "")
+}
+
+func (a *AgentsCtl) GetTools(ctx *ctxs.RespondCtx, handler callbacks.Handler) []lcTools.Tool {
+	tools := make([]lcTools.Tool, 0)
+
+	for _, toolConf := range ctx.SessionConf.Tools {
 		if !toolConf.Enabled {
 			continue
 		}
@@ -76,18 +89,11 @@ func (a *AgentsCtl) Respond(sessionConf *sc.SessionConf, history []*sessiondb.Se
 			continue
 		}
 
-		tool := toolInitializer.ToolInitializer(sessionConf, history, message, onResponse, onReact)
+		tool := toolInitializer.ToolInitializer(ctx)
 		tool.SetHandler(handler)
 
-		agent.AddTools(tool)
-	}
-	agent.Init()
-
-	result, err := agent.Run(history, message)
-	if err != nil {
-		return err
+		tools = append(tools, tool)
 	}
 
-	log.Info("AGENT RESPONDED", "result", result)
-	return onResponse(result, "assistant", "")
+	return tools
 }

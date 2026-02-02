@@ -30,14 +30,14 @@ func main() {
 	}
 
 	log.Info("Loading skills...")
-	skills, err := skill.GetSkills()
+	err = skill.InitSkills()
 	if err != nil {
 		log.Error("Fail to load skills", "error", err)
 		os.Exit(1)
 	}
 
 	log.Info("Initializing agent...")
-	agent, err := agent.NewAgentsCtl(skills)
+	agent, err := agent.NewAgentsCtl()
 	if err != nil {
 		log.Error("Fail to initialize agent", "error", err)
 		os.Exit(1)
@@ -54,7 +54,6 @@ func main() {
 	session, err := session.NewSessionCtl(
 		channelCtl,
 		agent,
-		skills,
 	)
 	if err != nil || session == nil {
 		log.Error("Fail to initialize session", "error", err)

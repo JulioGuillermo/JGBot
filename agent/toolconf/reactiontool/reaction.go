@@ -2,8 +2,7 @@ package reactiontool
 
 import (
 	"JGBot/agent/tools"
-	"JGBot/session/sessionconf/sc"
-	"JGBot/session/sessiondb"
+	"JGBot/ctxs"
 	"context"
 	"fmt"
 )
@@ -19,12 +18,12 @@ func (c *ReactionInitializerConf) Name() string {
 	return "message_reaction"
 }
 
-func (c *ReactionInitializerConf) ToolInitializer(sessionConf *sc.SessionConf, history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage, onResponse func(text, role, extra string) error, onReact func(msg uint, reaction string) error) tools.Tool {
+func (c *ReactionInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool {
 	return &tools.ToolAutoArgs[ReactionArgs]{
 		ToolName:        c.Name(),
 		ToolDescription: "Use this tool to add or update a reaction to a specific message.",
 		ToolFunc: func(ctx context.Context, args ReactionArgs) (string, error) {
-			err := onReact(args.MessageID, args.Reaction)
+			err := rCtx.OnReact(args.MessageID, args.Reaction)
 			if err != nil {
 				return "", fmt.Errorf("FAILURE: Could not apply reaction. Reason: %s.", err.Error())
 			}

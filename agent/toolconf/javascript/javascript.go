@@ -2,10 +2,9 @@ package javascript
 
 import (
 	"JGBot/agent/tools"
+	"JGBot/ctxs"
 	"JGBot/js/exec"
 	"JGBot/js/runners"
-	"JGBot/session/sessionconf/sc"
-	"JGBot/session/sessiondb"
 	"context"
 	"fmt"
 )
@@ -20,7 +19,7 @@ func (c *JavaScriptInitializerConf) Name() string {
 	return "javascript"
 }
 
-func (c *JavaScriptInitializerConf) ToolInitializer(sessionConf *sc.SessionConf, history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage, onResponse func(text, role, extra string) error, onReact func(msg uint, reaction string) error) tools.Tool {
+func (c *JavaScriptInitializerConf) ToolInitializer(ctx *ctxs.RespondCtx) tools.Tool {
 	return &tools.ToolAutoArgs[JavaScriptArgs]{
 		ToolName:        c.Name(),
 		ToolDescription: "Executes sandboxed JavaScript code (ES2023). Ideal for complex math, data parsing, or logic.",

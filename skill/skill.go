@@ -1,10 +1,13 @@
 package skill
 
+var Skills map[string]*Skill
+
 type Skill struct {
 	Name        string
 	Description string
 	Content     string
 	Dir         string
+	HasTool     bool
 }
 
 func GetSkills() ([]*Skill, error) {
@@ -21,4 +24,18 @@ func GetSkills() ([]*Skill, error) {
 		}
 	}
 	return skillList, nil
+}
+
+func InitSkills() error {
+	skills, err := GetSkills()
+	if err != nil {
+		return err
+	}
+
+	Skills = make(map[string]*Skill)
+	for _, skill := range skills {
+		Skills[skill.Name] = skill
+	}
+
+	return nil
 }

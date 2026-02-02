@@ -3,7 +3,6 @@ package sessionconf
 import (
 	"JGBot/conf"
 	"JGBot/session/sessionconf/sc"
-	"JGBot/skill"
 )
 
 type SessionCtl struct {
@@ -35,8 +34,8 @@ func (s *SessionCtl) GetConfigOrigin(origin string) *sc.SessionConf {
 	return s.Config.GetOrigin(origin)
 }
 
-func (s *SessionCtl) AddUnconfig(name string, id string, origin string, skills []*skill.Skill) {
-	s.Unconfig.SetSession(sc.NewSessionConf(name, id, origin, skills))
+func (s *SessionCtl) AddUnconfig(name string, id string, origin string) {
+	s.Unconfig.SetSession(sc.NewSessionConf(name, id, origin))
 }
 
 func (s *SessionCtl) onConfigChange() {

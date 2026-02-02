@@ -32,6 +32,8 @@ func LoadSkill(name string) *Skill {
 		skill.Name = name
 	}
 
+	skill.HasTool = hasSkillTool(dir)
+
 	return skill
 }
 
@@ -51,6 +53,11 @@ func getSkillContent(dir string) string {
 		return ""
 	}
 	return string(content)
+}
+
+func hasSkillTool(dir string) bool {
+	stat, err := os.Stat(path.Join(dir, SkillToolFile))
+	return err == nil && !stat.IsDir()
 }
 
 func skillParse(content string) *Skill {
