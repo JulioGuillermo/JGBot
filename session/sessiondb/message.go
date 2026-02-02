@@ -54,6 +54,10 @@ func GetHistory(channel string, chatID uint, limit int) ([]*SessionMessage, erro
 	return history, err
 }
 
+func ClearHistory(channel string, chatID uint) error {
+	return database.DB.Where("channel = ? AND chat_id = ?", channel, chatID).Delete(&SessionMessage{}).Error
+}
+
 func (m *SessionMessage) Save() error {
 	return database.DB.Save(m).Error
 }

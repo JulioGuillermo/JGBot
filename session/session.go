@@ -50,6 +50,17 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
+	if message == "/reset!" {
+		err := sessiondb.ClearHistory(channel, chatID)
+		if err != nil {
+			log.Error("Clear history error", "err", err)
+			s.channelCtl.SendMessage(channel, chatID, fmt.Sprintf("Fail to clear history: %s", err.Error()))
+		} else {
+			s.channelCtl.SendMessage(channel, chatID, "History cleared")
+		}
+		return
+	}
+
 	history, err := sessiondb.GetHistory(channel, chatID, sessionConf.HistorySize)
 	if err != nil {
 		log.Error("Get history error", "err", err)
