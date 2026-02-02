@@ -3,6 +3,7 @@ package javascript
 import (
 	"JGBot/agent/tools"
 	"JGBot/js/exec"
+	"JGBot/js/runners"
 	"JGBot/session/sessionconf/sc"
 	"JGBot/session/sessiondb"
 	"context"
@@ -24,7 +25,7 @@ func (c *JavaScriptInitializerConf) ToolInitializer(sessionConf *sc.SessionConf,
 		ToolName:        c.Name(),
 		ToolDescription: "Executes sandboxed JavaScript code (ES2023). Ideal for complex math, data parsing, or logic.",
 		ToolFunc: func(ctx context.Context, args JavaScriptArgs) (string, error) {
-			output, err := exec.RunCode(args.Code)
+			output, err := runners.RunCode(args.Code, exec.FlagAsync(), exec.WithAwait())
 			if err != nil {
 				return "", fmt.Errorf("ERROR: Fail to execute the JavaScript code: %s.", err.Error())
 			}

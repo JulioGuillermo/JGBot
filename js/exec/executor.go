@@ -1,7 +1,6 @@
 package exec
 
 import (
-	"JGBot/js/jsaddons"
 	"JGBot/js/result"
 
 	"github.com/fastschema/qjs"
@@ -11,13 +10,15 @@ type Executor struct {
 	rt         *qjs.Runtime
 	ctx        *qjs.Context
 	jsResult   *qjs.Value
-	console    jsaddons.Console
+	console    Console
 	processors []Processor
+	options    []qjs.EvalOptionFunc
 }
 
 func NewExecutor() (*Executor, error) {
 	exec := &Executor{
 		processors: []Processor{},
+		options:    []qjs.EvalOptionFunc{},
 	}
 
 	err := exec.initRuntime()
@@ -47,7 +48,7 @@ func (e *Executor) initRuntime() error {
 }
 
 func (e *Executor) initConsole() error {
-	e.console = jsaddons.Console{}
+	e.console = Console{}
 	jsConsole, err := e.console.GetJSObj(e.ctx)
 	if err != nil {
 		return err
@@ -60,12 +61,24 @@ func (e *Executor) AddFunc(name string, fn qjs.Function) {
 	e.ctx.SetFunc(name, fn)
 }
 
+func (e *Executor) AddAddonObj(addon JSAddonObj) {
+	jsVal, err := addon.GetJSObj(e.ctx)
+	if err != nil {
+		panic(err)
+	}
+	e.ctx.Global().SetPropertyStr(addon.GetName(), jsVal)
+}
+
 func (e *Executor) AddVar(name string, val *qjs.Value) {
 	e.ctx.Global().SetPropertyStr(name, val)
 }
 
 func (e *Executor) AddProcessor(processor Processor) {
 	e.processors = append(e.processors, processor)
+}
+
+func (e *Executor) AddOption(option qjs.EvalOptionFunc) {
+	e.options = append(e.options, option)
 }
 
 func (e *Executor) LoadModule(file, code string) error {
@@ -76,9 +89,7 @@ func (e *Executor) LoadModule(file, code string) error {
 func (e *Executor) Run(file, code string) (err error) {
 	e.jsResult, err = e.ctx.Eval(
 		file,
-		qjs.Code(code),
-		qjs.FlagAsync(),
-		qjs.TypeModule(),
+		append(e.options, qjs.Code(code))...,
 	)
 	return
 }

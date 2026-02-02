@@ -1,4 +1,4 @@
-package jsaddons
+package exec
 
 import (
 	"fmt"

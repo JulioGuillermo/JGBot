@@ -1,12 +1,12 @@
 package test
 
 import (
-	"JGBot/js/exec"
+	"JGBot/js/runners"
 	"testing"
 )
 
 func TestJS(t *testing.T) {
-	output, err := exec.RunCode(`// Test JS
+	output, err := runners.RunCode(`// Test JS
 		import { log } from "JGBot/js/log"
 console.log("Hello World")
 export default { a: 1 }

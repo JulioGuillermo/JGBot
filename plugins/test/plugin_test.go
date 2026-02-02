@@ -15,12 +15,13 @@ func TestPlugin(t *testing.T) {
 	output, err := runners.RunModule(
 		"/init.js",
 		"../test_plugin",
+		exec.TypeModule(),
 		exec.WithFunc("onResult", func(ctx *qjs.This) (*qjs.Value, error) {
 			fmt.Println("Result...", ctx.Args()[0])
 			return nil, nil
 		}),
 		// exec.WithMainCall(),
-		exec.WithAwait(),
+		// exec.WithAwait(),
 	)
 	if err != nil {
 		t.Error(err)

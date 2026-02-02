@@ -2,6 +2,7 @@ package main
 
 import (
 	"JGBot/js/exec"
+	"JGBot/js/jsaddons/httpaddon"
 	"JGBot/js/runners"
 	"fmt"
 	"os"
@@ -14,6 +15,9 @@ func main() {
 	output, err := runners.RunModule(
 		"/init.js",
 		"./plugins/test_plugin",
+		httpaddon.WithHttp(),
+		exec.TypeModule(),
+		exec.FlagAsync(),
 		exec.WithFunc("onResult", func(ctx *qjs.This) (*qjs.Value, error) {
 			fmt.Println("Result...", ctx.Args()[0])
 			return nil, nil
