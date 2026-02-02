@@ -15,14 +15,15 @@ import (
 )
 
 type Agent struct {
-	Ctx      context.Context
-	Name     string
-	Handler  *handler.AgentHandler
-	Provider llms.Model
-	MaxIters int
-	tools    []tools.Tool
-	agent    agents.Agent
-	executor *agents.Executor
+	Ctx          context.Context
+	Name         string
+	Handler      *handler.AgentHandler
+	Provider     llms.Model
+	MaxIters     int
+	SystemPrompt string
+	tools        []tools.Tool
+	agent        agents.Agent
+	executor     *agents.Executor
 }
 
 func (a *Agent) AddTools(tool ...tools.Tool) {
@@ -42,9 +43,12 @@ func (a *Agent) initAgent() {
 	a.agent = agents.NewOpenAIFunctionsAgent(
 		a.Provider,
 		a.tools,
-		agents.NewOpenAIOption().WithExtraMessages([]prompts.MessageFormatter{
-			input.NewHistoryInput(),
-		}),
+		agents.NewOpenAIOption().
+			WithSystemMessage(a.SystemPrompt),
+		agents.NewOpenAIOption().
+			WithExtraMessages([]prompts.MessageFormatter{
+				input.NewHistoryInput(),
+			}),
 	)
 }
 

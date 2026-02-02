@@ -2,6 +2,7 @@ package agent
 
 import (
 	"JGBot/agent/handler"
+	"JGBot/agent/prompt"
 	"JGBot/agent/provider"
 	"JGBot/agent/toolconf"
 	"JGBot/agent/tools"
@@ -41,6 +42,8 @@ func (a *AgentsCtl) getProvider(provider string) (llms.Model, error) {
 func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	log.Info("Agent responding...")
 
+	sysPrompt := prompt.GetSystemPrompt(ctx.SessionConf)
+
 	handler := handler.NewAgentHandler()
 	handler.OnToolCall = func(toolCall tools.ToolCall) {
 		ctx.OnResponse("", "assistant", toolCall.ToJson())
@@ -55,11 +58,12 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	}
 
 	agent := &Agent{
-		Name:     "Main Agent",
-		Ctx:      a.ctx,
-		Handler:  handler,
-		Provider: provider,
-		MaxIters: max(ctx.SessionConf.AgentMaxIters, 3),
+		Name:         "Main Agent",
+		Ctx:          a.ctx,
+		Handler:      handler,
+		Provider:     provider,
+		MaxIters:     max(ctx.SessionConf.AgentMaxIters, 3),
+		SystemPrompt: sysPrompt,
 	}
 
 	tools := a.GetTools(ctx, handler)

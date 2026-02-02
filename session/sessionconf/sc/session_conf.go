@@ -13,9 +13,10 @@ type SessionConf struct {
 	HistorySize int
 	Provider    string
 
-	AgentMaxIters int
-	Tools         []Tool
-	Skills        []Skill
+	SystemPromptFile string
+	AgentMaxIters    int
+	Tools            []Tool
+	Skills           []Skill
 }
 
 func NewSessionConf(name, id, origin string) SessionConf {
@@ -39,6 +40,7 @@ func NewSessionConf(name, id, origin string) SessionConf {
 		Respond: Respond{
 			Always: true,
 		},
+		SystemPromptFile: "",
 		Tools: []Tool{
 			{
 				Name:    "message_reaction",
