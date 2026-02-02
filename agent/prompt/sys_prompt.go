@@ -48,5 +48,11 @@ func getSkillsPrompt(conf *sc.SessionConf) string {
 func GetSystemPrompt(conf *sc.SessionConf) string {
 	prompt := getSystemPromptFile(conf)
 	prompt = strings.TrimSpace(prompt)
-	return prompt + "\n\n" + getSkillsPrompt(conf)
+
+	toolConf := conf.GetToolConf("skill")
+	if toolConf != nil && toolConf.Enabled {
+		prompt += "\n\n" + getSkillsPrompt(conf)
+	}
+
+	return prompt
 }

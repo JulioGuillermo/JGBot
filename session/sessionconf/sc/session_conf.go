@@ -59,6 +59,15 @@ func NewSessionConf(name, id, origin string) SessionConf {
 	}
 }
 
+func (c *SessionConf) GetToolConf(name string) *Tool {
+	for _, tool := range c.Tools {
+		if tool.Name == name {
+			return &tool
+		}
+	}
+	return nil
+}
+
 func (c *SessionConf) GetSkillConf(name string) *Skill {
 	for _, skill := range c.Skills {
 		if skill.Name == name {
