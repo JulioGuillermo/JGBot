@@ -10,6 +10,10 @@ import (
 	"github.com/tmc/langchaingo/llms"
 )
 
+type ToolContent struct {
+	Args string `json:"__arg1"`
+}
+
 type HistoryInput struct {
 }
 
@@ -42,16 +46,15 @@ func (HistoryInput) FormatMessages(values map[string]any) ([]llms.ChatMessage, e
 			if toolResult == nil {
 				continue
 			}
+			var content string
 			if toolResult.Error != "" {
-				chatMsg = llms.ToolChatMessage{
-					ID:      toolResult.ToolCall.ID,
-					Content: toolResult.Error,
-				}
+				content = toolResult.Error
 			} else {
-				chatMsg = llms.ToolChatMessage{
-					ID:      toolResult.ToolCall.ID,
-					Content: toolResult.Output,
-				}
+				content = toolResult.Output
+			}
+			chatMsg = llms.ToolChatMessage{
+				ID:      toolResult.ToolCall.ID,
+				Content: content,
 			}
 		case "system":
 			chatMsg = llms.SystemChatMessage{
@@ -64,12 +67,18 @@ func (HistoryInput) FormatMessages(values map[string]any) ([]llms.ChatMessage, e
 
 			toolCall := tools.ToolCallFromJson(msg.Extra)
 			if toolCall != nil {
+				bytes, err := json.Marshal(ToolContent{
+					Args: toolCall.Input,
+				})
+				if err != nil {
+					return nil, err
+				}
 				m.ToolCalls = []llms.ToolCall{{
 					ID:   toolCall.ID,
 					Type: "function",
 					FunctionCall: &llms.FunctionCall{
 						Name:      toolCall.Tool,
-						Arguments: toolCall.Input,
+						Arguments: string(bytes),
 					},
 				}}
 			}

@@ -115,5 +115,6 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	err = s.agent.Respond(respCtx)
 	if err != nil {
 		log.Error("Agent respond error", "err", err)
+		s.channelCtl.SendMessage(channel, chatID, "Fail to respond 😵‍💫...")
 	}
 }
