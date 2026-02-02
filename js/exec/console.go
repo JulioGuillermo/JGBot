@@ -20,23 +20,21 @@ func (c *Console) print(text string) {
 func (c *Console) Print(args ...any) {
 	var sb strings.Builder
 
-	sb.WriteString("··· PRINT START ···\n")
 	for _, arg := range args {
 		fmt.Fprint(&sb, arg)
 		sb.WriteRune('\n')
 	}
-	sb.WriteString("··· PRINT END ···")
 
 	c.print(sb.String())
 }
 
-func (c *Console) newLog(start, end string, args ...*qjs.Value) {
+func (c *Console) newLog(start string, args ...*qjs.Value) {
 	var sb strings.Builder
 
-	sb.WriteString(start)
-	sb.WriteRune('\n')
 	for _, arg := range args {
 		jstr, err := arg.JSONStringify()
+		sb.WriteString(start)
+		sb.WriteString(" >>> ")
 		if err != nil {
 			sb.WriteString("Fail to log object: " + err.Error())
 		} else {
@@ -44,29 +42,28 @@ func (c *Console) newLog(start, end string, args ...*qjs.Value) {
 		}
 		sb.WriteRune('\n')
 	}
-	sb.WriteString(end)
 
 	c.print(sb.String())
 }
 
 func (c *Console) Log(args ...*qjs.Value) {
-	c.newLog("··· LOG START ···", "··· LOG END ···", args...)
+	c.newLog("LOG", args...)
 }
 
 func (c *Console) Error(args ...*qjs.Value) {
-	c.newLog("··· ERROR LOG START ···", "··· ERROR LOG END ···", args...)
+	c.newLog("ERROR", args...)
 }
 
 func (c *Console) Info(args ...*qjs.Value) {
-	c.newLog("··· INFO LOG START ···", "··· INFO LOG END ···", args...)
+	c.newLog("INFO", args...)
 }
 
 func (c *Console) Warn(args ...*qjs.Value) {
-	c.newLog("··· WARN LOG START ···", "··· WARN LOG END ···", args...)
+	c.newLog("WARN", args...)
 }
 
 func (c *Console) Debug(args ...*qjs.Value) {
-	c.newLog("··· DEBUG LOG START ···", "··· DEBUG LOG END ···", args...)
+	c.newLog("DEBUG", args...)
 }
 
 func (c *Console) GetJSObj(ctx *qjs.Context) (*qjs.Value, error) {

@@ -42,7 +42,7 @@ func (c *JavaScriptInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools
 				return "", fmt.Errorf("ERROR: Fail to execute the JavaScript code: %s.", err.Error())
 			}
 
-			return fmt.Sprintf("SUCCESS: The JavaScript code executed successfully. The result is:\n\n%s", output.String()), nil
+			return fmt.Sprintf("SUCCESS: The JavaScript code executed successfully.\n\n%s", output.String()), nil
 		},
 	}
 }
