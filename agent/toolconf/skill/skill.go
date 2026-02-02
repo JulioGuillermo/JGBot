@@ -4,15 +4,16 @@ import (
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
 	"JGBot/skill"
+	"JGBot/skill/skillexec"
 	"context"
 	"fmt"
 	"strings"
 )
 
 type SkillArgs struct {
-	Action string          `json:"action" description:"The action to execute. 'list' to list all the available skills, 'read' to read a skill, or 'exec' to execute a skill if it has a skill tool. (Note: The action is required)"`
-	Name   string          `json:"name" description:"The name of the skill to read or execute (Note: Not required for 'list')."`
-	Args   skill.SkillArgs `json:"args" description:"The arguments to pass to the skill (Note: Not required for 'list' or 'read', but required for 'exec')."`
+	Action string              `json:"action" description:"The action to execute. 'list' to list all the available skills, 'read' to read a skill, or 'exec' to execute a skill if it has a skill tool. (Note: The action is required)"`
+	Name   string              `json:"name" description:"The name of the skill to read or execute (Note: Not required for 'list')."`
+	Args   skillexec.SkillArgs `json:"args" description:"The arguments to pass to the skill (Note: Not required for 'list' or 'read', but required for 'exec')."`
 }
 
 type SkillInitializerConf struct{}
@@ -44,7 +45,7 @@ func (c *SkillInitializerConf) readSkill(name string) string {
 	return skill.Content
 }
 
-func (c *SkillInitializerConf) execSkill(name string, args skill.SkillArgs) (string, error) {
+func (c *SkillInitializerConf) execSkill(rCtx *ctxs.RespondCtx, name string, args skillexec.SkillArgs) (string, error) {
 	sk, ok := skill.Skills[name]
 	if !ok {
 		return "", fmt.Errorf("Skill %s not found", name)
@@ -52,7 +53,7 @@ func (c *SkillInitializerConf) execSkill(name string, args skill.SkillArgs) (str
 	if !sk.HasTool {
 		return "", fmt.Errorf("Skill %s has not skill tool", name)
 	}
-	return skill.ExecSkillTool(sk.Dir, args)
+	return skillexec.ExecSkillTool(sk.Dir, args, rCtx)
 }
 
 func (c *SkillInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool {
@@ -66,7 +67,7 @@ func (c *SkillInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool
 			case "read":
 				return c.readSkill(args.Name), nil
 			case "exec":
-				return c.execSkill(args.Name, args.Args)
+				return c.execSkill(rCtx, args.Name, args.Args)
 			}
 
 			return "Invalid action, please use 'list', 'read', or 'exec'", nil

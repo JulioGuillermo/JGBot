@@ -6,6 +6,14 @@ async function fn() {
   print(args);
   console.Log("Running #### 123");
 
+  VF.WriteStrFile("/test.md", "hello world");
+  print(VF.ReadDir("./"));
+  try {
+    print(VF.ReadStrFile("/test.md"));
+  } catch (e) {
+    console.log(e);
+  }
+
   const formData = HttpFormData()
     .AddField("name", "test")
     .AddFile("file", "test.txt", new Uint8Array([1, 2, 3, 4, 5]));
@@ -16,7 +24,6 @@ async function fn() {
     .Get();
   console.log(response.BodyString());
   const d = await getDate();
-  onResult(d);
   return d;
 }
 

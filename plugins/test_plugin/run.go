@@ -1,8 +1,10 @@
 package main
 
 import (
+	"JGBot/files"
 	"JGBot/js/exec"
 	"JGBot/js/jsaddons/httpaddon"
+	"JGBot/js/jsaddons/virtualfilesaddon"
 	"JGBot/js/runners"
 	"fmt"
 	"os"
@@ -13,10 +15,16 @@ import (
 func main() {
 	fmt.Println(os.Getwd())
 
+	vfRoot, err := files.GetVirtualRoot("test")
+	if err != nil {
+		panic(err)
+	}
+
 	output, err := runners.RunModule(
 		"/init.js",
 		"./plugins/test_plugin",
 		httpaddon.WithHttp(),
+		virtualfilesaddon.WithVirtualFile("VF", vfRoot),
 		exec.TypeModule(),
 		exec.FlagAsync(),
 		exec.WithFunc("GetArgs", func(ctx *qjs.This) (*qjs.Value, error) {
