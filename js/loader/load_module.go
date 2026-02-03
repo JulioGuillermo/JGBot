@@ -62,7 +62,7 @@ func loadRecursive(root, currentDir, file string, codes *[]Code, allowFetch bool
 
 	newDir := getPathDir(finalPath)
 
-	re := regexp.MustCompile(`import\s*(?:[^\w][\w\s{},*]*[^\w]\s*from\s*)?['"]([^'"]+)['"]`)
+	re := regexp.MustCompile(`(?:import\s*(?:[^\w][\w\s{},*]*[^\w]\s*from\s*)?|export.*from\s*)['"]([^'"]+)['"]`)
 	matches := re.FindAllStringSubmatch(code, -1)
 
 	replacements := make(map[string]string)
