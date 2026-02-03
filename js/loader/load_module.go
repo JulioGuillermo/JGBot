@@ -6,11 +6,16 @@ import (
 	"strings"
 )
 
-func LoadCode(root, file string, fetch bool) (map[string]string, error) {
+type Code struct {
+	Key  string
+	Code string
+}
+
+func LoadCode(root, file string, fetch bool) ([]Code, error) {
 	return LoadModule(root, root, file, fetch)
 }
 
-func LoadModule(root, dir, file string, fetch bool) (map[string]string, error) {
+func LoadModule(root, dir, file string, fetch bool) ([]Code, error) {
 	root, err := filepath.Abs(root)
 	if err != nil {
 		return nil, err
@@ -23,8 +28,8 @@ func LoadModule(root, dir, file string, fetch bool) (map[string]string, error) {
 		}
 	}
 
-	codes := make(map[string]string)
-	_, err = loadRecursive(root, dir, file, codes, fetch)
+	codes := make([]Code, 0)
+	_, err = loadRecursive(root, dir, file, &codes, fetch)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +37,7 @@ func LoadModule(root, dir, file string, fetch bool) (map[string]string, error) {
 	return codes, nil
 }
 
-func loadRecursive(root, currentDir, file string, codes map[string]string, allowFetch bool) (string, error) {
+func loadRecursive(root, currentDir, file string, codes *[]Code, allowFetch bool) (string, error) {
 	finalPath, err := getFinalPath(root, currentDir, file, allowFetch)
 	if err != nil {
 		return "", err
@@ -40,7 +45,7 @@ func loadRecursive(root, currentDir, file string, codes map[string]string, allow
 	finalPath = setExtension(finalPath, ".js")
 
 	key := getKeyPath(root, finalPath)
-	if _, exists := codes[key]; exists {
+	if code := GetCode(*codes, key); code != nil {
 		return key, nil
 	}
 
@@ -53,6 +58,7 @@ func loadRecursive(root, currentDir, file string, codes map[string]string, allow
 	if err != nil {
 		return "", err
 	}
+	// log.Info("Loading module...", "key", key, "path", finalPath)
 
 	newDir := getPathDir(finalPath)
 
@@ -89,6 +95,9 @@ func loadRecursive(root, currentDir, file string, codes map[string]string, allow
 		return match
 	})
 
-	codes[key] = code
+	*codes = append(*codes, Code{
+		Key:  key,
+		Code: code,
+	})
 	return key, nil
 }

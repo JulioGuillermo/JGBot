@@ -1,5 +1,5 @@
 import { getDate } from "date.js";
-import nodeHtmlMarkdown from "https://cdn.jsdelivr.net/npm/node-html-markdown@2.0.0/+esm";
+import html2md from 'https://cdn.jsdelivr.net/npm/html2md@0.1.1/+esm'
 
 const args = GetArgs();
 

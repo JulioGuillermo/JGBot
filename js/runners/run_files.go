@@ -2,13 +2,14 @@ package runners
 
 import (
 	"JGBot/js/exec"
+	"JGBot/js/loader"
 	"JGBot/js/result"
 	"fmt"
 )
 
-func RunFiles(mainFile string, files map[string]string, options ...exec.Option) (*result.Output, error) {
-	mainCode, ok := files[mainFile]
-	if !ok {
+func RunFiles(mainFile string, files []loader.Code, options ...exec.Option) (*result.Output, error) {
+	code := loader.GetCode(files, mainFile)
+	if code == nil {
 		return nil, fmt.Errorf("Fail to find main file: %s", mainFile)
 	}
 
@@ -25,18 +26,18 @@ func RunFiles(mainFile string, files map[string]string, options ...exec.Option) 
 		}
 	}
 
-	for file, code := range files {
-		if file == mainFile {
+	for _, code := range files {
+		if code.Key == mainFile {
 			continue
 		}
 
-		err = exec.LoadModule(file, code)
+		err = exec.LoadModule(code.Key, code.Code)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	err = exec.Run(mainFile, mainCode)
+	err = exec.Run(mainFile, code.Code)
 	if err != nil {
 		return nil, err
 	}

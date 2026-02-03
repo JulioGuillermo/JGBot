@@ -55,21 +55,21 @@ func TestLoadModule_Local(t *testing.T) {
 	// Keys should be "/main.js", "/foo.js", "/bar/baz.js"
 	expectedKeys := []string{"/main.js", "/foo.js", "/bar/baz.js"}
 	for _, key := range expectedKeys {
-		if _, ok := codes[key]; !ok {
+		if GetCode(codes, key) == nil {
 			t.Errorf("Missing key: %s", key)
 		}
 	}
 
 	// Check rewrites in main.js
 	// import "./foo.js" should become import "/foo.js"
-	mainCode := codes["/main.js"]
+	mainCode := GetCode(codes, "/main.js").Code
 	if !strings.Contains(mainCode, `import "/foo.js"`) {
 		t.Errorf("Import rewrite failed in main.js. Got: %s", mainCode)
 	}
 
 	// Check rewrites in foo.js
 	// import "./bar/baz" -> from foo.js (at root) -> bar/baz.js -> key /bar/baz.js
-	fooCode := codes["/foo.js"]
+	fooCode := GetCode(codes, "/foo.js").Code
 	if !strings.Contains(fooCode, `import "/bar/baz.js"`) {
 		t.Errorf("Import rewrite failed in foo.js. Got: %s", fooCode)
 	}
@@ -116,17 +116,17 @@ func TestLoadModule_URL(t *testing.T) {
 	// 2. server.URL + "/remote.js"
 	// 3. server.URL + "/remote_dep.js"
 
-	if _, ok := codes["/main.js"]; !ok {
+	if GetCode(codes, "/main.js") == nil {
 		t.Error("Missing key: /main.js")
 	}
 
 	remoteKey := remoteMapUrl
-	if _, ok := codes[remoteKey]; !ok {
+	if GetCode(codes, remoteKey) == nil {
 		t.Errorf("Missing key: %s", remoteKey)
 	}
 
 	remoteDepKey := server.URL + "/remote_dep.js"
-	if _, ok := codes[remoteDepKey]; !ok {
+	if GetCode(codes, remoteDepKey) == nil {
 		t.Errorf("Missing key: %s", remoteDepKey)
 	}
 
@@ -134,13 +134,13 @@ func TestLoadModule_URL(t *testing.T) {
 
 	// main.js should still have the full URL import because the key IS the full URL
 	// import "http://.../remote.js" -> import "http://.../remote.js"
-	mainCode := codes["/main.js"]
+	mainCode := GetCode(codes, "/main.js").Code
 	if !strings.Contains(mainCode, fmt.Sprintf(`import "%s"`, remoteKey)) {
 		t.Errorf("Import in main.js incorrect. Got: %s", mainCode)
 	}
 
 	// remote.js import "./remote_dep.js" should be rewritten to "http://.../remote_dep.js"
-	remoteCode := codes[remoteKey]
+	remoteCode := GetCode(codes, remoteKey).Code
 	if !strings.Contains(remoteCode, fmt.Sprintf(`import "%s"`, remoteDepKey)) {
 		t.Errorf("Import rewrite in remote.js failed. Got: %s", remoteCode)
 	}
