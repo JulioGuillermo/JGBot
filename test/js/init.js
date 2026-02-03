@@ -1,23 +1,11 @@
-import { decode } from 'https://esm.sh/he';
+import { webSearch } from "./search.js";
+import { html2md } from "./html2md.js";
 
-function html2md(html) {
-  return decode(html)
-    .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n')
-    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
-    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
-    .replace(/<[^>]+>/g, ''); // Limpia cualquier otra etiqueta
-}
+const args = GetArgs();
 
-function fn() {
-  const response = HttpRequest()
-    .SetURL("https://github.com/JulioGuillermo/JGBot")
-    .Get();
-  print(response.StatusCode == 200 ? 'Is ok' : 'not ok');
+const exec = () => {
+  const html = webSearch("noticias de hoy");
+  return html2md(html);
+};
 
-  const html = response.BodyString();
-  const markdown = html2md(html);
-  console.log(markdown);
-  return markdown;
-}
-
-export default fn();
+export default exec();

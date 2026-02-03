@@ -26,7 +26,7 @@ func ExecSkillTool(name string, args SkillArgs, rCtx *ctxs.RespondCtx) (string, 
 		return "", err
 	}
 
-	output, err := runners.RunModule(
+	output, err := runners.RunModuleFetch(
 		skill.SkillToolFile,
 		path.Join(skill.SkillDir, name),
 		httpaddon.WithHttp(),

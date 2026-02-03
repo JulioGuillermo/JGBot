@@ -22,9 +22,9 @@ func getSystemPromptFile(conf *sc.SessionConf) string {
 	return DefaultSystemPrompt
 }
 
-func getSkillsPrompt(conf *sc.SessionConf) string {
+func GetSkillsPrompt(conf *sc.SessionConf) string {
 	var sb strings.Builder
-	sb.WriteString("## Available skills:\n")
+	sb.WriteString("**Available skills:**\n")
 	for _, skillConf := range conf.Skills {
 		if !skillConf.Enabled {
 			continue
@@ -37,7 +37,7 @@ func getSkillsPrompt(conf *sc.SessionConf) string {
 		}
 
 		if skill.HasTool {
-			fmt.Fprintf(&sb, "- %s: [Skill Tool available] %s\n", skill.Name, skill.Description)
+			fmt.Fprintf(&sb, "- %s: [SkillTool available to exec through this the skill exec tool] %s\n", skill.Name, skill.Description)
 		} else {
 			fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
 		}
@@ -51,7 +51,7 @@ func GetSystemPrompt(conf *sc.SessionConf) string {
 
 	toolConf := conf.GetToolConf("skill")
 	if toolConf != nil && toolConf.Enabled {
-		prompt += "\n\n" + getSkillsPrompt(conf)
+		prompt += "\n\n" + GetSkillsPrompt(conf)
 	}
 
 	return prompt

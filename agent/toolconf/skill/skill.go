@@ -1,14 +1,13 @@
 package skill
 
 import (
+	"JGBot/agent/prompt"
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
-	"JGBot/log"
 	"JGBot/skill"
 	"JGBot/skill/skillexec"
 	"context"
 	"fmt"
-	"strings"
 )
 
 type SkillArgs struct {
@@ -24,26 +23,7 @@ func (c *SkillInitializerConf) Name() string {
 }
 
 func (c *SkillInitializerConf) listSkills(rCtx *ctxs.RespondCtx) string {
-	var sb strings.Builder
-	sb.WriteString("# Available skills:\n")
-	for _, skillConf := range rCtx.SessionConf.Skills {
-		if !skillConf.Enabled {
-			continue
-		}
-
-		skill, ok := skill.Skills[skillConf.Name]
-		if !ok {
-			log.Warn("Skill not found", "skill", skillConf.Name)
-			continue
-		}
-
-		if skill.HasTool {
-			fmt.Fprintf(&sb, "- %s: [Skill Tool available] %s\n", skill.Name, skill.Description)
-		} else {
-			fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
-		}
-	}
-	return sb.String()
+	return prompt.GetSkillsPrompt(rCtx.SessionConf)
 }
 
 func (c *SkillInitializerConf) readSkill(rCtx *ctxs.RespondCtx, name string) string {
