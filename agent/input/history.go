@@ -1,6 +1,7 @@
 package input
 
 import (
+	toolargs "JGBot/agent/tool_args"
 	"JGBot/agent/tools"
 	"JGBot/session/sessiondb"
 	"encoding/json"
@@ -9,10 +10,6 @@ import (
 
 	"github.com/tmc/langchaingo/llms"
 )
-
-type ToolContent struct {
-	Args string `json:"__arg1"`
-}
 
 type HistoryInput struct {
 }
@@ -67,12 +64,8 @@ func (HistoryInput) FormatMessages(values map[string]any) ([]llms.ChatMessage, e
 
 			toolCall := tools.ToolCallFromJson(msg.Extra)
 			if toolCall != nil {
-				bytes, err := json.Marshal(ToolContent{
-					Args: toolCall.Input,
-				})
-				if err != nil {
-					return nil, err
-				}
+				content := toolargs.GetValidArg(toolCall.Input)
+				bytes, _ := json.Marshal(content)
 				m.ToolCalls = []llms.ToolCall{{
 					ID:   toolCall.ID,
 					Type: "function",
