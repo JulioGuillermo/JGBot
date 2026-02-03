@@ -105,7 +105,6 @@ func (a *AgentsCtl) GetTools(ctx *ctxs.RespondCtx, handler callbacks.Handler) []
 
 		toolInitializer, ok := a.toolsConf[toolConf.Name]
 		if !ok {
-			log.Warn("Tool not found", "tool", toolConf.Name)
 			continue
 		}
 

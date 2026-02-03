@@ -13,7 +13,7 @@ import (
 )
 
 type JavaScriptArgs struct {
-	Code string `json:"code" description:"The JavaScript code to execute."`
+	Code string `json:"code" auto:"true" description:"The JavaScript code to execute."`
 }
 
 type JavaScriptInitializerConf struct{}

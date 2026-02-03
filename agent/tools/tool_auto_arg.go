@@ -1,12 +1,14 @@
 package tools
 
 import (
+	toolargs "JGBot/agent/tool_args"
 	"JGBot/agent/tools/args"
 	"JGBot/agent/tools/templ"
 	"JGBot/log"
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/tmc/langchaingo/callbacks"
 )
@@ -78,11 +80,39 @@ func (t *ToolAutoArgs[Args]) success(ctx context.Context, output string) (string
 }
 
 func (t *ToolAutoArgs[Args]) getArgs(input string) (Args, error) {
-	input = GetInputString(input)
+	input = toolargs.FromArgFormat(input)
 
 	var args Args
 	if err := json.Unmarshal([]byte(input), &args); err != nil {
+		return t.getFillStrField(args, err, input)
+	}
+	return args, nil
+}
+
+func (t *ToolAutoArgs[Args]) getFillStrField(args Args, err error, input string) (Args, error) {
+	v := reflect.ValueOf(&args).Elem()
+	tType := v.Type()
+
+	auto := false
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+		if f.Kind() != reflect.String || !f.CanSet() {
+			continue
+		}
+
+		sf := tType.Field(i)
+		if v, ok := sf.Tag.Lookup("auto"); !ok || v != "true" {
+			continue
+		}
+
+		f.SetString(input)
+		auto = true
+		break
+	}
+
+	if !auto {
 		return args, err
 	}
+
 	return args, nil
 }

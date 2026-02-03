@@ -23,7 +23,7 @@ func InitProviders(ctx context.Context) {
 			log.Error("Fail to initialize provider", "provider", conf.Name, "error", err)
 			continue
 		}
-		Providers[conf.Name] = prov
+		Providers[conf.Name] = &ProviderWrapper{model: prov}
 	}
 }
 
