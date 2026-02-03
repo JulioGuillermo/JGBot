@@ -69,7 +69,8 @@ func getFinalPath(root, currentDir, file string, fetch bool) (string, error) {
 
 func getKeyPath(root, p string) string {
 	if isURL(p) {
-		return p
+		u, _ := url.Parse(p)
+		return u.Host + u.Path
 	}
 	p = strings.TrimPrefix(p, root)
 	p = strings.ReplaceAll(p, "\\", "/")

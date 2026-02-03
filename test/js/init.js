@@ -1,5 +1,5 @@
-import { getDate } from "/date.js";
-require("https://cdn.jsdelivr.net/npm/node-html-markdown@2.0.0/+esm");
+import { getDate } from "date.js";
+import nodeHtmlMarkdown from "https://cdn.jsdelivr.net/npm/node-html-markdown@2.0.0/+esm";
 
 const args = GetArgs();
 

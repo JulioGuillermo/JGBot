@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	output, err := runners.RunModule(
+	output, err := runners.RunModuleFetch(
 		"/init.js",
 		"test/js",
 		httpaddon.WithHttp(),

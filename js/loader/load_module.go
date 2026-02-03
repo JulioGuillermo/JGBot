@@ -16,7 +16,6 @@ func LoadModule(root, dir, file string, fetch bool) (map[string]string, error) {
 		return nil, err
 	}
 
-	// Ensure dir is absolute if it's not a URL
 	if !isURL(dir) {
 		dir, err = filepath.Abs(dir)
 		if err != nil {
@@ -38,9 +37,9 @@ func loadRecursive(root, currentDir, file string, codes map[string]string, allow
 	if err != nil {
 		return "", err
 	}
+	finalPath = setExtension(finalPath, ".js")
 
 	key := getKeyPath(root, finalPath)
-
 	if _, exists := codes[key]; exists {
 		return key, nil
 	}
@@ -57,7 +56,7 @@ func loadRecursive(root, currentDir, file string, codes map[string]string, allow
 
 	newDir := getPathDir(finalPath)
 
-	re := regexp.MustCompile(`import\s+(?:[\w\s{},*]*\s+from\s+)?['"]([^'"]+)['"]`)
+	re := regexp.MustCompile(`import\s*(?:[^\w][\w\s{},*]*[^\w]\s*from\s*)?['"]([^'"]+)['"]`)
 	matches := re.FindAllStringSubmatch(code, -1)
 
 	replacements := make(map[string]string)
@@ -67,7 +66,7 @@ func loadRecursive(root, currentDir, file string, codes map[string]string, allow
 		key, err := loadRecursive(
 			root,
 			newDir,
-			setExtension(importPath, ".js"),
+			importPath,
 			codes,
 			allowFetch,
 		)

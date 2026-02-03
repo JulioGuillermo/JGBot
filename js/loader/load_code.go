@@ -75,7 +75,7 @@ func fetchCode(url string) (string, error) {
 		return "", err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Fail to fetch the code: status code %d", resp.StatusCode)
+		return "", fmt.Errorf("Fail to fetch the code from %s: status code %d", url, resp.StatusCode)
 	}
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
