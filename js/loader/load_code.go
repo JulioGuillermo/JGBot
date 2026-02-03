@@ -2,43 +2,12 @@ package loader
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 )
-
-func LoadCode(root string) (map[string]string, error) {
-	root, err := filepath.Abs(root)
-	if err != nil {
-		return nil, err
-	}
-
-	files, err := loadFiles(root)
-	if err != nil {
-		return nil, err
-	}
-
-	codes, err := readCode(files)
-	if err != nil {
-		return nil, err
-	}
-
-	codes = removePath(root, codes)
-	for file, _ := range codes {
-		fmt.Println(file)
-	}
-	return codes, nil
-}
-
-func removePath(root string, codes map[string]string) map[string]string {
-	cleanCode := map[string]string{}
-	for file, code := range codes {
-		cleanName := strings.TrimPrefix(file, root)
-		cleanCode[cleanName] = code
-	}
-	return cleanCode
-}
 
 func readCode(files []string) (map[string]string, error) {
 	codes := map[string]string{}
@@ -50,14 +19,6 @@ func readCode(files []string) (map[string]string, error) {
 		codes[file] = code
 	}
 	return codes, nil
-}
-
-func readFileCode(path string) (string, error) {
-	code, err := os.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	return string(code), nil
 }
 
 func loadFiles(path string) ([]string, error) {
@@ -98,4 +59,27 @@ func loadDirFiles(dir string) ([]string, error) {
 	}
 
 	return files, nil
+}
+
+func readFileCode(path string) (string, error) {
+	code, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	return string(code), nil
+}
+
+func fetchCode(url string) (string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Fail to fetch the code: status code %d", resp.StatusCode)
+	}
+	bytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }

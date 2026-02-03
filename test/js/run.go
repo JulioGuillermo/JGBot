@@ -22,7 +22,7 @@ func main() {
 
 	output, err := runners.RunModule(
 		"/init.js",
-		"./plugins/test_plugin",
+		"test/js",
 		httpaddon.WithHttp(),
 		virtualfilesaddon.WithVirtualFile("VF", vfRoot),
 		exec.TypeModule(),
