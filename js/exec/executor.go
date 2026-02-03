@@ -107,7 +107,7 @@ func (e *Executor) RunProcessors() (string, error) {
 			return "", err
 		}
 	}
-	return result.JSONStringify()
+	return ValStr(result), nil
 }
 
 func (e *Executor) GetLogs() string {
@@ -115,14 +115,9 @@ func (e *Executor) GetLogs() string {
 }
 
 func (e *Executor) GetResult() (*result.Output, error) {
-	jsonOuput, err := e.jsResult.JSONStringify()
-	if err != nil {
-		return nil, err
-	}
-
 	return &result.Output{
 		Logs:   e.console.String(),
-		Result: jsonOuput,
+		Result: ValStr(e.jsResult),
 	}, nil
 }
 

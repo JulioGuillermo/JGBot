@@ -11,6 +11,19 @@ type Console struct {
 	sb strings.Builder
 }
 
+func ValStr(val *qjs.Value) string {
+	switch {
+	case val.IsString():
+		return val.String()
+	default:
+		jsStr, err := val.JSONStringify()
+		if err == nil {
+			return jsStr
+		}
+		return val.String()
+	}
+}
+
 func (c *Console) print(text string) {
 	fmt.Print(text)
 	c.sb.WriteString(text)
@@ -32,15 +45,10 @@ func (c *Console) newLog(start string, args ...*qjs.Value) {
 	var sb strings.Builder
 
 	for _, arg := range args {
-		jstr, err := arg.JSONStringify()
 		sb.WriteString(" - JS ")
 		sb.WriteString(start)
 		sb.WriteString(" >>> ")
-		if err != nil {
-			sb.WriteString("Fail to log object: " + err.Error())
-		} else {
-			sb.WriteString(jstr)
-		}
+		sb.WriteString(ValStr(arg))
 		sb.WriteRune('\n')
 	}
 
