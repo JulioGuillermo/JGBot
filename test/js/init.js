@@ -4,29 +4,16 @@ import html2md from 'https://cdn.jsdelivr.net/npm/html2md@0.1.1/+esm'
 const args = GetArgs();
 
 async function fn() {
-  print(args);
-  console.Log("Running #### 123");
-
-  VF.WriteStrFile("/test.md", "hello world");
-  print(VF.ReadDir("./"));
-  try {
-    print(VF.ReadStrFile("/test.md"));
-  } catch (e) {
-    console.log(e);
-  }
-
-  const formData = HttpFormData()
-    .AddField("name", "test")
-    .AddFile("file", "test.txt", new Uint8Array([1, 2, 3, 4, 5]));
+  console.log(typeof html2md);
 
   const response = HttpRequest()
-    .SetURL("https://httpbin.org/get")
-    .SetBodyFormData(formData)
+    .SetURL("https://github.com/JulioGuillermo/JGBot")
     .Get();
-  print(response.StatusCode == 200 ? "Is ok" : "not ok");
-  console.log(response.BodyString());
-  const d = await getDate();
-  return d;
+  print(response.StatusCode == 200 ? 'Is ok' : 'not ok');
+
+  const html = response.BodyString();
+  const md = html2md(html);
+  return md;
 }
 
 export default fn();
