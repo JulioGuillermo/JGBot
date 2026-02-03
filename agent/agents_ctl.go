@@ -4,7 +4,10 @@ import (
 	"JGBot/agent/handler"
 	"JGBot/agent/prompt"
 	"JGBot/agent/provider"
+	"JGBot/agent/subagent"
+	"JGBot/agent/subagent/subagenttool"
 	"JGBot/agent/toolconf"
+	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
 	"JGBot/log"
@@ -18,23 +21,24 @@ import (
 
 type AgentsCtl struct {
 	ctx       context.Context
-	providers map[string]llms.Model
-	toolsConf map[string]toolconf.ToolInitializerConf
+	toolsConf map[string]tools_conf.ToolInitializerConf
 }
 
 func NewAgentsCtl() (*AgentsCtl, error) {
 	agent := &AgentsCtl{}
 	agent.ctx = context.Background()
-	agent.providers = provider.GetProviders(agent.ctx)
+
+	provider.InitProviders(agent.ctx)
+
 	agent.toolsConf = toolconf.GetToolMap()
 
 	return agent, nil
 }
 
-func (a *AgentsCtl) getProvider(provider string) (llms.Model, error) {
-	prov, ok := a.providers[provider]
+func (a *AgentsCtl) getProvider(providerName string) (llms.Model, error) {
+	prov, ok := provider.Providers[providerName]
 	if !ok {
-		return nil, fmt.Errorf("Provider %s not found", provider)
+		return nil, fmt.Errorf("Provider %s not found", providerName)
 	}
 	return prov, nil
 }
@@ -57,7 +61,7 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 		return err
 	}
 
-	agent := &Agent{
+	agent := &subagent.SubAgent{
 		Name:         "Main Agent",
 		Ctx:          a.ctx,
 		Handler:      handler,
@@ -68,6 +72,18 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 
 	tools := a.GetTools(ctx, handler)
 	agent.AddTools(tools...)
+
+	if conf := ctx.SessionConf.GetToolConf("subagent"); conf != nil && conf.Enabled {
+		subAgentToolConf := subagenttool.SubAgentInitializerConf{
+			Ctx:      a.ctx,
+			Handler:  handler,
+			Tools:    tools,
+			Provider: provider,
+		}
+		subAgentTool := subAgentToolConf.ToolInitializer(ctx)
+		agent.AddTools(subAgentTool)
+	}
+
 	agent.Init()
 
 	result, err := agent.Run(ctx.History, ctx.Message)

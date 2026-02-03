@@ -1,13 +1,15 @@
 package skill
 
 import (
-	"JGBot/agent/prompt"
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
+	"JGBot/log"
+	"JGBot/session/sessionconf/sc"
 	"JGBot/skill"
 	"JGBot/skill/skillexec"
 	"context"
 	"fmt"
+	"strings"
 )
 
 type SkillArgs struct {
@@ -23,7 +25,7 @@ func (c *SkillInitializerConf) Name() string {
 }
 
 func (c *SkillInitializerConf) listSkills(rCtx *ctxs.RespondCtx) string {
-	return prompt.GetSkillsPrompt(rCtx.SessionConf)
+	return GetSkillsPrompt(rCtx.SessionConf)
 }
 
 func (c *SkillInitializerConf) readSkill(rCtx *ctxs.RespondCtx, name string) string {
@@ -75,4 +77,28 @@ func (c *SkillInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool
 			return "Invalid action, please use 'list', 'read', or 'exec'", nil
 		},
 	}
+}
+
+func GetSkillsPrompt(conf *sc.SessionConf) string {
+	var sb strings.Builder
+	sb.WriteString("**Available skills:**\n")
+	sb.WriteString("You have access to the following skills, you can read them using the `skill` tool with the `read` action and the `name` of the skill or exec them using the `skill` tool with the `exec` action and the `name` of the skill and the `args` of the skill:\n")
+	for _, skillConf := range conf.Skills {
+		if !skillConf.Enabled {
+			continue
+		}
+
+		skill, ok := skill.Skills[skillConf.Name]
+		if !ok {
+			log.Warn("Skill not found", "skill", skillConf.Name)
+			continue
+		}
+
+		if skill.HasTool {
+			fmt.Fprintf(&sb, "- %s: [SkillTool available to exec through the skill tool] %s\n", skill.Name, skill.Description)
+		} else {
+			fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
+		}
+	}
+	return sb.String()
 }

@@ -1,9 +1,9 @@
 package prompt
 
 import (
-	"JGBot/log"
+	"JGBot/agent/toolconf/skill"
+	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/session/sessionconf/sc"
-	"JGBot/skill"
 	"fmt"
 	"os"
 	"strings"
@@ -22,37 +22,42 @@ func getSystemPromptFile(conf *sc.SessionConf) string {
 	return DefaultSystemPrompt
 }
 
-func GetSkillsPrompt(conf *sc.SessionConf) string {
-	var sb strings.Builder
-	sb.WriteString("**Available skills:**\n")
-	for _, skillConf := range conf.Skills {
-		if !skillConf.Enabled {
-			continue
-		}
-
-		skill, ok := skill.Skills[skillConf.Name]
-		if !ok {
-			log.Warn("Skill not found", "skill", skillConf.Name)
-			continue
-		}
-
-		if skill.HasTool {
-			fmt.Fprintf(&sb, "- %s: [SkillTool available to exec through this the skill exec tool] %s\n", skill.Name, skill.Description)
-		} else {
-			fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
-		}
-	}
-	return sb.String()
-}
-
-func GetSystemPrompt(conf *sc.SessionConf) string {
-	prompt := getSystemPromptFile(conf)
+func JoinPromptWithSkill(prompt string, conf *sc.SessionConf) string {
 	prompt = strings.TrimSpace(prompt)
+
+	prompt += "\n\n" + GetToolPrompt(conf)
 
 	toolConf := conf.GetToolConf("skill")
 	if toolConf != nil && toolConf.Enabled {
-		prompt += "\n\n" + GetSkillsPrompt(conf)
+		prompt += "\n\n" + skill.GetSkillsPrompt(conf)
 	}
 
 	return prompt
+}
+
+func GetSystemPrompt(conf *sc.SessionConf) string {
+	return JoinPromptWithSkill(getSystemPromptFile(conf), conf)
+}
+
+func GetSubAgentPrompt(conf *sc.SessionConf) string {
+	return JoinPromptWithSkill(SubAgentPrompt, conf)
+}
+
+func GetToolPrompt(conf *sc.SessionConf) string {
+	var sb strings.Builder
+	sb.WriteString("**Available tools:**\n")
+	sb.WriteString("You can use the following tools by a direct call:\n")
+	for _, toolConf := range tools_conf.NativeTools {
+		confTool := conf.GetToolConf(toolConf.Name())
+		if confTool == nil || !confTool.Enabled {
+			continue
+		}
+
+		fmt.Fprintf(&sb, "- %s\n", toolConf.Name())
+	}
+	if subAgentConf := conf.GetToolConf("subagent"); subAgentConf != nil && subAgentConf.Enabled {
+		fmt.Fprintf(&sb, "- subagent\n")
+	}
+
+	return sb.String()
 }

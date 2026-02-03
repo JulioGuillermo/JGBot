@@ -1,4 +1,4 @@
-package agent
+package subagent
 
 import (
 	"JGBot/agent/handler"
@@ -14,7 +14,7 @@ import (
 	"github.com/tmc/langchaingo/tools"
 )
 
-type Agent struct {
+type SubAgent struct {
 	Ctx          context.Context
 	Name         string
 	Handler      *handler.AgentHandler
@@ -26,7 +26,7 @@ type Agent struct {
 	executor     *agents.Executor
 }
 
-func (a *Agent) AddTools(tool ...tools.Tool) {
+func (a *SubAgent) AddTools(tool ...tools.Tool) {
 	if a.tools == nil {
 		a.tools = tool
 		return
@@ -34,12 +34,12 @@ func (a *Agent) AddTools(tool ...tools.Tool) {
 	a.tools = append(a.tools, tool...)
 }
 
-func (a *Agent) Init() {
+func (a *SubAgent) Init() {
 	a.initAgent()
 	a.initExecutor()
 }
 
-func (a *Agent) initAgent() {
+func (a *SubAgent) initAgent() {
 	a.agent = agents.NewOpenAIFunctionsAgent(
 		a.Provider,
 		a.tools,
@@ -52,7 +52,7 @@ func (a *Agent) initAgent() {
 	)
 }
 
-func (a *Agent) initExecutor() {
+func (a *SubAgent) initExecutor() {
 	a.executor = agents.NewExecutor(
 		a.agent,
 		agents.WithCallbacksHandler(a.Handler),
@@ -60,7 +60,7 @@ func (a *Agent) initExecutor() {
 	)
 }
 
-func (a *Agent) Run(history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage) (string, error) {
+func (a *SubAgent) Run(history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage) (string, error) {
 	bytes, _ := json.Marshal(history)
 	return chains.Predict(
 		a.Ctx,
@@ -68,6 +68,17 @@ func (a *Agent) Run(history []*sessiondb.SessionMessage, message *sessiondb.Sess
 		map[string]any{
 			"input":       message.String(),
 			"ChatHistory": string(bytes),
+		},
+	)
+}
+
+func (a *SubAgent) RunSimple(task string) (string, error) {
+	return chains.Predict(
+		a.Ctx,
+		a.executor,
+		map[string]any{
+			"input":       task,
+			"ChatHistory": "[]",
 		},
 	)
 }

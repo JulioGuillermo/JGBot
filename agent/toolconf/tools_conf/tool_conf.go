@@ -1,4 +1,4 @@
-package toolconf
+package tools_conf
 
 import (
 	"JGBot/agent/tools"

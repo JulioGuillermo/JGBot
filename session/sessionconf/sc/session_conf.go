@@ -54,6 +54,10 @@ func NewSessionConf(name, id, origin string) SessionConf {
 				Name:    "skills",
 				Enabled: false,
 			},
+			{
+				Name:    "subagent",
+				Enabled: false,
+			},
 		},
 		Skills: skConf,
 	}

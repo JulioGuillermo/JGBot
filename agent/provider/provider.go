@@ -9,10 +9,12 @@ import (
 	"github.com/tmc/langchaingo/llms"
 )
 
-func GetProviders(ctx context.Context) map[string]llms.Model {
+var Providers map[string]llms.Model
+
+func InitProviders(ctx context.Context) {
 	conf := GetConfig()
 
-	providers := map[string]llms.Model{}
+	Providers = map[string]llms.Model{}
 	var prov llms.Model
 	var err error
 	for _, conf := range conf {
@@ -21,10 +23,8 @@ func GetProviders(ctx context.Context) map[string]llms.Model {
 			log.Error("Fail to initialize provider", "provider", conf.Name, "error", err)
 			continue
 		}
-		providers[conf.Name] = prov
+		Providers[conf.Name] = prov
 	}
-
-	return providers
 }
 
 func GetProvider(ctx context.Context, conf conf.Provider) (llms.Model, error) {

@@ -9,15 +9,18 @@ const searchUrl = (query) => {
 
 const exec = () => {
   let url = ''
+  let headers = false
+
   if (args.url) {
     url = args.url
   } else if (args.query) {
     url = searchUrl(args.query)
+    headers = true
   } else {
     return "No url or query provided"
   }
 
-  const html = fetchContent(url);
+  const html = fetchContent(url, headers);
 
   return html2md(html);
 };
