@@ -12,15 +12,15 @@ type Console struct {
 }
 
 func (c *Console) print(text string) {
-	fmt.Println(text)
+	fmt.Print(text)
 	c.sb.WriteString(text)
-	c.sb.WriteRune('\n')
 }
 
 func (c *Console) Print(args ...any) {
 	var sb strings.Builder
 
 	for _, arg := range args {
+		sb.WriteString(" - JS >>> ")
 		fmt.Fprint(&sb, arg)
 		sb.WriteRune('\n')
 	}
@@ -33,6 +33,7 @@ func (c *Console) newLog(start string, args ...*qjs.Value) {
 
 	for _, arg := range args {
 		jstr, err := arg.JSONStringify()
+		sb.WriteString(" - JS ")
 		sb.WriteString(start)
 		sb.WriteString(" >>> ")
 		if err != nil {

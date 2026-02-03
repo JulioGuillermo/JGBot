@@ -1,10 +1,9 @@
 ---
 name: test_skill
 description: A testing skill that greets the user.
-license: MIT
 metadata:
-  author: dev-system
-  version: "1.1"
+  author: JulioGuillermo
+  version: "1.0"
 ---
 
 ## Usage

@@ -43,13 +43,21 @@ func removePath(root string, codes map[string]string) map[string]string {
 func readCode(files []string) (map[string]string, error) {
 	codes := map[string]string{}
 	for _, file := range files {
-		code, err := os.ReadFile(file)
+		code, err := readFileCode(file)
 		if err != nil {
 			return nil, err
 		}
-		codes[file] = string(code)
+		codes[file] = code
 	}
 	return codes, nil
+}
+
+func readFileCode(path string) (string, error) {
+	code, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	return string(code), nil
 }
 
 func loadFiles(path string) ([]string, error) {

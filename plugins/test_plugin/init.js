@@ -1,4 +1,5 @@
 import { getDate } from "/date.js";
+require("https://cdn.jsdelivr.net/npm/node-html-markdown@2.0.0/+esm");
 
 const args = GetArgs();
 
@@ -22,6 +23,7 @@ async function fn() {
     .SetURL("https://httpbin.org/get")
     .SetBodyFormData(formData)
     .Get();
+  print(response.StatusCode == 200 ? "Is ok" : "not ok");
   console.log(response.BodyString());
   const d = await getDate();
   return d;

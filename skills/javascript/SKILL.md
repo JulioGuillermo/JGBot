@@ -1,6 +1,9 @@
 ---
 name: javascript
 description: Technical reference of the JavaScript runtime environment for agents.
+metadata:
+  author: JulioGuillermo
+  version: "1.0"
 ---
 
 # JavaScript Runtime Specification for Agents
