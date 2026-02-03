@@ -8,7 +8,10 @@ import (
 	"JGBot/log"
 	"JGBot/session/sessionconf"
 	"JGBot/session/sessiondb"
+	"errors"
 	"fmt"
+
+	"github.com/tmc/langchaingo/agents"
 )
 
 type SessionCtl struct {
@@ -117,8 +120,14 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	defer s.channelCtl.Status(channel, chatID, channels.Normal)
 
 	err = s.agent.Respond(respCtx)
-	if err != nil {
-		log.Error("Agent respond error", "err", err)
-		s.channelCtl.SendMessage(channel, chatID, "Fail to respond 😵‍💫...")
+	if err == nil {
+		return
 	}
+	if errors.Is(err, agents.ErrNotFinished) {
+		log.Error("Agent Max Iter Error", "err", err)
+		s.channelCtl.SendMessage(channel, chatID, "[MAX ITER] I need a break 🤒...")
+		return
+	}
+	log.Error("Agent respond error", "err", err)
+	s.channelCtl.SendMessage(channel, chatID, "[ERROR] I probably made a mistake 😵‍💫...")
 }
