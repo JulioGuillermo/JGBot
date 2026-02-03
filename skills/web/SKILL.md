@@ -1,30 +1,35 @@
 ---
-name: get_link
-description: Fetches the content of a URL and converts the HTML into Markdown format.
+name: web
+description: Performs a web search or fetches the content of a URL, converting the result into Markdown format.
 metadata:
   author: JulioGuillermo
-  version: "1.0"
+  version: "1.1"
 ---
 
-# Get Link
+# Web Tool
 
-This skill allows the bot to access external web content. It takes a URL, fetches the HTML content of the page, and converts it into a clean Markdown format for easier processing and reading.
+This skill allows you to access external web content either by searching or by direct URL access. It fetches the content and converts it into a clean Markdown format.
 
 ## Usage
 
-Use this tool whenever a user provides a URL and asks to read, summarize, analyze, or extract information from that webpage.
+Use this tool when you need to:
+1.  **Search the web**: Provide a `query` to find information.
+2.  **Read a webpage**: Provide a `url` to read specific content.
 
 ### Arguments
 
-- `url`: The full web address (including http:// or https://) of the page you want to fetch.
+- `query` (optional): The search terms to find information on the web.
+- `url` (optional): The full web address (including http:// or https://) of the page to fetch.
+
+**Note**: You must provide either `query` or `url`, but not both (url takes precedence).
 
 ## Examples
 
-- **User**: "Summarize the information on this page: https://example.com/article"
-  **Action**: Call `get_link` with `url="https://example.com/article"`
-- **User**: "What are the main points of https://en.wikipedia.org/wiki/JavaScript?"
-  **Action**: Call `get_link` with `url="https://en.wikipedia.org/wiki/JavaScript"`
+- **User**: "Who won the super bowl 2024?"
+  **Action**: Call `web` with `query="super bowl 2024 winner"`
+- **User**: "Summarize this article: https://example.com/article"
+  **Action**: Call `web` with `url="https://example.com/article"`
 
 ## Notes
 
-The tool will return a string containing the Markdown representation of the page. If the request fails (e.g., 404 error or timeout), it will return an error message describing the status code.
+The tool returns a Markdown string. If using `query`, it performs a search (e.g., via Mojeek) and returns the results. If using `url`, it fetches and converts the page content.
