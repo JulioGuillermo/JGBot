@@ -9,6 +9,7 @@ import (
 	"JGBot/log"
 	"JGBot/session"
 	"JGBot/skill"
+	"JGBot/timer"
 	"fmt"
 	"os"
 	"os/signal"
@@ -30,8 +31,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	log.Info("Initializing cron...")
+	log.Info("Initializing cron and timer...")
 	cron.InitCronCtl()
+	timer.InitTimerCtl()
 
 	log.Info("Loading skills...")
 	err = skill.InitSkills()

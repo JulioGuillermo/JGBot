@@ -5,20 +5,15 @@ import (
 	"JGBot/agent/prompt"
 	"JGBot/agent/provider"
 	"JGBot/agent/subagent"
-	"JGBot/agent/subagent/subagenttool"
 	"JGBot/agent/toolconf"
-	"JGBot/agent/toolconf/cron"
 	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
 	"JGBot/log"
-	"JGBot/session/sessiondb"
 	"context"
 	"fmt"
 
-	"github.com/tmc/langchaingo/callbacks"
 	"github.com/tmc/langchaingo/llms"
-	lcTools "github.com/tmc/langchaingo/tools"
 )
 
 type AgentsCtl struct {
@@ -72,54 +67,7 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 		SystemPrompt: sysPrompt,
 	}
 
-	tools := a.GetTools(ctx, handler)
-	agent.AddTools(tools...)
-
-	if conf := ctx.SessionConf.GetToolConf("cron"); conf != nil && conf.Enabled {
-		cronToolConf := cron.CronInitializerConf{
-			OnExecute: func(ctx *ctxs.RespondCtx, args cron.CronArgs) {
-				history, err := ctx.GetHistory()
-				if err != nil {
-					log.Error("CRON TOOL ERROR: Get history error", "err", err)
-					return
-				}
-
-				msg := fmt.Sprintf("CRON EXECUTION: %s\n\nSCHEDULE: %s\n\nDESCRIPTION: %s\n\nMESSAGE: %s", args.Name, args.Schedule.String(), args.Description, args.Message)
-
-				newCtx := ctx.Copy()
-				newCtx.History = history
-				newCtx.Message = &sessiondb.SessionMessage{
-					Channel:    ctx.Message.Channel,
-					ChatID:     ctx.Message.ChatID,
-					ChatName:   ctx.Message.ChatName,
-					SenderID:   ctx.Message.SenderID,
-					SenderName: "tool",
-					Role:       "tool",
-					MessageID:  ctx.Message.MessageID,
-					Message:    msg,
-					Extra:      "",
-				}
-
-				err = a.Respond(newCtx)
-				if err != nil {
-					log.Error("CRON TOOL ERROR: Respond error", "err", err)
-				}
-			},
-		}
-		cronTool := cronToolConf.ToolInitializer(ctx)
-		agent.AddTools(cronTool)
-	}
-
-	if conf := ctx.SessionConf.GetToolConf("subagent"); conf != nil && conf.Enabled {
-		subAgentToolConf := subagenttool.SubAgentInitializerConf{
-			Ctx:      a.ctx,
-			Handler:  handler,
-			Tools:    tools,
-			Provider: provider,
-		}
-		subAgentTool := subAgentToolConf.ToolInitializer(ctx)
-		agent.AddTools(subAgentTool)
-	}
+	a.AddTools(agent, handler, provider, ctx)
 
 	agent.Init()
 
@@ -130,26 +78,4 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 
 	log.Info("AGENT RESPONDED", "result", result)
 	return ctx.OnResponse(result, "assistant", "")
-}
-
-func (a *AgentsCtl) GetTools(ctx *ctxs.RespondCtx, handler callbacks.Handler) []lcTools.Tool {
-	tools := make([]lcTools.Tool, 0)
-
-	for _, toolConf := range ctx.SessionConf.Tools {
-		if !toolConf.Enabled {
-			continue
-		}
-
-		toolInitializer, ok := a.toolsConf[toolConf.Name]
-		if !ok {
-			continue
-		}
-
-		tool := toolInitializer.ToolInitializer(ctx)
-		tool.SetHandler(handler)
-
-		tools = append(tools, tool)
-	}
-
-	return tools
 }

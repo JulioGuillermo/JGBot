@@ -19,9 +19,13 @@ func (c *CronInitializerConf) Name() string {
 
 func (c *CronInitializerConf) listCronJobs() string {
 	jobs := cron.Cron.ListJobs()
+	if len(jobs) == 0 {
+		return "No cron jobs are active."
+	}
 	var sb strings.Builder
+	sb.WriteString("Active cron jobs:\n")
 	for _, job := range jobs {
-		fmt.Fprintf(&sb, "%s: %s\n", job.Name, job.Description)
+		fmt.Fprintf(&sb, "- %s: %s\n", job.Name, job.Description)
 	}
 	return sb.String()
 }
