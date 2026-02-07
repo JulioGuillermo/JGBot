@@ -20,7 +20,7 @@ func (c *CronInitializerConf) Name() string {
 func (c *CronInitializerConf) listCronJobs(ctx *ctxs.RespondCtx) string {
 	jobs := cron.Cron.ListJobs(ctx.Origin)
 	if len(jobs) == 0 {
-		return "No cron jobs are active."
+		return "Active cron jobs:\nCron jobs list is empty."
 	}
 	var sb strings.Builder
 	sb.WriteString("Active cron jobs:\n")

@@ -20,7 +20,7 @@ func (c *TimerInitializerConf) Name() string {
 func (c *TimerInitializerConf) listTimers(rCtx *ctxs.RespondCtx) string {
 	jobs := timer.Timer.ListTimers(rCtx.Origin)
 	if len(jobs) == 0 {
-		return "No timers are active."
+		return "Active timers:\nTimer list is empty."
 	}
 	var sb strings.Builder
 	sb.WriteString("Active timers:\n")
