@@ -4,6 +4,7 @@ import (
 	"JGBot/agent"
 	"JGBot/channels/channelctl"
 	"JGBot/conf"
+	"JGBot/cron"
 	"JGBot/database"
 	"JGBot/log"
 	"JGBot/session"
@@ -28,6 +29,9 @@ func main() {
 		log.Error("Fail to initialize database", "error", err)
 		os.Exit(1)
 	}
+
+	log.Info("Initializing cron...")
+	cron.InitCronCtl()
 
 	log.Info("Loading skills...")
 	err = skill.InitSkills()

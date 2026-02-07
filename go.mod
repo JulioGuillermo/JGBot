@@ -3,11 +3,13 @@ module JGBot
 go 1.25.5
 
 require (
+	github.com/fastschema/qjs v0.0.6
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-telegram/bot v1.18.0
 	github.com/lmittmann/tint v1.1.2
 	github.com/mattn/go-sqlite3 v1.14.33
 	github.com/mdp/qrterminal/v3 v3.2.1
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/tmc/langchaingo v0.1.14
 	go.mau.fi/whatsmeow v0.0.0-20260129212019-7787ab952245
 	gorm.io/driver/sqlite v1.6.0
@@ -33,7 +35,6 @@ require (
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/elliotchance/orderedmap/v3 v3.1.0 // indirect
-	github.com/fastschema/qjs v0.0.6 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gage-technologies/mistral-go v1.1.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect

@@ -7,10 +7,12 @@ import (
 	"JGBot/agent/subagent"
 	"JGBot/agent/subagent/subagenttool"
 	"JGBot/agent/toolconf"
+	"JGBot/agent/toolconf/cron"
 	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
 	"JGBot/log"
+	"JGBot/session/sessiondb"
 	"context"
 	"fmt"
 
@@ -72,6 +74,41 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 
 	tools := a.GetTools(ctx, handler)
 	agent.AddTools(tools...)
+
+	if conf := ctx.SessionConf.GetToolConf("cron"); conf != nil && conf.Enabled {
+		cronToolConf := cron.CronInitializerConf{
+			OnExecute: func(ctx *ctxs.RespondCtx, args cron.CronArgs) {
+				history, err := ctx.GetHistory()
+				if err != nil {
+					log.Error("CRON TOOL ERROR: Get history error", "err", err)
+					return
+				}
+
+				msg := fmt.Sprintf("CRON EXECUTION: %s\n\nSCHEDULE: %s\n\nDESCRIPTION: %s\n\nMESSAGE: %s", args.Name, args.Schedule.String(), args.Description, args.Message)
+
+				newCtx := ctx.Copy()
+				newCtx.History = history
+				newCtx.Message = &sessiondb.SessionMessage{
+					Channel:    ctx.Message.Channel,
+					ChatID:     ctx.Message.ChatID,
+					ChatName:   ctx.Message.ChatName,
+					SenderID:   ctx.Message.SenderID,
+					SenderName: "tool",
+					Role:       "tool",
+					MessageID:  ctx.Message.MessageID,
+					Message:    msg,
+					Extra:      "",
+				}
+
+				err = a.Respond(newCtx)
+				if err != nil {
+					log.Error("CRON TOOL ERROR: Respond error", "err", err)
+				}
+			},
+		}
+		cronTool := cronToolConf.ToolInitializer(ctx)
+		agent.AddTools(cronTool)
+	}
 
 	if conf := ctx.SessionConf.GetToolConf("subagent"); conf != nil && conf.Enabled {
 		subAgentToolConf := subagenttool.SubAgentInitializerConf{

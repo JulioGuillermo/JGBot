@@ -6,6 +6,8 @@ import (
 	"JGBot/session/sessiondb"
 	"context"
 	"encoding/json"
+	"fmt"
+	"time"
 
 	"github.com/tmc/langchaingo/agents"
 	"github.com/tmc/langchaingo/chains"
@@ -40,11 +42,14 @@ func (a *SubAgent) Init() {
 }
 
 func (a *SubAgent) initAgent() {
+	now := time.Now().Format("Monday, 2006-01-02 15:04:05")
+	prompt := fmt.Sprintf("%s\n\nCURRENT TIME: %s", a.SystemPrompt, now)
+
 	a.agent = agents.NewOpenAIFunctionsAgent(
 		a.Provider,
 		a.tools,
 		agents.NewOpenAIOption().
-			WithSystemMessage(a.SystemPrompt),
+			WithSystemMessage(prompt),
 		agents.NewOpenAIOption().
 			WithExtraMessages([]prompts.MessageFormatter{
 				input.NewHistoryInput(),

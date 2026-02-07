@@ -7,6 +7,7 @@ import (
 
 type OnResponse func(text, role, extra string) error
 type OnReact func(msg uint, reaction string) error
+type GetHistory func() ([]*sessiondb.SessionMessage, error)
 
 type RespondCtx struct {
 	SessionConf *sc.SessionConf
@@ -14,4 +15,17 @@ type RespondCtx struct {
 	Message     *sessiondb.SessionMessage
 	OnResponse  OnResponse
 	OnReact     OnReact
+	GetHistory  GetHistory
+}
+
+func (c *RespondCtx) Copy() *RespondCtx {
+	history := make([]*sessiondb.SessionMessage, len(c.History))
+	copy(history, c.History)
+	return &RespondCtx{
+		SessionConf: c.SessionConf,
+		History:     history,
+		Message:     c.Message,
+		OnResponse:  c.OnResponse,
+		OnReact:     c.OnReact,
+	}
 }

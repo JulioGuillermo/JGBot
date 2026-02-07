@@ -114,6 +114,9 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		OnReact: func(msg uint, reaction string) error {
 			return s.channelCtl.ReactMessage(channel, chatID, msg, reaction)
 		},
+		GetHistory: func() ([]*sessiondb.SessionMessage, error) {
+			return sessiondb.GetHistory(channel, chatID, sessionConf.HistorySize)
+		},
 	}
 
 	s.channelCtl.Status(channel, chatID, channels.Writing)

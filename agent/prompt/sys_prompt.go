@@ -55,6 +55,9 @@ func GetToolPrompt(conf *sc.SessionConf) string {
 
 		fmt.Fprintf(&sb, "- %s\n", toolConf.Name())
 	}
+	if cronConf := conf.GetToolConf("cron"); cronConf != nil && cronConf.Enabled {
+		fmt.Fprintf(&sb, "- cron\n")
+	}
 	if subAgentConf := conf.GetToolConf("subagent"); subAgentConf != nil && subAgentConf.Enabled {
 		fmt.Fprintf(&sb, "- subagent\n")
 	}
