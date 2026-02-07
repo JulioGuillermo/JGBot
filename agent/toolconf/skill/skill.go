@@ -13,9 +13,9 @@ import (
 )
 
 type SkillArgs struct {
-	Action string              `json:"action" description:"The action to execute. 'list' to list all the available skills, 'read' to read a skill, or 'exec' to execute a skill if it has a skill tool. (Note: The action is required)"`
-	Name   string              `json:"name" description:"The name of the skill to read or execute (Note: Not required for 'list')."`
-	Args   skillexec.SkillArgs `json:"args" description:"The arguments to pass to the skill (Note: Not required for 'list' or 'read', but required for 'exec')."`
+	Action string              `json:"action" description:"The action to execute. 'list' to list all the available skills, 'read' to read a skill, or 'exec' to execute a skill if it has a skill tool. (Note: The action is required). Important this action is for this tool only, not for the skill itself. The skill is executed using the 'exec' action and the 'name' of the skill and the 'args' of the skill, everything you need to pass to the skill tool on the exec action you have to pass it on this args parameter."`
+	Name   string              `json:"name" description:"The name of the skill to read or execute (Note: Not required for 'list'). This is the name of the skill, and it is not passed to the skill tool on the exec action."`
+	Args   skillexec.SkillArgs `json:"args" description:"The arguments to pass to the skill (Note: Not required for 'list' or 'read', but required for 'exec'). This is the arguments of the skill during the exec action, everything you need to pass to the skill tool on the exec action you have to pass it on this args parameter."`
 }
 
 type SkillInitializerConf struct{}

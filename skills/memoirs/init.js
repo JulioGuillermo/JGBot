@@ -4,6 +4,8 @@ const args = GetArgs();
 
 const main = () => {
     try {
+        if (!args.command) args.command = args.action
+
         if (!args.command) {
             return "Error: No command provided. Available commands: list, read, create, edit, save, delete.";
         }
