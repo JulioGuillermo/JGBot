@@ -17,8 +17,8 @@ func (c *TimerInitializerConf) Name() string {
 	return "timer"
 }
 
-func (c *TimerInitializerConf) listTimers() string {
-	jobs := timer.Timer.ListTimers()
+func (c *TimerInitializerConf) listTimers(rCtx *ctxs.RespondCtx) string {
+	jobs := timer.Timer.ListTimers(rCtx.Origin)
 	if len(jobs) == 0 {
 		return "No timers are active."
 	}
@@ -30,9 +30,9 @@ func (c *TimerInitializerConf) listTimers() string {
 	return sb.String()
 }
 
-func (c *TimerInitializerConf) readTimer(name string) string {
-	job, ok := timer.Timer.Timers[name]
-	if !ok {
+func (c *TimerInitializerConf) readTimer(rCtx *ctxs.RespondCtx, name string) string {
+	job := timer.Timer.GetTimer(rCtx.Origin, name)
+	if job == nil {
 		return fmt.Sprintf("Fail to read timer %s: not found", name)
 	}
 	return fmt.Sprintf("Name: %s\nDescription: %s\nSchedule: (%s)", job.Name, job.Description, job.Time.String())
@@ -43,11 +43,11 @@ func (c *TimerInitializerConf) addTimer(rCtx *ctxs.RespondCtx, args TimerArgs) s
 
 	switch args.Type {
 	case "timeout":
-		err = timer.Timer.AddTimeout(args.Name, args.Description, args.TimerTime.ToTime(), func() {
+		err = timer.Timer.AddTimeout(rCtx.Origin, args.Name, args.Description, args.TimerTime.ToTime(), func() {
 			c.OnExecute(rCtx, args)
 		})
 	case "alarm":
-		err = timer.Timer.AddAlarm(args.Name, args.Description, args.TimerTime.ToTime(), func() {
+		err = timer.Timer.AddAlarm(rCtx.Origin, args.Name, args.Description, args.TimerTime.ToTime(), func() {
 			c.OnExecute(rCtx, args)
 		})
 	default:
@@ -61,8 +61,8 @@ func (c *TimerInitializerConf) addTimer(rCtx *ctxs.RespondCtx, args TimerArgs) s
 	return fmt.Sprintf("Timer %s added", args.Name)
 }
 
-func (c *TimerInitializerConf) removeTimer(name string) string {
-	err := timer.Timer.RemoveTimer(name)
+func (c *TimerInitializerConf) removeTimer(rCtx *ctxs.RespondCtx, name string) string {
+	err := timer.Timer.RemoveTimer(rCtx.Origin, name)
 	if err != nil {
 		return fmt.Sprintf("Fail to remove timer %s: %s", name, err.Error())
 	}
@@ -79,13 +79,13 @@ func (c *TimerInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool
 
 			switch args.Action {
 			case "list":
-				return c.listTimers(), nil
+				return c.listTimers(rCtx), nil
 			case "read":
-				return c.readTimer(args.Name), nil
+				return c.readTimer(rCtx, args.Name), nil
 			case "add":
 				return c.addTimer(rCtx, args), nil
 			case "remove":
-				return c.removeTimer(args.Name), nil
+				return c.removeTimer(rCtx, args.Name), nil
 			}
 
 			return "Invalid action, please use 'list', 'read', 'add' or 'remove'", nil

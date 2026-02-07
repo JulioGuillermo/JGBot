@@ -11,7 +11,7 @@ import (
 type CronCtl struct {
 	C *cron.Cron
 
-	Tasks map[string]CronTask
+	Tasks []CronTask
 }
 
 var Cron *CronCtl
@@ -26,12 +26,21 @@ func NewCronCtl() *CronCtl {
 
 	return &CronCtl{
 		C:     c,
-		Tasks: make(map[string]CronTask),
+		Tasks: make([]CronTask, 0),
 	}
 }
 
-func (c *CronCtl) AddJob(name, description string, args CronArgs, job func()) error {
-	if _, ok := c.Tasks[name]; ok {
+func (c *CronCtl) GetJob(origin, name string) *CronTask {
+	for _, task := range c.Tasks {
+		if task.Name == name && task.Origin == origin {
+			return &task
+		}
+	}
+	return nil
+}
+
+func (c *CronCtl) AddJob(origin, name, description string, args CronArgs, job func()) error {
+	if c.GetJob(origin, name) != nil {
 		return errors.New("task with name " + name + " already exists")
 	}
 
@@ -41,31 +50,36 @@ func (c *CronCtl) AddJob(name, description string, args CronArgs, job func()) er
 	}
 
 	task := CronTask{
+		Origin:      origin,
 		Name:        name,
 		Description: description,
 		Schedule:    args,
 		ID:          id,
 	}
-	c.Tasks[name] = task
+	c.Tasks = append(c.Tasks, task)
 
 	return nil
 }
 
-func (c *CronCtl) RemoveJob(name string) error {
-	task, ok := c.Tasks[name]
-	if !ok {
+func (c *CronCtl) RemoveJob(origin, name string) error {
+	task := c.GetJob(origin, name)
+	if task == nil {
 		return errors.New("task with name " + name + " not found")
 	}
 
 	c.C.Remove(task.ID)
-	delete(c.Tasks, name)
+	c.Tasks = slices.DeleteFunc(c.Tasks, func(t CronTask) bool {
+		return t.Name == name && t.Origin == origin
+	})
 	return nil
 }
 
-func (c *CronCtl) ListJobs() []CronTask {
+func (c *CronCtl) ListJobs(origin string) []CronTask {
 	var tasks []CronTask
 	for _, task := range c.Tasks {
-		tasks = append(tasks, task)
+		if task.Origin == origin {
+			tasks = append(tasks, task)
+		}
 	}
 	slices.SortFunc(tasks, func(a, b CronTask) int {
 		return strings.Compare(a.Name, b.Name)

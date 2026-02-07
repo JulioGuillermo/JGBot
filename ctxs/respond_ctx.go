@@ -10,6 +10,9 @@ type OnReact func(msg uint, reaction string) error
 type GetHistory func() ([]*sessiondb.SessionMessage, error)
 
 type RespondCtx struct {
+	Origin      string
+	Channel     string
+	ChatID      uint
 	SessionConf *sc.SessionConf
 	History     []*sessiondb.SessionMessage
 	Message     *sessiondb.SessionMessage

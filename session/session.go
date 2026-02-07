@@ -91,6 +91,9 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	}
 
 	respCtx := &ctxs.RespondCtx{
+		Origin:      origin,
+		Channel:     channel,
+		ChatID:      chatID,
 		SessionConf: sessionConf,
 		History:     history,
 		Message:     msg,
