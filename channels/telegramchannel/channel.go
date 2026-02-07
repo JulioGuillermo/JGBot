@@ -3,6 +3,7 @@ package telegramchannel
 import (
 	"JGBot/channels"
 	"JGBot/channels/telegramchannel/telegramdb"
+	"JGBot/formatter"
 	"JGBot/log"
 	"fmt"
 
@@ -112,6 +113,8 @@ func (ch *TelegramChannel) Status(chatID uint, status channels.Status) error {
 }
 
 func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
+	message = formatter.FormatMD2Telegram(message)
+
 	chat, err := telegramdb.GetChat(chatID)
 	if err != nil {
 		log.Error("Fail to find the chat", "chatID", chatID, "error", err)

@@ -3,6 +3,7 @@ package whatsappchannel
 import (
 	"JGBot/channels"
 	"JGBot/channels/whatsappchannel/whatsappdb"
+	"JGBot/formatter"
 	"JGBot/log"
 	"fmt"
 
@@ -107,6 +108,8 @@ func (ch *WhatsAppChannel) Status(chatID uint, status channels.Status) error {
 }
 
 func (ch *WhatsAppChannel) SendMessage(chatID uint, message string) error {
+	message = formatter.FormatMD2WhatsApp(message)
+
 	chat, err := whatsappdb.GetChat(chatID)
 	if err != nil {
 		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
