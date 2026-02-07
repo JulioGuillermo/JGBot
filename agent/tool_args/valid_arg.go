@@ -1,27 +1,24 @@
 package toolargs
 
-import (
-	"encoding/json"
-	"strings"
-)
+import "fmt"
 
-func isInvalidJSON(content string) bool {
-	if !strings.HasPrefix(content, "{") || !strings.HasSuffix(content, "}") {
-		return false
-	}
-
-	var a any
-	err := json.Unmarshal([]byte(content), &a)
-	return err != nil
+func GetToolArgContent(args string) (string, error) {
+	return ExtractContent(args)
 }
 
-func GetValidArg(args string) string {
-	content := FromArgFormat(args)
+func GetMsgValidArg(msg string) string {
+	content, err := GetToolArgContent(msg)
+	if err != nil {
+		return NewToolArgError(fmt.Sprintf("Could not parse arg as a valid JSON Arguments: %s\n%s", err.Error(), msg)).ToJSON()
+	}
 
-	if isInvalidJSON(content) {
-		bytes, _ := json.Marshal(content)
-		content = "Could not parse arg as a valid JSON Arguments: " + string(bytes)
-		content = NewToolArg(content).ToJSON()
+	return NewToolArg(content).ToJSON()
+}
+
+func GetMsgToolCallArg(msg string) string {
+	content, err := GetToolArgContent(msg)
+	if err != nil {
+		return NewToolArgError(fmt.Sprintf("Could not parse arg as a valid JSON Arguments: %s\n%s", err.Error(), msg)).ToJSON()
 	}
 
 	return NewToolArg(content).ToJSON()

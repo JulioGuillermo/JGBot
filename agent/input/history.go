@@ -64,14 +64,13 @@ func (HistoryInput) FormatMessages(values map[string]any) ([]llms.ChatMessage, e
 
 			toolCall := tools.ToolCallFromJson(msg.Extra)
 			if toolCall != nil {
-				content := toolargs.GetValidArg(toolCall.Input)
-				bytes, _ := json.Marshal(content)
+				content := toolargs.GetMsgValidArg(toolCall.Input)
 				m.ToolCalls = []llms.ToolCall{{
 					ID:   toolCall.ID,
 					Type: "function",
 					FunctionCall: &llms.FunctionCall{
 						Name:      toolCall.Tool,
-						Arguments: string(bytes),
+						Arguments: content,
 					},
 				}}
 			}

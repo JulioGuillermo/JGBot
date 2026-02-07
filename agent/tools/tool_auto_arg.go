@@ -80,12 +80,17 @@ func (t *ToolAutoArgs[Args]) success(ctx context.Context, output string) (string
 }
 
 func (t *ToolAutoArgs[Args]) getArgs(input string) (Args, error) {
-	input = toolargs.FromArgFormat(input)
-
 	var args Args
-	if err := json.Unmarshal([]byte(input), &args); err != nil {
+
+	content, err := toolargs.GetToolArgContent(input)
+	if err != nil {
 		return t.getFillStrField(args, err, input)
 	}
+
+	if err := json.Unmarshal([]byte(content), &args); err != nil {
+		return t.getFillStrField(args, err, input)
+	}
+
 	return args, nil
 }
 
