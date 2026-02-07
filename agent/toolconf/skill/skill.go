@@ -29,6 +29,10 @@ func (c *SkillInitializerConf) listSkills(rCtx *ctxs.RespondCtx) string {
 }
 
 func (c *SkillInitializerConf) readSkill(rCtx *ctxs.RespondCtx, name string) string {
+	if name == "" {
+		return "Error: name is required for read"
+	}
+
 	skillConf := rCtx.SessionConf.GetSkillConf(name)
 	if skillConf == nil || !skillConf.Enabled {
 		return fmt.Sprintf("Skill %s not available", name)
@@ -45,6 +49,10 @@ func (c *SkillInitializerConf) readSkill(rCtx *ctxs.RespondCtx, name string) str
 }
 
 func (c *SkillInitializerConf) execSkill(rCtx *ctxs.RespondCtx, name string, args skillexec.SkillArgs) (string, error) {
+	if name == "" {
+		return "Error: name is required for exec", nil
+	}
+
 	skillConf := rCtx.SessionConf.GetSkillConf(name)
 	if skillConf == nil || !skillConf.Enabled {
 		return "", fmt.Errorf("Skill %s not available", name)
