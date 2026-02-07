@@ -85,7 +85,7 @@ func formatTableRow(cols []string, headers []string, rowNum int) []string {
 		if j < len(headers) {
 			header = headers[j]
 		}
-		rows = append(rows, fmt.Sprintf("\t- *%s*: %s", header, val))
+		rows = append(rows, fmt.Sprintf("\t- **%s**: %s", header, val))
 	}
 	return rows
 }

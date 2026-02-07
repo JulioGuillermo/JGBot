@@ -7,29 +7,30 @@ import (
 // FormatHeader tries to format a line as a Header.
 // Returns the formatted string and true if successful, else original string and false.
 func FormatHeader(line string) (string, bool) {
+	// 1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣🔟
 	// h1
 	if strings.HasPrefix(line, "# ") {
-		return "🔹 *" + strings.TrimPrefix(line, "# ") + "*", true
+		return "1️⃣ " + strings.TrimPrefix(line, "# "), true
 	}
 	// h2
 	if strings.HasPrefix(line, "## ") {
-		return "🔹 *_" + strings.TrimPrefix(line, "## ") + "_*", true
+		return "2️⃣ " + strings.TrimPrefix(line, "## "), true
 	}
 	// h3
 	if strings.HasPrefix(line, "### ") {
-		return "🔹 _" + strings.TrimPrefix(line, "### ") + "_", true
+		return "3️⃣ " + strings.TrimPrefix(line, "### "), true
 	}
 	// h4
 	if strings.HasPrefix(line, "#### ") {
-		return "🔹 " + strings.TrimPrefix(line, "#### "), true
+		return "4️⃣ " + strings.TrimPrefix(line, "#### "), true
 	}
 	// h5
 	if strings.HasPrefix(line, "##### ") {
-		return "🔹 " + strings.TrimPrefix(line, "##### "), true
+		return "5️⃣ " + strings.TrimPrefix(line, "##### "), true
 	}
 	// h6
 	if strings.HasPrefix(line, "###### ") {
-		return "🔹 " + strings.TrimPrefix(line, "###### "), true
+		return "6️⃣ " + strings.TrimPrefix(line, "###### "), true
 	}
 	return line, false
 }

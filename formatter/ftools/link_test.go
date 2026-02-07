@@ -14,7 +14,7 @@ func TestMapRestoreLinks(t *testing.T) {
 		t.Fatalf("MapLinks MD failed to capture link")
 	}
 	// Restore with format
-	gotMD := RestoreLinks(mappedMD, linksMD)
+	gotMD := RestoreLinks(mappedMD, linksMD, false)
 	expectMD := "Check (Google: https://google.com)"
 	if gotMD != expectMD {
 		t.Errorf("RestoreLinks MD failed: got %q, want %q", gotMD, expectMD)
@@ -26,8 +26,15 @@ func TestMapRestoreLinks(t *testing.T) {
 		t.Fatalf("MapLinks Raw failed to capture link")
 	}
 	// Restore raw (should be same)
-	gotRaw := RestoreLinks(mappedRaw, linksRaw)
+	gotRaw := RestoreLinks(mappedRaw, linksRaw, false)
 	if gotRaw != inputRaw {
 		t.Errorf("RestoreLinks Raw failed: got %q, want %q", gotRaw, inputRaw)
+	}
+
+	// Test MD Link with supportMD
+	gotMDSupport := RestoreLinks(mappedMD, linksMD, true)
+	expectMDSupport := "Check [Google](https://google.com)"
+	if gotMDSupport != expectMDSupport {
+		t.Errorf("RestoreLinks MD failed: got %q, want %q", gotMDSupport, expectMDSupport)
 	}
 }

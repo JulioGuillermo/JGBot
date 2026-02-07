@@ -8,9 +8,12 @@ func TestFormatHeader(t *testing.T) {
 		want  string
 		ok    bool
 	}{
-		{"# Title", "🔹 *Title*", true},
-		{"## Title", "🔹 *_Title_*", true},
-		{"### Title", "🔹 _Title_", true},
+		{"# Title", "1️⃣ Title", true},
+		{"## Title", "2️⃣ Title", true},
+		{"### Title", "3️⃣ Title", true},
+		{"#### Title", "4️⃣ Title", true},
+		{"##### Title", "5️⃣ Title", true},
+		{"###### Title", "6️⃣ Title", true},
 		{"Not Header", "Not Header", false},
 	}
 

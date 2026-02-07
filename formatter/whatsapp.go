@@ -10,6 +10,7 @@ func FormatMD2WhatsApp(msg string) string {
 
 	msg = ftools.FormatHeaders(msg)
 	msg = ftools.FormatTable(msg)
+	msg = ftools.FormatList(msg)
 
 	msg = ftools.ProtectBold(msg)
 
@@ -18,7 +19,7 @@ func FormatMD2WhatsApp(msg string) string {
 
 	msg = ftools.RestoreBold(msg, "*")
 
-	msg = ftools.RestoreLinks(msg, links)
+	msg = ftools.RestoreLinks(msg, links, false)
 	msg = ftools.RestoreCodeBlocks(msg, codeBlocks, nil)
 
 	return msg

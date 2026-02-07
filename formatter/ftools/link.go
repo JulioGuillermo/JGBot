@@ -34,7 +34,7 @@ func MapLinks(msg string) (string, []string) {
 // RestoreLinks restores links and formats them:
 // [text](url) -> (text: url)
 // Raw URL -> returns as is (protected from other formatting)
-func RestoreLinks(msg string, links []string) string {
+func RestoreLinks(msg string, links []string, supportMD bool) string {
 	re := regexp.MustCompile(LinkPlaceholder + `(\d+)`)
 	return re.ReplaceAllStringFunc(msg, func(match string) string {
 		var idx int
@@ -50,6 +50,10 @@ func RestoreLinks(msg string, links []string) string {
 		content := links[idx]
 		if content == "" {
 			return match
+		}
+
+		if supportMD {
+			return content
 		}
 
 		// Check if it is MD link or Raw

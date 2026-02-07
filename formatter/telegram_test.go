@@ -23,20 +23,22 @@ func TestMD2Telegram(t *testing.T) {
 		{
 			name:     "Markdown Table",
 			input:    "| Name | Age |\n|---|---|\n| Bob | 30 |",
-			expected: "1. •••\n\t- *Name*: Bob\n\t- *Age*: 30",
+			expected: "1. •••\n\t- **Name**: Bob\n\t- **Age**: 30",
 		},
 
 		// 3. Headings (Custom mapping for Telegram)
-		{name: "H1 Header", input: "# Title", expected: "🔹 **Title**"},
-		{name: "H2 Header", input: "## Subtitle", expected: "🔹 __Subtitle__"},
-		{name: "H3 Header", input: "### Section", expected: "🔹 Section"},
-		{name: "H4 Header", input: "#### Subsection", expected: "🔹 Subsection"},
+		{name: "H1 Header", input: "# Title", expected: "1️⃣ Title"},
+		{name: "H2 Header", input: "## Subtitle", expected: "2️⃣ Subtitle"},
+		{name: "H3 Header", input: "### Section", expected: "3️⃣ Section"},
+		{name: "H4 Header", input: "#### Subsection", expected: "4️⃣ Subsection"},
+		{name: "H5 Header", input: "##### Subsection", expected: "5️⃣ Subsection"},
+		{name: "H6 Header", input: "###### Subsection", expected: "6️⃣ Subsection"},
 
 		// 4. Mixed Content
 		{
 			name:     "Complex Message",
 			input:    "# Header\n- Item 1\n- Item 2\nCheck [link](https://test.com)!",
-			expected: "🔹 **Header**\n- Item 1\n- Item 2\nCheck [link](https://test.com)!",
+			expected: "1️⃣ Header\n- Item 1\n- Item 2\nCheck [link](https://test.com)!",
 		},
 	}
 

@@ -1,44 +1,27 @@
 package formatter
 
 import (
-	"strings"
-
 	"JGBot/formatter/ftools"
 )
 
 func FormatMD2Telegram(msg string) string {
-	// 1. Task List
-	msg = strings.ReplaceAll(msg, "- [ ] ", "- ⬜ ")
-	msg = strings.ReplaceAll(msg, "- [x] ", "- ✅ ")
+	msg, codeBlocks := ftools.MapCodeBlocks(msg)
+	msg, links := ftools.MapLinks(msg)
 
-	// 2. Tables (using ftools)
+	msg = ftools.FormatHeaders(msg)
 	msg = ftools.FormatTable(msg)
+	msg = ftools.FormatList(msg)
 
-	// 3. Headers & Styles
-	lines := strings.Split(msg, "\n")
-	for i, line := range lines {
-		// Try H1: # Title -> 🔹 **Title**
-		if strings.HasPrefix(line, "# ") {
-			lines[i] = "🔹 **" + strings.TrimPrefix(line, "# ") + "**"
-			continue
-		}
-		// Try H2: ## Subtitle -> 🔹 __Subtitle__
-		if strings.HasPrefix(line, "## ") {
-			lines[i] = "🔹 __" + strings.TrimPrefix(line, "## ") + "__"
-			continue
-		}
-		// Try H3: ### Section -> 🔹 Section
-		if strings.HasPrefix(line, "### ") {
-			lines[i] = "🔹 " + strings.TrimPrefix(line, "### ")
-			continue
-		}
-		// Try H4: #### Subsection -> 🔹 Subsection
-		if strings.HasPrefix(line, "#### ") {
-			lines[i] = "🔹 " + strings.TrimPrefix(line, "#### ")
-			continue
-		}
-	}
-	msg = strings.Join(lines, "\n")
+	// By default telegram support bold, italic, strikethrough, etc.
+	// msg = ftools.ProtectBold(msg)
+
+	// msg = ftools.FormatItalic(msg, "_")
+	// msg = ftools.FormatStrike(msg, "~")
+
+	// msg = ftools.RestoreBold(msg, "*")
+
+	msg = ftools.RestoreLinks(msg, links, true)
+	msg = ftools.RestoreCodeBlocks(msg, codeBlocks, nil)
 
 	return msg
 }
