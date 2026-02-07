@@ -63,7 +63,8 @@ func (ch *WhatsAppChannel) handler(msg *events.Message) {
 		return
 	}
 
-	message, err := whatsappdb.ReceivedMessage(chat, sender, msg.Info.ID, msg.Message.GetConversation())
+	msgContent := GetMsgContent(msg.Message)
+	message, err := whatsappdb.ReceivedMessage(chat, sender, msg.Info.ID, msgContent)
 	if err != nil {
 		log.Error("Error receiving message", "Error", err)
 		return
