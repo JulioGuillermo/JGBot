@@ -33,12 +33,12 @@ type TimerCtl struct {
 		description,
 		message string,
 	)
-	Timers []TimerTask
+	Timers []*TimerTask
 }
 
 func NewTimerCtl() *TimerCtl {
 	return &TimerCtl{
-		Timers: make([]TimerTask, 0),
+		Timers: make([]*TimerTask, 0),
 	}
 }
 
@@ -82,7 +82,7 @@ func (t *TimerCtl) onActivate(tt *TimerTask) {
 func (t *TimerCtl) GetTimer(origin string, name string) *TimerTask {
 	for _, timer := range t.Timers {
 		if timer.Name == name && timer.Origin == origin {
-			return &timer
+			return timer
 		}
 	}
 	return nil
@@ -96,7 +96,7 @@ func (t *TimerCtl) RemoveTimer(origin, name string) error {
 	defer t.Save()
 
 	timer.close()
-	t.Timers = slices.DeleteFunc(t.Timers, func(timer TimerTask) bool {
+	t.Timers = slices.DeleteFunc(t.Timers, func(timer *TimerTask) bool {
 		return timer.Name == name && timer.Origin == origin
 	})
 	return nil
@@ -120,7 +120,7 @@ func (t *TimerCtl) addTimer(
 	}
 	defer t.Save()
 
-	timer := TimerTask{
+	timer := &TimerTask{
 		Origin:    ctx.Origin,
 		Channel:   ctx.Channel,
 		ChatID:    ctx.ChatID,
@@ -176,14 +176,14 @@ func (t *TimerCtl) AddAlarm(
 	)
 }
 
-func (t *TimerCtl) ListTimers(origin string) []TimerTask {
-	var timers []TimerTask
+func (t *TimerCtl) ListTimers(origin string) []*TimerTask {
+	var timers []*TimerTask
 	for _, timer := range t.Timers {
 		if timer.Origin == origin {
 			timers = append(timers, timer)
 		}
 	}
-	slices.SortFunc(timers, func(a, b TimerTask) int {
+	slices.SortFunc(timers, func(a, b *TimerTask) int {
 		return strings.Compare(a.Name, b.Name)
 	})
 	return timers

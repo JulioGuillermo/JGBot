@@ -32,7 +32,7 @@ type CronCtl struct {
 		message string,
 	)
 
-	Tasks []CronTask
+	Tasks []*CronTask
 }
 
 var Cron *CronCtl
@@ -47,7 +47,7 @@ func NewCronCtl() *CronCtl {
 
 	return &CronCtl{
 		C:     c,
-		Tasks: make([]CronTask, 0),
+		Tasks: make([]*CronTask, 0),
 	}
 }
 
@@ -90,7 +90,7 @@ func (c *CronCtl) onActivate(task *CronTask) {
 func (c *CronCtl) GetJob(origin, name string) *CronTask {
 	for _, task := range c.Tasks {
 		if task.Name == name && task.Origin == origin {
-			return &task
+			return task
 		}
 	}
 	return nil
@@ -104,7 +104,7 @@ func (c *CronCtl) RemoveJob(origin, name string) error {
 	defer c.Save()
 
 	task.close(c.C)
-	c.Tasks = slices.DeleteFunc(c.Tasks, func(t CronTask) bool {
+	c.Tasks = slices.DeleteFunc(c.Tasks, func(t *CronTask) bool {
 		return t.Name == name && t.Origin == origin
 	})
 	return nil
@@ -127,7 +127,7 @@ func (c *CronCtl) AddJob(
 	}
 	defer c.Save()
 
-	task := CronTask{
+	task := &CronTask{
 		Origin:    ctx.Origin,
 		Channel:   ctx.Channel,
 		ChatID:    ctx.ChatID,
@@ -147,14 +147,14 @@ func (c *CronCtl) AddJob(
 	return nil
 }
 
-func (c *CronCtl) ListJobs(origin string) []CronTask {
-	var tasks []CronTask
+func (c *CronCtl) ListJobs(origin string) []*CronTask {
+	var tasks []*CronTask
 	for _, task := range c.Tasks {
 		if task.Origin == origin {
 			tasks = append(tasks, task)
 		}
 	}
-	slices.SortFunc(tasks, func(a, b CronTask) int {
+	slices.SortFunc(tasks, func(a, b *CronTask) int {
 		return strings.Compare(a.Name, b.Name)
 	})
 	return tasks
