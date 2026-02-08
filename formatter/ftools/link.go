@@ -73,3 +73,39 @@ func RestoreLinks(msg string, links []string, supportMD bool) string {
 		return fmt.Sprintf("(%s: %s)", title, url)
 	})
 }
+
+func RestoreLinksHTML(msg string, links []string) string {
+	re := regexp.MustCompile(LinkPlaceholder + `(\d+)`)
+	return re.ReplaceAllStringFunc(msg, func(match string) string {
+		var idx int
+		n, err := fmt.Sscanf(match, LinkPlaceholder+"%d", &idx)
+		if err != nil || n != 1 {
+			return match
+		}
+
+		if idx < 0 || idx >= len(links) {
+			return match
+		}
+
+		content := links[idx]
+		if content == "" {
+			return match
+		}
+
+		// Check if it is MD link or Raw
+		if content[0] != '[' {
+			// Raw URL
+			return fmt.Sprintf(`<a href="%s">%s</a>`, content, content)
+		}
+
+		reMD := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
+		sub := reMD.FindStringSubmatch(content)
+		if len(sub) != 3 {
+			return content
+		}
+
+		title := sub[1]
+		url := sub[2]
+		return fmt.Sprintf(`<a href="%s">%s</a>`, url, title)
+	})
+}

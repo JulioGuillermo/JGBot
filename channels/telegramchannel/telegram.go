@@ -58,7 +58,7 @@ func (ctl *TelegramCtl) SendMessage(chatID int64, message string) error {
 	_, err := ctl.client.SendMessage(ctl.ctx, &bot.SendMessageParams{
 		ChatID:    chatID,
 		Text:      message,
-		ParseMode: models.ParseModeMarkdown,
+		ParseMode: models.ParseModeHTML,
 	})
 	return err
 }

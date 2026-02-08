@@ -44,3 +44,35 @@ func FormatHeaders(msg string) string {
 	}
 	return strings.Join(lines, "\n")
 }
+
+func FormatHeaderHTML(line string) (string, bool) {
+	if strings.HasPrefix(line, "# ") {
+		return "<h1>" + strings.TrimPrefix(line, "# ") + "</h1>", true
+	}
+	if strings.HasPrefix(line, "## ") {
+		return "<h2>" + strings.TrimPrefix(line, "## ") + "</h2>", true
+	}
+	if strings.HasPrefix(line, "### ") {
+		return "<h3>" + strings.TrimPrefix(line, "### ") + "</h3>", true
+	}
+	if strings.HasPrefix(line, "#### ") {
+		return "<h4>" + strings.TrimPrefix(line, "#### ") + "</h4>", true
+	}
+	if strings.HasPrefix(line, "##### ") {
+		return "<h5>" + strings.TrimPrefix(line, "##### ") + "</h5>", true
+	}
+	if strings.HasPrefix(line, "###### ") {
+		return "<h6>" + strings.TrimPrefix(line, "###### ") + "</h6>", true
+	}
+	return line, false
+}
+
+func FormatHeadersHTML(msg string) string {
+	lines := strings.Split(msg, "\n")
+	for i, line := range lines {
+		if h, ok := FormatHeaderHTML(line); ok {
+			lines[i] = h
+		}
+	}
+	return strings.Join(lines, "\n")
+}

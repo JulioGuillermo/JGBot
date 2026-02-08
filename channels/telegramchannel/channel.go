@@ -113,7 +113,7 @@ func (ch *TelegramChannel) Status(chatID uint, status channels.Status) error {
 }
 
 func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
-	message = formatter.FormatMD2Telegram(message)
+	message = formatter.FormatMD2TelegramHTML(message)
 
 	chat, err := telegramdb.GetChat(chatID)
 	if err != nil {
