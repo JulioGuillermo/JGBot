@@ -129,7 +129,17 @@ The `Providers` array allows you to configure multiple Large Language Model (LLM
 }
 ```
 
-## Setup and Management
+## Persistent Task Storage
+ 
+ Besides the main configuration, JGBot maintains several files to store the state of active tasks and sessions:
+ 
+ - **`config/sessions.json`**: Stores session-specific configurations and permissions.
+ - **`config/cron.json`**: Contains active cron job definitions.
+ - **`config/timers.json`**: Stores pending timers and alarms.
+ 
+ These files are managed automatically by the system when tasks are added or removed through AI tools.
+
+ ## Setup and Management
 
 ### Initial Configuration
 

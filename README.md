@@ -7,10 +7,14 @@ A modular, AI-powered chatbot framework featuring multi-channel support, a custo
 - **Multi-Channel Support**: Seamless integration with Telegram and WhatsApp.
 - **Custom Skills**: Extend functionality using JavaScript-based skills and tools.
 - **AI Agents**: Robust conversation handling powered by LangChainGo, supporting multiple LLM providers.
+- **Cron Jobs**: Schedule recurring tasks and messages with flexible cron expressions.
+- **Timers & Alarms**: Set one-time timeouts or specific alarms to trigger bot actions.
+- **Message Reactions**: Built-in support for reacting to messages with emojis.
 - **Database Integration**: Reliable data persistence using SQLite with GORM.
 - **Virtual File System (VFS)**: Isolated file storage for sessions, including private and shared access.
 - **HTTP Client**: Built-in, fluent HTTP functionality for external API interactions.
 - **Modular & Extensible**: Designed for easy customization and growth.
+
 
 ## Installation
 
@@ -82,8 +86,8 @@ async function main() {
   return `You said: ${input}`;
 }
 
-// The result of the last expression is returned to the AI
-await main();
+// The skill must export the result as default
+export default await main();
 ```
 
 ## Architecture
@@ -103,6 +107,8 @@ JGBot/
 ├── agent/          # AI agent and tool implementations
 ├── channels/       # Channel-specific logic (Telegram, WhatsApp)
 ├── conf/           # Configuration management
+├── config/         # Persistent configuration files (sessions, cron, timers)
+├── cron/           # Cron job system implementation
 ├── database/       # Database models and GORM setup
 ├── doc/            # Detailed documentation
 ├── js/             # JavaScript runtime and Go-JS bridge
@@ -110,6 +116,7 @@ JGBot/
 ├── session/        # Session logic and lifecycle
 ├── skill/          # Skill loader and executor
 ├── skills/         # Directory for user-defined skills
+├── timer/          # Timer and alarm system implementation
 ├── main.go         # Entry point
 └── go.mod          # Go module definitions
 ```
@@ -142,6 +149,11 @@ We welcome contributions!
 
 ## Support
 
-- Explore the detailed guides in the `doc/` directory.
+- Explore the detailed guides in the `doc/` directory:
+  - [Custom Skills Development Guide](doc/CUSTOM_SKILL.md)
+  - [Available Skills List](doc/AVAILABLE_SKILLS.md)
+  - [Session Configuration Guide](doc/SESSION.md)
+  - [Scheduled Tasks Guide (Cron & Timers)](doc/SCHEDULED_TASKS.md)
+  - [Configuration Guide](doc/CONF.md)
 - Review existing GitHub issues or create a new one for bugs and feature requests.
 

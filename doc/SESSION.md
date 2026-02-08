@@ -52,10 +52,12 @@ When a new interaction is detected from a previously unknown origin (e.g., a new
     "match": ".*"
   },
   "tools": [
-    { "name": "message_reaction", "enabled": true },
-    { "name": "javascript", "enabled": true },
-    { "name": "skills", "enabled": true }
-  ],
+     { "name": "message_reaction", "enabled": true },
+     { "name": "cron", "enabled": true },
+     { "name": "timer", "enabled": true },
+     { "name": "javascript", "enabled": true },
+     { "name": "skills", "enabled": true }
+   ],
   "skills": [
     {
       "name": "weather_skill",
@@ -87,7 +89,12 @@ When a new interaction is detected from a previously unknown origin (e.g., a new
 - **`respond.match`** (string): A regex pattern. The bot only responds if the message matches this pattern.
 
 #### Tools & Skills
-- **`tools`**: Control access to core system capabilities like `message_reaction`, raw `javascript` execution, or the `skills` system.
+- **`tools`**: Control access to core system capabilities:
+  - `message_reaction`: Allows the bot to react to messages with emojis.
+  - `cron`: Enables scheduling repeat tasks and messages.
+  - `timer`: Enables setting one-time alarms and timeouts.
+  - `javascript`: Raw JavaScript execution for advanced logic.
+  - `skills`: Access to the custom skill system.
 - **`skills`**: A list of available custom skills. You can enable/disable them individually for each session.
 
 ## The Hot-Reload Workflow
