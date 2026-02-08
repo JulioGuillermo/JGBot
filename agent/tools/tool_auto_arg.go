@@ -7,10 +7,15 @@ import (
 	"JGBot/log"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 
 	"github.com/tmc/langchaingo/callbacks"
+)
+
+var (
+	ToolArgError = errors.New("TOOL_ARG_ERROR")
 )
 
 type ToolAutoArgs[Args any] struct {
@@ -52,6 +57,9 @@ func (t *ToolAutoArgs[Args]) Call(ctx context.Context, input string) (string, er
 	}
 
 	args, err := t.getArgs(input)
+	if err != nil && errors.Is(err, ToolArgError) {
+		return t.fail(ctx, "TOOL_ARG_ERROR: %s", errors.New(input))
+	}
 	if err != nil {
 		return t.fail(ctx, "ARGS ERROR: Fail to parse args from input JSON: %s", err)
 	}
@@ -79,8 +87,26 @@ func (t *ToolAutoArgs[Args]) success(ctx context.Context, output string) (string
 	return output, nil
 }
 
+func (t *ToolAutoArgs[Args]) checkInput(input string) error {
+	var args map[string]any
+
+	if err := json.Unmarshal([]byte(input), &args); err != nil {
+		return err
+	}
+
+	if _, ok := args["error"]; ok {
+		return ToolArgError
+	}
+
+	return nil
+}
+
 func (t *ToolAutoArgs[Args]) getArgs(input string) (Args, error) {
 	var args Args
+
+	if err := t.checkInput(input); err != nil {
+		return args, err
+	}
 
 	content, err := toolargs.GetToolArgContent(input)
 	if err != nil {
