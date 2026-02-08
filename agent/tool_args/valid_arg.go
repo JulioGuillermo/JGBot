@@ -9,7 +9,10 @@ func GetToolArgContent(args string) (string, error) {
 func GetMsgValidArg(msg string) string {
 	content, err := GetToolArgContent(msg)
 	if err != nil {
-		return NewToolArgError(fmt.Sprintf("Could not parse arg as a valid JSON Arguments: %s\n%s", err.Error(), msg)).ToJSON()
+		return ToolArgErrFromStr(
+			msg,
+			fmt.Sprintf("Could not parse arg as a valid JSON Arguments: %s", err.Error()),
+		).ToJSON()
 	}
 
 	return NewToolArg(content).ToJSON()
@@ -18,7 +21,18 @@ func GetMsgValidArg(msg string) string {
 func GetMsgToolCallArg(msg string) string {
 	content, err := GetToolArgContent(msg)
 	if err != nil {
-		return NewToolArgError(fmt.Sprintf("Could not parse arg as a valid JSON Arguments: %s\n%s", err.Error(), msg)).ToJSON()
+		return ToolArgErrFromStr(
+			msg,
+			fmt.Sprintf("Could not parse arg as a valid JSON Arguments: %s", err.Error()),
+		).ToJSON()
+	}
+
+	if !LooksJson(content) && !IsJson(content) {
+		return ToolArgErrFromStr(
+			content,
+			"Could not parse arg as a valid JSON Arguments",
+		).ToJSON()
+		// return NewFromStrArg(content).ToJSON()
 	}
 
 	return NewToolArg(content).ToJSON()

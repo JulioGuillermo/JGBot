@@ -6,13 +6,21 @@ import (
 	"strings"
 )
 
-func ExtractArg(args string) (string, bool, error) {
+func LooksJson(args string) bool {
 	trimmed := strings.TrimSpace(args)
-	if !strings.HasPrefix(trimmed, "{") && !strings.HasPrefix(trimmed, "[") {
+	return strings.HasPrefix(trimmed, "{") || strings.HasPrefix(trimmed, "[")
+}
+
+func IsJson(args string) bool {
+	return json.Valid([]byte(args))
+}
+
+func ExtractArg(args string) (string, bool, error) {
+	if !LooksJson(args) {
 		return args, false, nil
 	}
 
-	if !json.Valid([]byte(args)) {
+	if !IsJson(args) {
 		return "", false, errors.New("invalid json")
 	}
 
@@ -23,7 +31,12 @@ func ExtractArg(args string) (string, bool, error) {
 		return args, false, nil
 	}
 
-	content, ok := argsMap["__arg1"]
+	content, ok := argsMap["string_arg"]
+	if ok {
+		return content.(string), true, nil
+	}
+
+	content, ok = argsMap["__arg1"]
 	if !ok {
 		return args, false, nil
 	}

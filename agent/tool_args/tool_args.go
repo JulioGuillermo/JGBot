@@ -6,7 +6,12 @@ type ToolArg struct {
 	Arg any `json:"__arg1"`
 }
 
+type PlainArg struct {
+	Arg string `json:"string_arg"`
+}
+
 type ToolArgError struct {
+	Arg   any    `json:"__arg1"`
 	Error string `json:"error"`
 }
 
@@ -19,8 +24,30 @@ func NewToolArg(arg string) *ToolArg {
 	return &ToolArg{Arg: a}
 }
 
-func NewToolArgError(errMsg string) *ToolArgError {
-	return &ToolArgError{Error: errMsg}
+func NewFromStrArg(arg string) *ToolArg {
+	strArg := &PlainArg{
+		Arg: arg,
+	}
+	return &ToolArg{
+		Arg: strArg,
+	}
+}
+
+func NewToolArgError(arg any, errMsg string) *ToolArgError {
+	return &ToolArgError{
+		Arg:   arg,
+		Error: errMsg,
+	}
+}
+
+func ToolArgErrFromStr(arg, errMsg string) *ToolArgError {
+	strArg := &PlainArg{
+		Arg: arg,
+	}
+	return &ToolArgError{
+		Arg:   strArg,
+		Error: errMsg,
+	}
 }
 
 func (t *ToolArg) ToJSON() string {
