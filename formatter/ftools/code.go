@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const CodePlaceholder = "CODEBLOCK_PH_"
+const CodePlaceholder = "«CODEBLOCKPH»"
 
 // MapCodeBlocks finds code blocks and replaces them with placeholders.
 func MapCodeBlocks(msg string) (string, []string) {

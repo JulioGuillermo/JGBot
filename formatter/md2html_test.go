@@ -16,6 +16,16 @@ func TestFormatMD2HTML(t *testing.T) {
 			expected: "<b>bold</b> <i>italic</i>",
 		},
 		{
+			name:     "Bold and Italic2",
+			input:    "**bold _italic_**",
+			expected: "<b>bold <i>italic</i></b>",
+		},
+		{
+			name:     "Bold and Italic2",
+			input:    "*bold __italic__*",
+			expected: "<i>bold <b>italic</b></i>",
+		},
+		{
 			name:     "Headers",
 			input:    "# H1\n## H2",
 			expected: "<h1>H1</h1>\n<h2>H2</h2>",

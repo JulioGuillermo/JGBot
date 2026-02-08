@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-const LinkPlaceholder = "LINK_PH_"
+const LinkPlaceholder = "«LINKPH»"
 
 // MapLinks finds [text](url) and raw URLs, replacing them with placeholders to protect them.
 func MapLinks(msg string) (string, []string) {
