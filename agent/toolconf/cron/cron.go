@@ -9,9 +9,7 @@ import (
 	"strings"
 )
 
-type CronInitializerConf struct {
-	OnExecute func(ctx *ctxs.RespondCtx, args CronArgs)
-}
+type CronInitializerConf struct{}
 
 func (c *CronInitializerConf) Name() string {
 	return "cron"
@@ -39,9 +37,7 @@ func (c *CronInitializerConf) readCronJob(ctx *ctxs.RespondCtx, name string) str
 }
 
 func (c *CronInitializerConf) addCronJob(rCtx *ctxs.RespondCtx, args CronArgs) string {
-	err := cron.Cron.AddJob(rCtx.Origin, args.Name, args.Description, args.Schedule.ToCron(), func() {
-		c.OnExecute(rCtx, args)
-	})
+	err := cron.Cron.AddJob(rCtx, args.Name, args.Description, args.Message, args.Schedule.ToCron())
 	if err != nil {
 		return fmt.Sprintf("Fail to add cron job %s: %s", args.Name, err.Error())
 	}

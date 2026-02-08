@@ -1,6 +1,9 @@
 package cron
 
 import (
+	"JGBot/ctxs"
+	"JGBot/log"
+	"JGBot/tools"
 	"errors"
 	"slices"
 	"strings"
@@ -8,8 +11,26 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+const (
+	CRON_FILE = "config/cron.json"
+)
+
 type CronCtl struct {
 	C *cron.Cron
+
+	OnActivation func(
+		origin string,
+		channel string,
+		chatID uint,
+		chatName string,
+		senderID uint,
+		messageID uint,
+
+		name,
+		schedule,
+		description,
+		message string,
+	)
 
 	Tasks []CronTask
 }
@@ -30,6 +51,42 @@ func NewCronCtl() *CronCtl {
 	}
 }
 
+func (c *CronCtl) Save() {
+	tools.WriteJSONFile(CRON_FILE, c.Tasks)
+}
+
+func (c *CronCtl) Load() {
+	err := tools.ReadJSONFile(CRON_FILE, &c.Tasks)
+	if err != nil {
+		log.Error("Fail to load cron", "error", err)
+		return
+	}
+	for _, task := range c.Tasks {
+		log.Info("Cron loaded", "name", task.Name, "schedule", task.Schedule.String())
+		task.activate(c.C, c.onActivate)
+	}
+}
+
+func (c *CronCtl) onActivate(task *CronTask) {
+	if c.OnActivation != nil {
+		c.OnActivation(
+			// Chat info
+			task.Origin,
+			task.Channel,
+			task.ChatID,
+			task.ChatName,
+			task.SenderID,
+			task.MessageID,
+
+			// Timer info
+			task.Name,
+			task.Schedule.String(),
+			task.Description,
+			task.Message,
+		)
+	}
+}
+
 func (c *CronCtl) GetJob(origin, name string) *CronTask {
 	for _, task := range c.Tasks {
 		if task.Name == name && task.Origin == origin {
@@ -39,38 +96,54 @@ func (c *CronCtl) GetJob(origin, name string) *CronTask {
 	return nil
 }
 
-func (c *CronCtl) AddJob(origin, name, description string, args CronArgs, job func()) error {
-	if c.GetJob(origin, name) != nil {
-		return errors.New("task with name " + name + " already exists")
-	}
-
-	id, err := c.C.AddFunc(args.CronString(), job)
-	if err != nil {
-		return err
-	}
-
-	task := CronTask{
-		Origin:      origin,
-		Name:        name,
-		Description: description,
-		Schedule:    args,
-		ID:          id,
-	}
-	c.Tasks = append(c.Tasks, task)
-
-	return nil
-}
-
 func (c *CronCtl) RemoveJob(origin, name string) error {
 	task := c.GetJob(origin, name)
 	if task == nil {
 		return errors.New("task with name " + name + " not found")
 	}
+	defer c.Save()
 
-	c.C.Remove(task.ID)
+	task.close(c.C)
 	c.Tasks = slices.DeleteFunc(c.Tasks, func(t CronTask) bool {
 		return t.Name == name && t.Origin == origin
 	})
+	return nil
+}
+
+func (c *CronCtl) AddJob(
+	// ctx
+	ctx *ctxs.RespondCtx,
+
+	// task info
+	name string,
+	description string,
+	message string,
+
+	// cron info
+	args CronArgs,
+) error {
+	if c.GetJob(ctx.Origin, name) != nil {
+		return errors.New("task with name " + name + " already exists")
+	}
+	defer c.Save()
+
+	task := CronTask{
+		Origin:    ctx.Origin,
+		Channel:   ctx.Channel,
+		ChatID:    ctx.ChatID,
+		ChatName:  ctx.ChatName,
+		SenderID:  ctx.Message.SenderID,
+		MessageID: ctx.Message.ID,
+
+		Name:        name,
+		Description: description,
+		Message:     message,
+
+		Schedule: args,
+	}
+	task.activate(c.C, c.onActivate)
+	c.Tasks = append(c.Tasks, task)
+
 	return nil
 }
 

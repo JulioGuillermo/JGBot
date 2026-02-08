@@ -13,6 +13,7 @@ type RespondCtx struct {
 	Origin      string
 	Channel     string
 	ChatID      uint
+	ChatName    string
 	SessionConf *sc.SessionConf
 	History     []*sessiondb.SessionMessage
 	Message     *sessiondb.SessionMessage

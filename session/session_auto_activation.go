@@ -1,12 +1,9 @@
 package session
 
 import (
-	"JGBot/agent"
 	"JGBot/channels"
-	"JGBot/channels/channelctl"
 	"JGBot/ctxs"
 	"JGBot/log"
-	"JGBot/session/sessionconf"
 	"JGBot/session/sessiondb"
 	"errors"
 	"fmt"
@@ -14,36 +11,20 @@ import (
 	"github.com/tmc/langchaingo/agents"
 )
 
-type SessionCtl struct {
-	channelCtl *channelctl.ChannelCtl
-	agent      *agent.AgentsCtl
-	sessionCtl *sessionconf.SessionCtl
-}
+func (s *SessionCtl) OnAutoActivation(
+	origin string,
+	channel string,
+	chatID uint,
+	chatName string,
+	senderID uint,
+	messageID uint,
 
-func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*SessionCtl, error) {
-	sessiondb.Migrate()
-
-	sessionCtl, err := sessionconf.NewSessionCtl()
-	if err != nil {
-		return nil, err
-	}
-
-	ctl := &SessionCtl{
-		channelCtl: channelCtl,
-		agent:      agent,
-		sessionCtl: sessionCtl,
-	}
-
-	channelCtl.OnMessage(ctl.OnNewMessage)
-
-	return ctl, nil
-}
-
-func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
-	if message == "" {
-		log.Info("Empty msg")
-		return
-	}
+	name,
+	schedule,
+	description,
+	message string,
+) {
+	msgContent := fmt.Sprintf("CRON EXECUTION: %s\n\nSCHEDULE: %s\n\nDESCRIPTION: %s\n\nMESSAGE: %s", name, schedule, description, message)
 
 	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
 	if sessionConf == nil {
@@ -60,33 +41,18 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
-	if message == "/reset!" {
-		err := sessiondb.ClearHistory(channel, chatID)
-		if err != nil {
-			log.Error("Clear history error", "err", err)
-			s.channelCtl.SendMessage(channel, chatID, fmt.Sprintf("Fail to clear history: %s", err.Error()))
-		} else {
-			s.channelCtl.SendMessage(channel, chatID, "History cleared")
-		}
-		return
-	}
-
 	history, err := sessiondb.GetHistory(channel, chatID, sessionConf.HistorySize)
 	if err != nil {
 		log.Error("Get history error", "err", err)
 		return
 	}
-	msg, err := sessiondb.NewSessionMessage(channel, chatID, chatName, senderID, senderName, messageID, message, "user", "")
+	msg, err := sessiondb.NewSessionMessage(channel, chatID, chatName, senderID, "tool", messageID, msgContent, "tool", "")
 	if err != nil {
 		log.Error("New session message error", "err", err)
 		return
 	}
 	if msg == nil {
 		log.Info("Empty msg")
-		return
-	}
-
-	if !sessionConf.Respond.Respond(message) {
 		return
 	}
 
@@ -131,10 +97,10 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 	if errors.Is(err, agents.ErrNotFinished) {
-		log.Error("Agent Max Iter Error", "err", err)
-		s.channelCtl.SendMessage(channel, chatID, "[MAX ITER] I need a break 🤒...")
+		log.Error("(AUTO ACT) Agent Max Iter Error", "err", err)
+		s.channelCtl.SendMessage(channel, chatID, "(AUTO ACT) [MAX ITER] I need a break 🤒...")
 		return
 	}
 	log.Error("Agent respond error", "err", err)
-	s.channelCtl.SendMessage(channel, chatID, "[ERROR] I probably made a mistake 😵‍💫...")
+	s.channelCtl.SendMessage(channel, chatID, "(AUTO ACT) [ERROR] I probably made a mistake 😵‍💫...")
 }

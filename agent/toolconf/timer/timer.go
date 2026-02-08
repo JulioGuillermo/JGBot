@@ -9,9 +9,7 @@ import (
 	"strings"
 )
 
-type TimerInitializerConf struct {
-	OnExecute func(ctx *ctxs.RespondCtx, args TimerArgs)
-}
+type TimerInitializerConf struct{}
 
 func (c *TimerInitializerConf) Name() string {
 	return "timer"
@@ -43,13 +41,9 @@ func (c *TimerInitializerConf) addTimer(rCtx *ctxs.RespondCtx, args TimerArgs) s
 
 	switch args.Type {
 	case "timeout":
-		err = timer.Timer.AddTimeout(rCtx.Origin, args.Name, args.Description, args.TimerTime.ToTime(), func() {
-			c.OnExecute(rCtx, args)
-		})
+		err = timer.Timer.AddTimeout(rCtx, args.Name, args.Description, args.Message, args.TimerTime.ToTime())
 	case "alarm":
-		err = timer.Timer.AddAlarm(rCtx.Origin, args.Name, args.Description, args.TimerTime.ToTime(), func() {
-			c.OnExecute(rCtx, args)
-		})
+		err = timer.Timer.AddAlarm(rCtx, args.Name, args.Description, args.Message, args.TimerTime.ToTime())
 	default:
 		return fmt.Sprintf("Fail to add timer %s: invalid type %s, must be 'timeout' or 'alarm'", args.Name, args.Type)
 	}

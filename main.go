@@ -65,12 +65,12 @@ func main() {
 		log.Error("Fail to initialize session", "error", err)
 		os.Exit(1)
 	}
+	timer.Timer.OnActivation = session.OnAutoActivation
+	cron.Cron.OnActivation = session.OnAutoActivation
 
-	// channelCtl.OnMessage(func(channel string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string) {
-	// 	fmt.Println("\033[36m  ### Received a message >>>\033[0m", channel, chatID, chatName, senderID, senderName, messageID, message)
-	// 	channelCtl.SendMessage(channel, chatID, "Hi..."+senderName)
-	// 	channelCtl.ReactMessage(channel, chatID, messageID, "👍")
-	// })
+	log.Info("Loading timers and cron jobs...")
+	timer.Timer.Load()
+	cron.Cron.Load()
 
 	log.Info("System ready and running...")
 
