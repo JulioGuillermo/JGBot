@@ -28,7 +28,7 @@ type TimerTask struct {
 }
 
 func (tt *TimerTask) setSchedule() {
-	if tt.Type == "alarm" {
+	if tt.Type == ALARM {
 		tt.Schedule = tt.Time.ToTime()
 		return
 	}
