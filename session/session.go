@@ -10,6 +10,7 @@ import (
 	"JGBot/session/sessiondb"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/tmc/langchaingo/agents"
 )
@@ -33,6 +34,8 @@ func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*
 		agent:      agent,
 		sessionCtl: sessionCtl,
 	}
+
+	agent.SetDependencies(sessionCtl, channelCtl)
 
 	channelCtl.OnMessage(ctl.OnNewMessage)
 
@@ -76,6 +79,12 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		log.Error("Get history error", "err", err)
 		return
 	}
+
+	isAdmin, message := s.IsAdmin(sessionConf.Admin, message)
+	if isAdmin {
+		log.Info("Using ADMIN permissions")
+	}
+
 	msg, err := sessiondb.NewSessionMessage(channel, chatID, chatName, senderID, senderName, messageID, message, "user", "")
 	if err != nil {
 		log.Error("New session message error", "err", err)
@@ -98,6 +107,9 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		SessionConf: sessionConf,
 		History:     history,
 		Message:     msg,
+		IsAdmin:     isAdmin,
+		SessionCtl:  s.sessionCtl,
+		ChannelCtl:  s.channelCtl,
 		OnResponse: func(text, role, extra string) error {
 			sessiondb.NewSessionMessage(
 				channel,
@@ -137,4 +149,25 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	}
 	log.Error("Agent respond error", "err", err)
 	s.channelCtl.SendMessage(channel, chatID, "[ERROR] I probably made a mistake 😵‍💫...")
+}
+
+func (s *SessionCtl) IsAdmin(adminPermission string, message string) (bool, string) {
+	admin := false
+	if strings.HasPrefix(message, "/admin ") {
+		admin = true
+		message = strings.TrimPrefix(message, "/admin ")
+	} else if message == "/admin" {
+		admin = true
+		message = ""
+	}
+
+	if adminPermission == "full" {
+		return true, message
+	}
+
+	if adminPermission == "allow" {
+		return admin, message
+	}
+
+	return false, message
 }

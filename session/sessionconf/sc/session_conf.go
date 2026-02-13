@@ -6,6 +6,7 @@ type SessionConf struct {
 	Name   string
 	ID     string
 	Origin string
+	Admin  string
 
 	Allowed bool
 	Respond Respond
@@ -33,6 +34,7 @@ func NewSessionConf(name, id, origin string) SessionConf {
 		Name:   name,
 		ID:     id,
 		Origin: origin,
+		Admin:  "",
 
 		Allowed:       false,
 		HistorySize:   50,

@@ -3,6 +3,7 @@ package agent
 import (
 	"JGBot/agent/handler"
 	"JGBot/agent/subagent"
+	"JGBot/agent/toolconf/admin"
 	"JGBot/ctxs"
 
 	"github.com/tmc/langchaingo/callbacks"
@@ -38,6 +39,18 @@ func (a *AgentsCtl) GetTools(ctx *ctxs.RespondCtx, handler callbacks.Handler) []
 
 		tools = append(tools, tool)
 	}
+
+	if !ctx.IsAdmin {
+		return tools
+	}
+
+	listSessions := admin.NewAdminListSessionsInitializerConf().ToolInitializer(ctx)
+	listSessions.SetHandler(handler)
+	tools = append(tools, listSessions)
+
+	sendMessage := admin.NewAdminSendMessageInitializerConf().ToolInitializer(ctx)
+	sendMessage.SetHandler(handler)
+	tools = append(tools, sendMessage)
 
 	return tools
 }

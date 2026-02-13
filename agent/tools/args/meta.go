@@ -15,7 +15,8 @@ type TypeMetaData struct {
 	SubType *TypeMetaData
 	KeyType string
 
-	Fields []*TypeMetaData
+	AdminOnly bool
+	Fields    []*TypeMetaData
 }
 
 func (m *TypeMetaData) IsArray() bool {
@@ -41,8 +42,8 @@ func (m *TypeMetaData) FieldName() string {
 	return m.Name
 }
 
-func (m *TypeMetaData) String() string {
-	return m.getString("")
+func (m *TypeMetaData) String(isAdmin bool) string {
+	return m.getString("", isAdmin)
 }
 
 func (m *TypeMetaData) getFieldNameString() string {
@@ -59,17 +60,21 @@ func (m *TypeMetaData) getFieldDescriptionString() string {
 	return fmt.Sprintf(" /* %s */", m.Description)
 }
 
-func (m *TypeMetaData) getString(prefix string) string {
+func (m *TypeMetaData) getString(prefix string, isAdmin bool) string {
+	if m.AdminOnly && !isAdmin {
+		return ""
+	}
+
 	if m.IsArray() {
-		return m.arrayString(prefix)
+		return m.arrayString(prefix, isAdmin)
 	}
 
 	if m.IsMap() {
-		return m.mapString(prefix)
+		return m.mapString(prefix, isAdmin)
 	}
 
 	if m.IsStruct() {
-		return m.structString(prefix)
+		return m.structString(prefix, isAdmin)
 	}
 
 	return m.primitiveString(prefix)
@@ -81,32 +86,48 @@ func (m *TypeMetaData) primitiveString(prefix string) string {
 	return fmt.Sprintf("%s- %s%s%s", prefix, fieldName, m.Type, description)
 }
 
-func (m *TypeMetaData) arrayString(prefix string) string {
+func (m *TypeMetaData) arrayString(prefix string, isAdmin bool) string {
 	fieldName := m.getFieldNameString()
 	description := m.getFieldDescriptionString()
-	subtypeString := m.SubType.getString(prefix + "  ")
+	subtypeString := m.SubType.getString(prefix+"  ", isAdmin)
 	return fmt.Sprintf("%s- %sArray [%s\n%s\n]", prefix, fieldName, description, subtypeString)
 }
 
-func (m *TypeMetaData) mapString(prefix string) string {
+func (m *TypeMetaData) mapString(prefix string, isAdmin bool) string {
 	fieldName := m.getFieldNameString()
 	description := m.getFieldDescriptionString()
-	subtypeString := m.SubType.getString(prefix + "  ")
+	subtypeString := m.SubType.getString(prefix+"  ", isAdmin)
 	return fmt.Sprintf("%s- %sMap [%s ->%s\n%s\n]", prefix, fieldName, m.KeyType, description, subtypeString)
 }
 
-func (m *TypeMetaData) structString(prefix string) string {
+func (m *TypeMetaData) getFields(isAdmin bool) []*TypeMetaData {
+	var fields []*TypeMetaData
+	for _, field := range m.Fields {
+		if field.AdminOnly && !isAdmin {
+			continue
+		}
+		fields = append(fields, field)
+	}
+	return fields
+}
+
+func (m *TypeMetaData) structString(prefix string, isAdmin bool) string {
 	fieldName := m.getFieldNameString()
 	description := m.getFieldDescriptionString()
+	fields := m.getFields(isAdmin)
 
 	var sb strings.Builder
-	if len(m.Fields) > 0 {
+	if len(fields) > 0 {
 		sb.WriteString("\n")
 	} else {
 		sb.WriteString(" ")
 	}
-	for _, field := range m.Fields {
-		sb.WriteString(field.getString(prefix + "  "))
+	for _, field := range fields {
+		s := field.getString(prefix+"  ", isAdmin)
+		if s == "" {
+			continue
+		}
+		sb.WriteString(s)
 		sb.WriteString(",\n")
 	}
 

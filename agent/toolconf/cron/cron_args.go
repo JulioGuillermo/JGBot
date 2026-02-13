@@ -6,4 +6,5 @@ type CronArgs struct {
 	Description string       `json:"description" description:"The description of the cron job (Note: Required just for 'add'). This is for you to know what the cron job does."`
 	Message     string       `json:"message" description:"The message to send (Note: Required just for 'add'). This is the message you will receive when the cron job is executed."`
 	Schedule    CronSchedule `json:"schedule" description:"The schedule of the cron job (Note: Required just for 'add'). This is the schedule of the cron job."`
+	Session     string       `json:"session" description:"The origin of the session to act on (Note: Admin only). Omit if you want to act on the current session." admin:"true"`
 }

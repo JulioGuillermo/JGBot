@@ -15,8 +15,10 @@ func (c *CronInitializerConf) Name() string {
 	return "cron"
 }
 
-func (c *CronInitializerConf) listCronJobs(ctx *ctxs.RespondCtx) string {
-	jobs := cron.Cron.ListJobs(ctx.Origin)
+func (c *CronInitializerConf) listCronJobs(ctx *ctxs.RespondCtx, args CronArgs) string {
+	origin := ctx.GetOrigin(args.Session)
+
+	jobs := cron.Cron.ListJobs(origin)
 	if len(jobs) == 0 {
 		return "Active cron jobs:\nCron jobs list is empty."
 	}
@@ -28,44 +30,57 @@ func (c *CronInitializerConf) listCronJobs(ctx *ctxs.RespondCtx) string {
 	return sb.String()
 }
 
-func (c *CronInitializerConf) readCronJob(ctx *ctxs.RespondCtx, name string) string {
-	job := cron.Cron.GetJob(ctx.Origin, name)
+func (c *CronInitializerConf) readCronJob(ctx *ctxs.RespondCtx, args CronArgs) string {
+	origin := ctx.GetOrigin(args.Session)
+
+	job := cron.Cron.GetJob(origin, args.Name)
 	if job == nil {
-		return fmt.Sprintf("Fail to read cron job %s: not found", name)
+		return fmt.Sprintf("Fail to read cron job %s: not found", args.Name)
 	}
 	return fmt.Sprintf("Name: %s\nDescription: %s\nSchedule: (%s)", job.Name, job.Description, job.Schedule.String())
 }
 
 func (c *CronInitializerConf) addCronJob(rCtx *ctxs.RespondCtx, args CronArgs) string {
-	err := cron.Cron.AddJob(rCtx, args.Name, args.Description, args.Message, args.Schedule.ToCron())
+	ctx, err := rCtx.GetSessionCtx(args.Session)
+	if err != nil {
+		return err.Error()
+	}
+	if ctx.SessionCtl == nil {
+		return "Error: Session controller not initialized."
+	}
+
+	err = cron.Cron.AddJob(ctx, args.Name, args.Description, args.Message, args.Schedule.ToCron())
 	if err != nil {
 		return fmt.Sprintf("Fail to add cron job %s: %s", args.Name, err.Error())
 	}
-	return fmt.Sprintf("Cron job %s added", args.Name)
+	return fmt.Sprintf("Cron job %s added for session %s", args.Name, ctx.Origin)
 }
 
-func (c *CronInitializerConf) removeCronJob(ctx *ctxs.RespondCtx, name string) string {
-	err := cron.Cron.RemoveJob(ctx.Origin, name)
+func (c *CronInitializerConf) removeCronJob(ctx *ctxs.RespondCtx, args CronArgs) string {
+	origin := ctx.GetOrigin(args.Session)
+
+	err := cron.Cron.RemoveJob(origin, args.Name)
 	if err != nil {
-		return fmt.Sprintf("Fail to remove cron job %s: %s", name, err.Error())
+		return fmt.Sprintf("Fail to remove cron job %s: %s", args.Name, err.Error())
 	}
-	return fmt.Sprintf("Cron job %s removed", name)
+	return fmt.Sprintf("Cron job %s removed", args.Name)
 }
 
 func (c *CronInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool {
 	return &tools.ToolAutoArgs[CronArgs]{
 		ToolName:        c.Name(),
 		ToolDescription: "Allows you to list, read, or execute cron jobs.",
+		IsAdmin:         rCtx.IsAdmin,
 		ToolFunc: func(ctx context.Context, args CronArgs) (string, error) {
 			switch args.Action {
 			case "list":
-				return c.listCronJobs(rCtx), nil
+				return c.listCronJobs(rCtx, args), nil
 			case "read":
-				return c.readCronJob(rCtx, args.Name), nil
+				return c.readCronJob(rCtx, args), nil
 			case "add":
 				return c.addCronJob(rCtx, args), nil
 			case "remove":
-				return c.removeCronJob(rCtx, args.Name), nil
+				return c.removeCronJob(rCtx, args), nil
 			}
 
 			return "Invalid action, please use 'list', 'read', 'add' or 'remove'", nil

@@ -23,12 +23,14 @@ type ToolAutoArgs[Args any] struct {
 	ToolName        string
 	ToolDescription string
 	ToolFunc        func(ctx context.Context, args Args) (string, error)
+	IsAdmin         bool
 }
 
-func NewToolAutoArgs[Args any](toolName, toolDescription string, toolFunc func(ctx context.Context, args Args) (string, error)) *ToolAutoArgs[Args] {
+func NewToolAutoArgs[Args any](toolName, toolDescription string, isAdmin bool, toolFunc func(ctx context.Context, args Args) (string, error)) *ToolAutoArgs[Args] {
 	return &ToolAutoArgs[Args]{
 		ToolName:        toolName,
 		ToolDescription: toolDescription,
+		IsAdmin:         isAdmin,
 		ToolFunc:        toolFunc,
 	}
 }
@@ -39,7 +41,7 @@ func (t *ToolAutoArgs[Args]) Name() string {
 
 func (t *ToolAutoArgs[Args]) Description() string {
 	var argsVar Args
-	argsDescription := args.GetArgsMetaDataString(argsVar)
+	argsDescription := args.GetArgsMetaDataString(argsVar, t.IsAdmin)
 	return templ.GetNativeToolDescription(t.ToolName, t.ToolDescription, argsDescription)
 }
 
@@ -81,6 +83,7 @@ func (t *ToolAutoArgs[Args]) fail(ctx context.Context, msg string, err error) (s
 }
 
 func (t *ToolAutoArgs[Args]) success(ctx context.Context, output string) (string, error) {
+	log.Info("TOOL SUCCESS", "output", output)
 	if t.Handler != nil {
 		t.Handler.HandleToolEnd(ctx, output)
 	}

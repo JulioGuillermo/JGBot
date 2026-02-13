@@ -8,8 +8,10 @@ import (
 	"JGBot/agent/toolconf"
 	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/agent/tools"
+	"JGBot/channels/channelctl"
 	"JGBot/ctxs"
 	"JGBot/log"
+	"JGBot/session/sessionconf"
 	"context"
 	"fmt"
 
@@ -17,8 +19,10 @@ import (
 )
 
 type AgentsCtl struct {
-	ctx       context.Context
-	toolsConf map[string]tools_conf.ToolInitializerConf
+	ctx        context.Context
+	toolsConf  map[string]tools_conf.ToolInitializerConf
+	sessionCtl *sessionconf.SessionCtl
+	channelCtl *channelctl.ChannelCtl
 }
 
 func NewAgentsCtl() (*AgentsCtl, error) {
@@ -30,6 +34,11 @@ func NewAgentsCtl() (*AgentsCtl, error) {
 	agent.toolsConf = toolconf.GetToolMap()
 
 	return agent, nil
+}
+
+func (a *AgentsCtl) SetDependencies(sessionCtl *sessionconf.SessionCtl, channelCtl *channelctl.ChannelCtl) {
+	a.sessionCtl = sessionCtl
+	a.channelCtl = channelCtl
 }
 
 func (a *AgentsCtl) getProvider(providerName string) (llms.Model, error) {

@@ -8,9 +8,9 @@ func GetArgsMetaData(args any) *TypeMetaData {
 	return inspectType(reflect.TypeOf(args))
 }
 
-func GetArgsMetaDataString(args any) string {
+func GetArgsMetaDataString(args any, isAdmin bool) string {
 	meta := GetArgsMetaData(args)
-	return meta.String()
+	return meta.String(isAdmin)
 }
 
 func inspectType(typ reflect.Type) *TypeMetaData {
@@ -80,6 +80,7 @@ func inspectStruct(typ reflect.Type) *TypeMetaData {
 		fieldMeta.Public = field.IsExported()
 		fieldMeta.JsonName = field.Tag.Get("json")
 		fieldMeta.Description = field.Tag.Get("description")
+		fieldMeta.AdminOnly = field.Tag.Get("admin") == "true"
 
 		meta.Fields = append(meta.Fields, fieldMeta)
 	}

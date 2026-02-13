@@ -22,6 +22,7 @@ func (c *ReactionInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.T
 	return &tools.ToolAutoArgs[ReactionArgs]{
 		ToolName:        c.Name(),
 		ToolDescription: "Use this tool to add or update a reaction to a specific message.",
+		IsAdmin:         rCtx.IsAdmin,
 		ToolFunc: func(ctx context.Context, args ReactionArgs) (string, error) {
 			err := rCtx.OnReact(args.MessageID, args.Reaction)
 			if err != nil {

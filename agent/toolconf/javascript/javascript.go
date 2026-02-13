@@ -26,6 +26,7 @@ func (c *JavaScriptInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools
 	return &tools.ToolAutoArgs[JavaScriptArgs]{
 		ToolName:        c.Name(),
 		ToolDescription: "Executes sandboxed JavaScript code (ES2023). Ideal for complex math, data parsing, or logic. Ensure the argument is a valid object with a code property.",
+		IsAdmin:         rCtx.IsAdmin,
 		ToolFunc: func(ctx context.Context, args JavaScriptArgs) (string, error) {
 			sharedRoot, err := files.GetVirtualRoot(rCtx.SessionConf.Origin, "Shared")
 			if err != nil {
