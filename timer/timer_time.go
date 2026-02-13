@@ -8,6 +8,10 @@ import (
 )
 
 type TimerTime struct {
+	Day   int
+	Month int
+	Year  int
+
 	Hour   int
 	Minute int
 	Second int
@@ -90,5 +94,16 @@ func (t TimerTime) ToDuration() time.Duration {
 
 func (t TimerTime) ToTime() time.Time {
 	now := time.Now()
-	return time.Date(now.Year(), now.Month(), now.Day(), t.Hour, t.Minute, t.Second, 0, time.Local)
+
+	if t.Day <= 0 {
+		t.Day = now.Day()
+	}
+	if t.Month <= 0 {
+		t.Month = int(now.Month())
+	}
+	if t.Year <= 0 {
+		t.Year = now.Year()
+	}
+
+	return time.Date(t.Year, time.Month(t.Month), t.Day, t.Hour, t.Minute, t.Second, 0, now.Location())
 }
