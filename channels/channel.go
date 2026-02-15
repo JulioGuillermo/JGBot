@@ -1,5 +1,7 @@
 package channels
 
+import "fmt"
+
 type Status int
 
 const (
@@ -9,12 +11,35 @@ const (
 
 type OnMessageHandler func(channel string, origin string, chatID uint, chatName string, senderID uint, senderName string, messageID uint, message string)
 
-type Channel interface {
+type NamedChannel interface {
 	GetName() string
-	OnMessage(handler OnMessageHandler)
-	Status(chatID uint, status Status) error
-	SendMessage(chatID uint, message string) error
-	ReactMessage(chatID uint, messageID uint, reaction string) error
+}
+
+type SessionControlChannel interface {
 	AutoEnableSession() bool
+}
+
+type LifecycleChannel interface {
 	Close()
+}
+
+type IncomingMessageChannel interface {
+	OnMessage(handler OnMessageHandler)
+}
+
+type MessageSender interface {
+	SendMessage(chatID uint, message string) error
+}
+
+func ErrNotSupported(feature string) error {
+	return fmt.Errorf("%s not supported by this channel", feature)
+}
+
+type Channel interface {
+	NamedChannel
+	LifecycleChannel
+	SessionControlChannel
+
+	IncomingMessageChannel
+	MessageSender
 }
