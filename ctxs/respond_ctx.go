@@ -35,6 +35,10 @@ func (c *RespondCtx) Copy() *RespondCtx {
 	history := make([]*sessiondb.SessionMessage, len(c.History))
 	copy(history, c.History)
 	return &RespondCtx{
+		Origin:      c.Origin,
+		Channel:     c.Channel,
+		ChatID:      c.ChatID,
+		ChatName:    c.ChatName,
 		SessionConf: c.SessionConf,
 		History:     history,
 		Message:     c.Message,
@@ -43,6 +47,7 @@ func (c *RespondCtx) Copy() *RespondCtx {
 		ChannelCtl:  c.ChannelCtl,
 		OnResponse:  c.OnResponse,
 		OnReact:     c.OnReact,
+		GetHistory:  c.GetHistory,
 	}
 }
 
