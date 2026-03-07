@@ -13,11 +13,19 @@ type Console struct {
 
 func ValStr(val *qjs.Value) string {
 	switch {
-	case val.IsString():
+	case val.IsUndefined():
+		return "undefined"
+	case val.IsNull(), val.IsBool(), val.IsNumber(), val.IsString():
+		return val.String()
+	case val.IsObject(), val.IsArray():
+		jsStr, err := val.JSONStringify()
+		if err == nil && jsStr != "" {
+			return jsStr
+		}
 		return val.String()
 	default:
 		jsStr, err := val.JSONStringify()
-		if err == nil {
+		if err == nil && jsStr != "" {
 			return jsStr
 		}
 		return val.String()
