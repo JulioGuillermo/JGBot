@@ -8,6 +8,7 @@ import (
 	"JGBot/agent/toolconf"
 	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/agent/tools"
+	"JGBot/channels"
 	"JGBot/channels/channelctl"
 	"JGBot/ctxs"
 	"JGBot/log"
@@ -51,15 +52,18 @@ func (a *AgentsCtl) getProvider(providerName string) (llms.Model, error) {
 }
 
 func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
+	defer ctx.Status(channels.Normal)
 	log.Info("Agent responding...")
 
 	sysPrompt := prompt.GetSystemPrompt(ctx.SessionConf)
 
 	handler := handler.NewAgentHandler()
 	handler.OnToolCall = func(toolCall tools.ToolCall) {
+		ctx.Status(channels.Writing)
 		ctx.OnResponse("", "assistant", toolCall.ToJson())
 	}
 	handler.OnToolResult = func(toolResult tools.ToolResult) {
+		ctx.Status(channels.Writing)
 		ctx.OnResponse("", "tool", toolResult.ToJson())
 	}
 

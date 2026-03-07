@@ -1,6 +1,7 @@
 package ctxs
 
 import (
+	"JGBot/channels"
 	"JGBot/channels/channelctl"
 	"JGBot/session/sessionconf"
 	"JGBot/session/sessionconf/sc"
@@ -43,6 +44,14 @@ func (c *RespondCtx) Copy() *RespondCtx {
 		OnResponse:  c.OnResponse,
 		OnReact:     c.OnReact,
 	}
+}
+
+func (c *RespondCtx) Status(status channels.Status) {
+	c.ChannelCtl.Status(
+		c.Channel,
+		c.ChatID,
+		status,
+	)
 }
 
 func (c *RespondCtx) GetOrigin(origin string) string {
