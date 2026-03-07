@@ -14,6 +14,7 @@ import (
 	"JGBot/session/sessionconf"
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/tmc/langchaingo/llms"
 )
@@ -86,5 +87,25 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	}
 
 	log.Info("AGENT RESPONDED", "result", result)
-	return ctx.OnResponse(result, "assistant", "")
+	return ctx.OnResponse(removeThink(result), "assistant", "")
+}
+
+func removeThink(text string) string {
+	const Start = "<think>"
+	const End = "</think>"
+	if !strings.HasPrefix(text, Start) {
+		return text
+	}
+
+	idx := strings.Index(text, End)
+	if idx == -1 {
+		return text
+	}
+
+	idx += len(End)
+	if idx >= len(text) {
+		return ""
+	}
+
+	return text[idx:]
 }
