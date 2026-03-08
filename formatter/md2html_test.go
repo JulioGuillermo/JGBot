@@ -60,6 +60,56 @@ func TestFormatMD2HTML(t *testing.T) {
 			input:    "**bold** <script>alert(1)</script>",
 			expected: "<b>bold</b> &lt;script&gt;alert(1)&lt;/script&gt;",
 		},
+		{
+			name:     "Underscore inside words should not become italic",
+			input:    "**ak_arch** and **ak_arch_frontend**",
+			expected: "<b>ak_arch</b> and <b>ak_arch_frontend</b>",
+		},
+		{
+			name:     "Unmatched delimiters stay literal",
+			input:    "**bold *italic _under",
+			expected: "**bold *italic _under",
+		},
+		{
+			name:     "Inline code protects markdown markers",
+			input:    "`**bold** _italic_` outside **bold**",
+			expected: "<code>**bold** _italic_</code> outside <b>bold</b>",
+		},
+		{
+			name:     "Fenced code block protects markdown and html",
+			input:    "```\n**bold** <tag>\n```",
+			expected: "<pre><code>**bold** &lt;tag&gt;</code></pre>",
+		},
+		{
+			name:     "Raw URL becomes anchor",
+			input:    "Visit https://example.com/docs?q=1&lang=en",
+			expected: `Visit <a href="https://example.com/docs?q=1&lang=en">https://example.com/docs?q=1&lang=en</a>`,
+		},
+		{
+			name:     "Markdown link title is protected from style parsing",
+			input:    "[**Docs**](https://example.com)",
+			expected: `<a href="https://example.com">**Docs**</a>`,
+		},
+		{
+			name:     "Header content can still be styled",
+			input:    "# **Important** _now_",
+			expected: "<h1><b>Important</b> <i>now</i></h1>",
+		},
+		{
+			name:     "Italic underscore keeps punctuation boundaries",
+			input:    "Start _italic_, end.",
+			expected: "Start <i>italic</i>, end.",
+		},
+		{
+			name:     "Multiple raw urls are restored independently",
+			input:    "A https://a.test B https://b.test",
+			expected: `A <a href="https://a.test">https://a.test</a> B <a href="https://b.test">https://b.test</a>`,
+		},
+		{
+			name:     "Escaped html around markdown and code",
+			input:    "<b>unsafe</b> and `x < y`",
+			expected: "&lt;b&gt;unsafe&lt;/b&gt; and <code>x &lt; y</code>",
+		},
 	}
 
 	for _, tt := range tests {

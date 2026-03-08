@@ -35,3 +35,34 @@ func TestRestoreCodeBlocks(t *testing.T) {
 		t.Errorf("Restore with func failed: got %q", gotTyped)
 	}
 }
+
+func TestRestoreCodeBlocksHTML(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		blocks   []string
+		expected string
+	}{
+		{
+			name:     "Inline code escapes html",
+			input:    fmt.Sprintf("A %s0 B", CodePlaceholder),
+			blocks:   []string{"`x < y`"},
+			expected: "A <code>x &lt; y</code> B",
+		},
+		{
+			name:     "Fenced code escapes html",
+			input:    fmt.Sprintf("A %s0 B", CodePlaceholder),
+			blocks:   []string{"```\n<tag>\n```"},
+			expected: "A <pre><code>&lt;tag&gt;</code></pre> B",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := RestoreCodeBlocksHTML(tt.input, tt.blocks)
+			if got != tt.expected {
+				t.Errorf("RestoreCodeBlocksHTML() = %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}

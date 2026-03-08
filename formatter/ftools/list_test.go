@@ -9,39 +9,39 @@ func TestFormatList(t *testing.T) {
 		expected string
 	}{
 		{
-			name:     "To Do List",
+			name:     "Todo list with dash",
 			input:    "- [ ] To do",
 			expected: "- ⬜ To do",
 		},
 		{
-			name:     "To Do List",
+			name:     "Todo list with star",
 			input:    "* [ ] To do",
 			expected: "- ⬜ To do",
 		},
 		{
-			name:     "Done List",
+			name:     "Done list lowercase",
 			input:    "- [x] Done",
 			expected: "- ✅ Done",
 		},
 		{
-			name:     "Done List",
-			input:    "* [x] Done",
+			name:     "Done list uppercase",
+			input:    "* [X] Done",
 			expected: "- ✅ Done",
 		},
 		{
-			name:     "Bullet List",
-			input:    "- Item 1\n- Item 2",
-			expected: "- Item 1\n- Item 2",
-		},
-		{
-			name:     "Bullet List",
+			name:     "Bullet list",
 			input:    "* Item 1\n* Item 2",
 			expected: "- Item 1\n- Item 2",
 		},
 		{
-			name:     "Numbered List",
+			name:     "Numbered list",
 			input:    "1. First\n2. Second",
 			expected: "1. First\n2. Second",
+		},
+		{
+			name:     "Indented lines stay untouched",
+			input:    "  - nested",
+			expected: "  - nested",
 		},
 	}
 

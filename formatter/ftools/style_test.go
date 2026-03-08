@@ -39,3 +39,41 @@ func TestFormatStrike(t *testing.T) {
 		t.Errorf("FormatStrike failed: got %q", got)
 	}
 }
+
+func TestFormatStyleTagsUnderscoreBoundaries(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "Formats standalone underscore emphasis",
+			input:    "say _hello_ now",
+			expected: "say <i>hello</i> now",
+		},
+		{
+			name:     "Does not format identifiers",
+			input:    "ak_arch ak_arch_frontend",
+			expected: "ak_arch ak_arch_frontend",
+		},
+		{
+			name:     "Keeps punctuation outside emphasis",
+			input:    "(_hello_),",
+			expected: "(<i>hello</i>),",
+		},
+		{
+			name:     "Unmatched underscore stays literal",
+			input:    "_hello world",
+			expected: "_hello world",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := FormatStyleTags(tt.input, "_", "_", "<i>", "</i>")
+			if got != tt.expected {
+				t.Errorf("FormatStyleTags underscore = %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}

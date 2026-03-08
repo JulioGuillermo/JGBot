@@ -60,6 +60,15 @@ func TestMD2WhatsApp(t *testing.T) {
 		// {name: "Escaped Character", input: "\\*not bold\\*", expected: "*not bold*"}, // MD escapes usually just render the char
 		{name: "Empty String", input: "", expected: ""},
 		{name: "Multiple Newlines", input: "Line 1\n\n\nLine 2", expected: "Line 1\n\n\nLine 2"},
+		{name: "Uppercase Task List Done", input: "- [X] Done", expected: "- ✅ Done"},
+		{name: "Inline Code Protects Markdown", input: "`**bold** _italic_` and **real**", expected: "`**bold** _italic_` and *real*"},
+		{name: "Block Code Protects Markdown", input: "```\n**bold**\n```\noutside _ok_", expected: "```\n**bold**\n```\noutside _ok_"},
+		{name: "Identifier Underscore In Bold", input: "**ak_arch** and **ak_arch_frontend**", expected: "*ak_arch* and *ak_arch_frontend*"},
+		{name: "Markdown Link With Underscore Title", input: "[ak_arch](https://example.com/ak_arch)", expected: "(ak_arch: https://example.com/ak_arch)"},
+		{name: "Nested Bold Italic Strike", input: "**bold _italic_ ~~strike~~**", expected: "*bold _italic_ ~strike~*"},
+		{name: "Unmatched Delimiters Stay Literal", input: "**bold _italic", expected: "**bold _italic"},
+		{name: "Two Raw URLs Stay Raw", input: "A https://a.test B https://b.test", expected: "A https://a.test B https://b.test"},
+		{name: "Header Content Keeps Style Conversion", input: "# **Urgent** _now_", expected: "1️⃣ *Urgent* _now_"},
 	}
 
 	for _, tt := range tests {

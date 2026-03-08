@@ -1,6 +1,7 @@
 package ftools
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -34,29 +35,23 @@ func FormatStrike(msg string, replacementWrapper string) string {
 
 func FormatStyleTags(msg string, startPattern, endPattern string, replaceStart, replaceEnd string) string {
 	// We want to match startPattern + content + endPattern.
-	// But if startPattern is "_", we want to avoid matching it if it's inside a word (like LINK_PH_0).
-	// In Markdown, _italic_ requires it to be at the start of a word or preceded by space.
-
-	pattern := regexp.QuoteMeta(startPattern) + `(.*?)` + regexp.QuoteMeta(endPattern)
+	// For underscore emphasis, avoid matching inside words/identifiers like `ak_arch`.
 	if startPattern == "_" {
-		// More strict for underscore to avoid matching in the middle of words (placeholders)
-		// It must be at the start of string or preceded by a non-word char,
-		// and followed by a non-word char or end of string.
-		// Since Go regexp doesn't support lookarounds, we'll use a simpler heuristic:
-		// match only if it's not immediately preceded/followed by letters/numbers/underscores?
-		// Actually, let's just use the fact that placeholders are usually Uppercase + PH + Number.
-
-		re := regexp.MustCompile(pattern)
+		re := regexp.MustCompile(fmt.Sprintf(
+			`(^|[^\w\d])%s([^\s](?:.*?[^\s])?)%s([^\w\d]|$)`,
+			regexp.QuoteMeta(startPattern),
+			regexp.QuoteMeta(endPattern),
+		))
 		return re.ReplaceAllStringFunc(msg, func(match string) string {
-			// Check if this match is likely a placeholder (contains _PH_)
-			if strings.Contains(match, "_PH_") {
+			matchs := re.FindStringSubmatch(match)
+			if len(matchs) < 4 {
 				return match
 			}
-			content := match[len(startPattern) : len(match)-len(endPattern)]
-			return replaceStart + content + replaceEnd
+			return matchs[1] + replaceStart + matchs[2] + replaceEnd + matchs[3]
 		})
 	}
 
+	pattern := regexp.QuoteMeta(startPattern) + `([^\s](?:.*?[^\s])?)` + regexp.QuoteMeta(endPattern)
 	re := regexp.MustCompile(pattern)
 	return re.ReplaceAllStringFunc(msg, func(match string) string {
 		content := match[len(startPattern) : len(match)-len(endPattern)]

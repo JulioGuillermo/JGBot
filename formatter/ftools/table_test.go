@@ -33,3 +33,12 @@ func TestProcessTableBlock(t *testing.T) {
 		t.Errorf("Row index missing, got %q", got[0])
 	}
 }
+
+func TestFormatTableMultipleRowsAndNonTableText(t *testing.T) {
+	input := "Before\n| Name | Age |\n|---|---|\n| Bob | 30 |\n| Ana | 25 |\nAfter"
+	got := FormatTable(input)
+	want := "Before\n1. •••\n\t- **Name**: Bob\n\t- **Age**: 30\n2. •••\n\t- **Name**: Ana\n\t- **Age**: 25\nAfter"
+	if got != want {
+		t.Errorf("FormatTable() = %q, want %q", got, want)
+	}
+}
