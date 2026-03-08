@@ -111,5 +111,6 @@ func removeThink(text string) string {
 		return ""
 	}
 
-	return text[idx:]
+	text = text[idx:]
+	return strings.TrimSpace(text)
 }
