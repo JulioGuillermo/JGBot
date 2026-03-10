@@ -39,6 +39,11 @@ func NewTelegramChannel() (*TelegramChannel, error) {
 }
 
 func (ch *TelegramChannel) handler(msg *models.Message) {
+	if msg == nil {
+		log.Info("Nil message")
+		return
+	}
+
 	sender, err := telegramdb.ReceivedSender(
 		msg.From.ID,
 		msg.From.FirstName,
