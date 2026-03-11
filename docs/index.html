@@ -20,11 +20,23 @@
                     <span class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
                 </div>
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="#features" :class="activeSection === 'features' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Features</a>
-                    <a href="#architecture" :class="activeSection === 'architecture' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Architecture</a>
-                    <a href="#providers" :class="activeSection === 'providers' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Providers</a>
-                    <a href="#installation" :class="activeSection === 'installation' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Installation</a>
-                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-gray-950 font-semibold px-4 py-2 rounded-lg transition-colors">
+                    <a href="#features" :class="activeSection === 'features' ? 'text-cyan-400' : 'text-gray-300'" class="nav-link relative py-1 group">
+                        <span :class="activeSection === 'features' ? 'text-cyan-400' : 'text-gray-300 group-hover:text-cyan-400'" class="transition-colors">Features</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" :class="activeSection === 'features' ? 'w-full' : ''"></span>
+                    </a>
+                    <a href="#architecture" :class="activeSection === 'architecture' ? 'text-cyan-400' : 'text-gray-300'" class="nav-link relative py-1 group">
+                        <span :class="activeSection === 'architecture' ? 'text-cyan-400' : 'text-gray-300 group-hover:text-cyan-400'" class="transition-colors">Architecture</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" :class="activeSection === 'architecture' ? 'w-full' : ''"></span>
+                    </a>
+                    <a href="#providers" :class="activeSection === 'providers' ? 'text-cyan-400' : 'text-gray-300'" class="nav-link relative py-1 group">
+                        <span :class="activeSection === 'providers' ? 'text-cyan-400' : 'text-gray-300 group-hover:text-cyan-400'" class="transition-colors">Providers</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" :class="activeSection === 'providers' ? 'w-full' : ''"></span>
+                    </a>
+                    <a href="#installation" :class="activeSection === 'installation' ? 'text-cyan-400' : 'text-gray-300'" class="nav-link relative py-1 group">
+                        <span :class="activeSection === 'installation' ? 'text-cyan-400' : 'text-gray-300 group-hover:text-cyan-400'" class="transition-colors">Installation</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" :class="activeSection === 'installation' ? 'w-full' : ''"></span>
+                    </a>
+                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30 hover:scale-105 active:scale-95">
                         GitHub
                     </a>
                 </div>
@@ -59,10 +71,10 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="#installation" class="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-gray-950 font-semibold px-8 py-4 rounded-lg transition-all transform hover:scale-105">
+                    <a href="#installation" class="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-cyan-500/30 hover:scale-105 active:scale-95">
                         Get Started
                     </a>
-                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="w-full sm:w-auto border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white font-semibold px-8 py-4 rounded-lg transition-all">
+                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="w-full sm:w-auto border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white font-semibold px-8 py-4 rounded-lg transition-all duration-300 hover:bg-gray-800/50 hover:scale-105 active:scale-95">
                         View on GitHub
                     </a>
                 </div>
@@ -72,9 +84,18 @@
             <div class="mt-16 max-w-3xl mx-auto" x-data="{ activeTab: 'main' }">
                 <div class="bg-gray-900/80 border border-gray-800 rounded-xl overflow-hidden backdrop-blur-sm">
                     <div class="flex border-b border-gray-800 overflow-x-auto">
-                        <button @click="activeTab = 'main'" :class="activeTab === 'main' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300'" class="px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">Main Config</button>
-                        <button @click="activeTab = 'config'" :class="activeTab === 'config' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300'" class="px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">Session Config</button>
-                        <button @click="activeTab = 'skill'" :class="activeTab === 'skill' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300'" class="px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">Custom Skill</button>
+                        <button @click="activeTab = 'main'" :class="activeTab === 'main' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/50'" class="px-5 py-3 text-sm font-medium transition-all duration-300 whitespace-nowrap relative">
+                            <span class="relative z-10">Main Config</span>
+                            <span x-show="activeTab === 'main'" class="absolute inset-0 bg-cyan-500/10 rounded-t-lg" x-transition:enter="transition-all duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"></span>
+                        </button>
+                        <button @click="activeTab = 'config'" :class="activeTab === 'config' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/50'" class="px-5 py-3 text-sm font-medium transition-all duration-300 whitespace-nowrap relative">
+                            <span class="relative z-10">Session Config</span>
+                            <span x-show="activeTab === 'config'" class="absolute inset-0 bg-cyan-500/10 rounded-t-lg" x-transition:enter="transition-all duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"></span>
+                        </button>
+                        <button @click="activeTab = 'skill'" :class="activeTab === 'skill' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/50'" class="px-5 py-3 text-sm font-medium transition-all duration-300 whitespace-nowrap relative">
+                            <span class="relative z-10">Custom Skill</span>
+                            <span x-show="activeTab === 'skill'" class="absolute inset-0 bg-cyan-500/10 rounded-t-lg" x-transition:enter="transition-all duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"></span>
+                        </button>
                     </div>
                     <div class="p-6 font-mono text-xs md:text-sm overflow-x-auto">
                         <pre x-show="activeTab === 'main'" class="text-gray-300"><code>{
@@ -135,70 +156,70 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Feature 1 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
-                    <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:shadow-cyan-500/10 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-cyan-500/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-cyan-400 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Multi-Channel Support</h3>
-                    <p class="text-gray-400">Seamless integration with Telegram and WhatsApp with full message and reaction support.</p>
+                    <h3 class="text-xl font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300">Multi-Channel Support</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Seamless integration with Telegram and WhatsApp with full message and reaction support.</p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] hover:shadow-blue-500/10 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-blue-500/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-blue-400 group-hover:-rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Custom Skills</h3>
-                    <p class="text-gray-400">Extend functionality using JavaScript-based skills. Create powerful tools with the language you love.</p>
+                    <h3 class="text-xl font-semibold mb-2 group-hover:text-blue-400 transition-colors duration-300">Custom Skills</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Extend functionality using JavaScript-based skills. Create powerful tools with the language you love.</p>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:shadow-purple-500/10 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-purple-500/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-purple-400 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">AI Agents</h3>
-                    <p class="text-gray-400">Powered by LangChainGo with robust conversation handling and multiple LLM provider support.</p>
+                    <h3 class="text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors duration-300">AI Agents</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Powered by LangChainGo with robust conversation handling and multiple LLM provider support.</p>
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
-                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-green-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(34,197,94,0.15)] hover:shadow-green-500/10 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-green-500/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-green-400 group-hover:-rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Cron & Timers</h3>
-                    <p class="text-gray-400">Schedule recurring tasks with cron expressions or set one-time alarms for specific actions.</p>
+                    <h3 class="text-xl font-semibold mb-2 group-hover:text-green-400 transition-colors duration-300">Cron & Timers</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Schedule recurring tasks with cron expressions or set one-time alarms for specific actions.</p>
                 </div>
 
                 <!-- Feature 5 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
-                    <div class="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-pink-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)] hover:shadow-pink-500/10 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-pink-500/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-pink-400 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a9 9 0 0 1 9 9c0 3.9-2.5 7.3-5.8 8.7-.5.2-1 .3-1.5.3s-1-.1-1.5-.3C5.5 18.3 3 14.9 3 11a9 9 0 0 1 9-9z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v2m0 4v2m0 4v2"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Memory System</h3>
-                    <p class="text-gray-400">Persistent text storage for user preferences, facts, and data across conversations and restarts.</p>
+                    <h3 class="text-xl font-semibold mb-2 group-hover:text-pink-400 transition-colors duration-300">Memory System</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Persistent text storage for user preferences, facts, and data across conversations and restarts.</p>
                 </div>
 
                 <!-- Feature 6 -->
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
-                    <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-amber-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] hover:shadow-amber-500/10 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-amber-500/30 transition-all duration-300">
+                        <svg class="w-6 h-6 text-amber-400 group-hover:-rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Hot-Reloading</h3>
-                    <p class="text-gray-400">Session configuration changes applied in real-time without restarting the bot.</p>
+                    <h3 class="text-xl font-semibold mb-2 group-hover:text-amber-400 transition-colors duration-300">Hot-Reloading</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Session configuration changes applied in real-time without restarting the bot.</p>
                 </div>
             </div>
         </div>
@@ -214,60 +235,60 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 <!-- Core Component 1 -->
-                <div class="text-center">
-                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group text-center cursor-pointer">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] group-hover:shadow-cyan-500/30 transition-all duration-300">
+                        <svg class="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Agent System</h3>
-                    <p class="text-sm text-gray-400">AI-driven logic and conversation flows</p>
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300">Agent System</h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">AI-driven logic and conversation flows</p>
                 </div>
 
                 <!-- Core Component 2 -->
-                <div class="text-center">
-                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group text-center cursor-pointer">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] group-hover:shadow-blue-500/30 transition-all duration-300">
+                        <svg class="w-10 h-10 text-white group-hover:-rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Channel Controller</h3>
-                    <p class="text-sm text-gray-400">Abstraction for Telegram & WhatsApp</p>
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-blue-400 transition-colors duration-300">Channel Controller</h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Abstraction for Telegram & WhatsApp</p>
                 </div>
 
                 <!-- Core Component 3 -->
-                <div class="text-center">
-                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-purple-500/20">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group text-center cursor-pointer">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-purple-500/20 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] group-hover:shadow-purple-500/30 transition-all duration-300">
+                        <svg class="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Skill System</h3>
-                    <p class="text-sm text-gray-400">Discover, load, execute JS skills</p>
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-purple-400 transition-colors duration-300">Skill System</h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Discover, load, execute JS skills</p>
                 </div>
 
                 <!-- Core Component 4 -->
-                <div class="text-center">
-                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-green-500/20">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group text-center cursor-pointer">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-green-500/20 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] group-hover:shadow-green-500/30 transition-all duration-300">
+                        <svg class="w-10 h-10 text-white group-hover:-rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Cron System</h3>
-                    <p class="text-sm text-gray-400">Schedule recurring tasks</p>
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-green-400 transition-colors duration-300">Cron System</h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Schedule recurring tasks</p>
                 </div>
 
                 <!-- Core Component 5 -->
-                <div class="text-center">
-                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-orange-500/20">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="group text-center cursor-pointer">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-orange-500/20 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] group-hover:shadow-orange-500/30 transition-all duration-300">
+                        <svg class="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <circle cx="12" cy="13" r="8" stroke-width="2"/>
                             <path stroke-linecap="round" stroke-width="2" d="M12 9v4l2 2"/>
                             <path stroke-linecap="round" stroke-width="2" d="M9 2h6"/>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Timer System</h3>
-                    <p class="text-sm text-gray-400">One-time alarms & timeouts</p>
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-orange-400 transition-colors duration-300">Timer System</h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">One-time alarms & timeouts</p>
                 </div>
             </div>
 
@@ -306,40 +327,40 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#10A37F] transition-colors">
-                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#10A37F] hover:shadow-[0_0_25px_rgba(16,163,127,0.2)] transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <img src="img/openai.svg" alt="OpenAI" class="w-8 h-8">
                     </div>
-                    <h3 class="font-semibold">OpenAI</h3>
-                    <p class="text-xs text-gray-500 mt-1">GPT-4, GPT-3.5</p>
+                    <h3 class="font-semibold group-hover:text-[#10A37F] transition-colors duration-300">OpenAI</h3>
+                    <p class="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors duration-300">GPT-4, GPT-3.5</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FF6C2F] transition-colors">
-                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FF6C2F] hover:shadow-[0_0_25px_rgba(255,108,47,0.2)] transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <img src="img/anthropic.svg" alt="Anthropic" class="w-8 h-8">
                     </div>
-                    <h3 class="font-semibold">Anthropic</h3>
-                    <p class="text-xs text-gray-500 mt-1">Claude 3</p>
+                    <h3 class="font-semibold group-hover:text-[#FF6C2F] transition-colors duration-300">Anthropic</h3>
+                    <p class="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors duration-300">Claude 3</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#4285F4] transition-colors">
-                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#4285F4] hover:shadow-[0_0_25px_rgba(66,133,244,0.2)] transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <img src="img/google.svg" alt="Google" class="w-8 h-8">
                     </div>
-                    <h3 class="font-semibold">Google</h3>
-                    <p class="text-xs text-gray-500 mt-1">Gemini Pro</p>
+                    <h3 class="font-semibold group-hover:text-[#4285F4] transition-colors duration-300">Google</h3>
+                    <p class="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors duration-300">Gemini Pro</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FFFFFF] transition-colors">
-                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FFFFFF] hover:shadow-[0_0_25px_rgba(255,255,255,0.15)] transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <img src="img/ollama.svg" alt="Ollama" class="w-8 h-8">
                     </div>
-                    <h3 class="font-semibold">Ollama</h3>
-                    <p class="text-xs text-gray-500 mt-1">Local models</p>
+                    <h3 class="font-semibold group-hover:text-white transition-colors duration-300">Ollama</h3>
+                    <p class="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors duration-300">Local models</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FFDA00] transition-colors">
-                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                <div class="group bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FFDA00] hover:shadow-[0_0_25px_rgba(255,218,0,0.2)] transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <img src="img/mistral.svg" alt="Mistral" class="w-8 h-8">
                     </div>
-                    <h3 class="font-semibold">Mistral</h3>
-                    <p class="text-xs text-gray-500 mt-1">Mistral AI</p>
+                    <h3 class="font-semibold group-hover:text-[#FFDA00] transition-colors duration-300">Mistral</h3>
+                    <p class="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors duration-300">Mistral AI</p>
                 </div>
             </div>
 
@@ -347,18 +368,18 @@
             <div class="mt-12">
                 <h3 class="text-xl font-semibold text-center mb-8">Supported Channels</h3>
                 <div class="flex flex-wrap justify-center gap-6">
-                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 hover:border-[#229ED9] transition-colors">
-                        <img src="img/telegram.svg" alt="Telegram" class="w-8 h-8">
+                    <div class="group flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 hover:border-[#229ED9] hover:shadow-[0_0_25px_rgba(34,158,217,0.2)] transition-all duration-300 hover:-translate-y-1">
+                        <img src="img/telegram.svg" alt="Telegram" class="w-8 h-8 group-hover:scale-110 transition-transform duration-300">
                         <div>
-                            <h4 class="font-semibold">Telegram</h4>
-                            <p class="text-xs text-gray-500">Messaging, reactions, typing status, rich text</p>
+                            <h4 class="font-semibold group-hover:text-[#229ED9] transition-colors duration-300">Telegram</h4>
+                            <p class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300">Messaging, reactions, typing status, rich text</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 hover:border-[#25D366] transition-colors">
-                        <img src="img/whatsapp.svg" alt="WhatsApp" class="w-8 h-8">
+                    <div class="group flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 hover:border-[#25D366] hover:shadow-[0_0_25px_rgba(37,211,102,0.2)] transition-all duration-300 hover:-translate-y-1">
+                        <img src="img/whatsapp.svg" alt="WhatsApp" class="w-8 h-8 group-hover:scale-110 transition-transform duration-300">
                         <div>
-                            <h4 class="font-semibold">WhatsApp</h4>
-                            <p class="text-xs text-gray-500">Messaging, reactions, typing status, rich text</p>
+                            <h4 class="font-semibold group-hover:text-[#25D366] transition-colors duration-300">WhatsApp</h4>
+                            <p class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300">Messaging, reactions, typing status, rich text</p>
                         </div>
                     </div>
                 </div>
@@ -443,25 +464,40 @@
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <a href="doc.html#CONF" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
-                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Configuration</h3>
-                    <p class="text-sm text-gray-400">Full configuration reference for JGBot.</p>
+                <a href="doc.html#CONF" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:shadow-cyan-500/5 transition-all duration-300 group hover:-translate-y-1">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300 flex items-center gap-2">
+                        <span class="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        Configuration
+                    </h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Full configuration reference for JGBot.</p>
                 </a>
-                <a href="doc.html#SESSION" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
-                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Session Configuration</h3>
-                    <p class="text-sm text-gray-400">Configure per-session behavior, tools, skills, and providers.</p>
+                <a href="doc.html#SESSION" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:shadow-cyan-500/5 transition-all duration-300 group hover:-translate-y-1">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300 flex items-center gap-2">
+                        <span class="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        Session Configuration
+                    </h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Configure per-session behavior, tools, skills, and providers.</p>
                 </a>
-                <a href="doc.html#AVAILABLE_SKILLS" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
-                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Available Skills</h3>
-                    <p class="text-sm text-gray-400">Discover built-in skills like memories, web search, and more.</p>
+                <a href="doc.html#AVAILABLE_SKILLS" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:shadow-cyan-500/5 transition-all duration-300 group hover:-translate-y-1">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300 flex items-center gap-2">
+                        <span class="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        Available Skills
+                    </h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Discover built-in skills like memories, web search, and more.</p>
                 </a>
-                <a href="doc.html#CUSTOM_SKILL" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
-                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Custom Skills</h3>
-                    <p class="text-sm text-gray-400">Learn how to create powerful JavaScript-based skills to extend JGBot's functionality.</p>
+                <a href="doc.html#CUSTOM_SKILL" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:shadow-cyan-500/5 transition-all duration-300 group hover:-translate-y-1">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300 flex items-center gap-2">
+                        <span class="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        Custom Skills
+                    </h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Learn how to create powerful JavaScript-based skills to extend JGBot's functionality.</p>
                 </a>
-                <a href="doc.html#SCHEDULED_TASKS" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
-                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Scheduled Tasks</h3>
-                    <p class="text-sm text-gray-400">Set up cron jobs and timers for automated tasks.</p>
+                <a href="doc.html#SCHEDULED_TASKS" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:shadow-cyan-500/5 transition-all duration-300 group hover:-translate-y-1">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors duration-300 flex items-center gap-2">
+                        <span class="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        Scheduled Tasks
+                    </h3>
+                    <p class="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Set up cron jobs and timers for automated tasks.</p>
                 </a>
             </div>
         </div>
@@ -484,11 +520,11 @@
                 <div class="flex flex-col items-center">
                     <h4 class="font-semibold mb-4">Documentation</h4>
                     <div class="flex flex-col gap-2 text-sm text-gray-400">
-                        <a href="doc.html#CONF" class="hover:text-cyan-400 transition-colors">Configuration</a>
-                        <a href="doc.html#SESSION" class="hover:text-cyan-400 transition-colors">Session Config</a>
-                        <a href="doc.html#AVAILABLE_SKILLS" class="hover:text-cyan-400 transition-colors">Available Skills</a>
-                        <a href="doc.html#CUSTOM_SKILL" class="hover:text-cyan-400 transition-colors">Custom Skills</a>
-                        <a href="doc.html#SCHEDULED_TASKS" class="hover:text-cyan-400 transition-colors">Scheduled Tasks</a>
+                        <a href="doc.html#CONF" class="hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 inline-block">Configuration</a>
+                        <a href="doc.html#SESSION" class="hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 inline-block">Session Config</a>
+                        <a href="doc.html#AVAILABLE_SKILLS" class="hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 inline-block">Available Skills</a>
+                        <a href="doc.html#CUSTOM_SKILL" class="hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 inline-block">Custom Skills</a>
+                        <a href="doc.html#SCHEDULED_TASKS" class="hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 inline-block">Scheduled Tasks</a>
                     </div>
                 </div>
 
@@ -496,7 +532,7 @@
                 <div class="flex flex-col items-center md:items-end">
                     <h4 class="font-semibold mb-4">Connect</h4>
                     <div class="flex items-center gap-4">
-                        <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="text-gray-400 hover:text-white transition-all duration-300 hover:scale-110 hover:rotate-6">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                 <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
                             </svg>
