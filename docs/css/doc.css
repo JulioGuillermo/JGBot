@@ -39,11 +39,10 @@
 
 .markdown-body code {
     background: #1f2937 !important;
-    color: #f472b6 !important;
     padding: 0.2em 0.4em !important;
     border-radius: 0.375rem !important;
     font-size: 0.875em !important;
-    font-family: ui-monono-Regular, Menospace, SFMlo, monospace !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
 }
 
 .markdown-body pre {
@@ -63,13 +62,43 @@
     line-height: 1.5 !important;
 }
 
+/* Inline code - override highlight.js for non-highlighted inline code */
+.markdown-body code:not(.hljs) {
+    color: #f472b6 !important;
+}
+
+/* Highlight.js code blocks */
+.markdown-body pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+}
+
+.markdown-body code.hljs {
+    padding: 0.2em 0.4em;
+}
+
 .markdown-body ul, 
 .markdown-body ol {
     padding-left: 1.5em !important;
     margin-bottom: 1em !important;
+    list-style: revert !important;
+}
+
+.markdown-body ul {
+    list-style-type: disc !important;
+}
+
+.markdown-body ol {
+    list-style-type: decimal !important;
 }
 
 .markdown-body li { margin-bottom: 0.5em !important; }
+.markdown-body li > ul,
+.markdown-body li > ol {
+    margin-top: 0.5em !important;
+    margin-bottom: 0 !important;
+}
 
 .markdown-body blockquote {
     border-left: 4px solid #22d3ee !important;
