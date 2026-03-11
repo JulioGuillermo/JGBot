@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JGBot - Modular AI Chatbot Framework</title>
+    <meta name="description" content="A modular, AI-powered chatbot framework featuring multi-channel support, custom skills, and extensible architecture.">
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="icon" href="img/logo.png">
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <img src="img/logo.png" alt="JGBot" class="w-12 h-12">
+                    <span class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-gray-300 hover:text-cyan-400 transition-colors">Features</a>
+                    <a href="#architecture" class="text-gray-300 hover:text-cyan-400 transition-colors">Architecture</a>
+                    <a href="#providers" class="text-gray-300 hover:text-cyan-400 transition-colors">Providers</a>
+                    <a href="#installation" class="text-gray-300 hover:text-cyan-400 transition-colors">Installation</a>
+                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-gray-950 font-semibold px-4 py-2 rounded-lg transition-colors">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4 relative overflow-hidden">
+        <!-- Background gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-transparent to-blue-900/20"></div>
+        <div class="absolute top-20 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto relative">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 bg-gray-900/50 border border-gray-800 rounded-full px-4 py-2 mb-6">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm text-gray-400">Open Source • Go-based • Extensible</span>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    Modular AI Chatbot
+                    <span class="block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                        Framework
+                    </span>
+                </h1>
+
+                <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+                    A powerful, extensible chatbot framework with multi-channel support,
+                    custom JavaScript skills, and AI-powered conversations.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#installation" class="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-gray-950 font-semibold px-8 py-4 rounded-lg transition-all transform hover:scale-105">
+                        Get Started
+                    </a>
+                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="w-full sm:w-auto border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white font-semibold px-8 py-4 rounded-lg transition-all">
+                        View on GitHub
+                    </a>
+                </div>
+            </div>
+
+            <!-- Code Preview -->
+            <div class="mt-16 max-w-3xl mx-auto" x-data="{ activeTab: 'main' }">
+                <div class="bg-gray-900/80 border border-gray-800 rounded-xl overflow-hidden backdrop-blur-sm">
+                    <div class="flex border-b border-gray-800 overflow-x-auto">
+                        <button @click="activeTab = 'main'" :class="activeTab === 'main' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300'" class="px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">Main Config</button>
+                        <button @click="activeTab = 'config'" :class="activeTab === 'config' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300'" class="px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">Session Config</button>
+                        <button @click="activeTab = 'skill'" :class="activeTab === 'skill' ? 'bg-gray-800 text-cyan-400' : 'text-gray-500 hover:text-gray-300'" class="px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">Custom Skill</button>
+                    </div>
+                    <div class="p-6 font-mono text-xs md:text-sm overflow-x-auto">
+                        <pre x-show="activeTab === 'main'" class="text-gray-300"><code>{
+  <span class="text-cyan-400">"Database"</span>: <span class="text-green-400">"db/database.db"</span>,
+  <span class="text-cyan-400">"LogLevel"</span>: <span class="text-green-400">"Info"</span>,
+  <span class="text-cyan-400">"Channels"</span>: {
+    <span class="text-cyan-400">"Telegram"</span>: {<span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>, <span class="text-cyan-400">"token"</span>: <span class="text-green-400">"YOUR_BOT_TOKEN"</span>},
+    <span class="text-cyan-400">"Whatsapp"</span>: {<span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">false</span>}
+  },
+  <span class="text-cyan-400">"Providers"</span>: [
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"Local LLM"</span>, <span class="text-cyan-400">"Type"</span>: <span class="text-green-400">"openai"</span>, <span class="text-cyan-400">"BaseUrl"</span>: <span class="text-green-400">"http://localhost:1234/v1"</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"Google"</span>, <span class="text-cyan-400">"Type"</span>: <span class="text-green-400">"google"</span>, <span class="text-cyan-400">"ApiKey"</span>: <span class="text-green-400">"YOUR_API_KEY"</span>, <span class="text-cyan-400">"Model"</span>: <span class="text-green-400">"gemini-2.0-flash"</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"OpenRouter"</span>, <span class="text-cyan-400">"Type"</span>: <span class="text-green-400">"openai"</span>, <span class="text-cyan-400">"BaseUrl"</span>: <span class="text-green-400">"https://openrouter.ai/api/v1"</span>, <span class="text-cyan-400">"ApiKey"</span>: <span class="text-green-400">"YOUR_API_KEY"</span>}
+  ]
+}</code></pre>
+                        <pre x-show="activeTab === 'config'" class="text-gray-300"><code>{
+  <span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"My User"</span>,
+  <span class="text-cyan-400">"ID"</span>: <span class="text-green-400">"Telegram:123456789"</span>,
+  <span class="text-cyan-400">"Allowed"</span>: <span class="text-yellow-300">true</span>,
+  <span class="text-cyan-400">"Provider"</span>: <span class="text-green-400">"Local LLM"</span>,
+  <span class="text-cyan-400">"HistorySize"</span>: <span class="text-yellow-300">50</span>,
+  <span class="text-cyan-400">"Tools"</span>: [
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"message_reaction"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"javascript"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"skills"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"subagent"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"cron"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"timer"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>}
+  ],
+  <span class="text-cyan-400">"Skills"</span>: [
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"javascript"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"memories"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>},
+    {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"web"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>}
+  ]
+}</code></pre>
+                        <pre x-show="activeTab === 'skill'" class="text-gray-300"><code><span class="text-purple-400">const</span> args = <span class="text-cyan-400">GetArgs</span>();
+
+<span class="text-purple-400">async function</span> <span class="text-yellow-300">main</span>() {
+  <span class="text-purple-400">const</span> { input } = args;
+  <span class="text-purple-400">return</span> <span class="text-green-400">`You said: ${input}`</span>;
+}
+
+<span class="text-gray-500">// Export the result</span>
+<span class="text-purple-400">export default</span> main();</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-gray-900/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Powerful Features</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Everything you need to build sophisticated AI chatbots</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Multi-Channel Support</h3>
+                    <p class="text-gray-400">Seamless integration with Telegram and WhatsApp with full message and reaction support.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Custom Skills</h3>
+                    <p class="text-gray-400">Extend functionality using JavaScript-based skills. Create powerful tools with the language you love.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">AI Agents</h3>
+                    <p class="text-gray-400">Powered by LangChainGo with robust conversation handling and multiple LLM provider support.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Cron & Timers</h3>
+                    <p class="text-gray-400">Schedule recurring tasks with cron expressions or set one-time alarms for specific actions.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a9 9 0 0 1 9 9c0 3.9-2.5 7.3-5.8 8.7-.5.2-1 .3-1.5.3s-1-.1-1.5-.3C5.5 18.3 3 14.9 3 11a9 9 0 0 1 9-9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v2m0 4v2m0 4v2"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Memory System</h3>
+                    <p class="text-gray-400">Persistent text storage for user preferences, facts, and data across conversations and restarts.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Hot-Reloading</h3>
+                    <p class="text-gray-400">Session configuration changes applied in real-time without restarting the bot.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Architecture</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">A modular design built for extensibility and maintainability</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Core Component 1 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Agent System</h3>
+                    <p class="text-sm text-gray-400">AI-driven logic and conversation flows</p>
+                </div>
+
+                <!-- Core Component 2 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Channel Controller</h3>
+                    <p class="text-sm text-gray-400">Abstraction for Telegram & WhatsApp</p>
+                </div>
+
+                <!-- Core Component 3 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-purple-500/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Skill System</h3>
+                    <p class="text-sm text-gray-400">Discover, load, execute JS skills</p>
+                </div>
+
+                <!-- Core Component 4 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-green-500/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Database</h3>
+                    <p class="text-sm text-gray-400">SQLite with GORM for persistence</p>
+                </div>
+            </div>
+
+            <!-- Directory Structure -->
+            <div class="mt-16 bg-gray-900/50 border border-gray-800 rounded-xl p-6 md:p-8">
+                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                    </svg>
+                    Directory Structure
+                </h3>
+                <div class="font-mono text-sm text-gray-400 overflow-x-auto">
+                    <pre><code><span class="text-gray-500">JGBot/</span>
+├── <span class="text-cyan-400">agent/</span>          <span class="text-gray-500"># AI agent and tool implementations</span>
+├── <span class="text-cyan-400">channels/</span>       <span class="text-gray-500"># Telegram, WhatsApp integration</span>
+├── <span class="text-cyan-400">conf/</span>           <span class="text-gray-500"># Configuration management</span>
+├── <span class="text-cyan-400">session/</span>        <span class="text-gray-500"># Session logic and lifecycle</span>
+├── <span class="text-cyan-400">skill/</span>          <span class="text-gray-500"># Skill loader and executor</span>
+├── <span class="text-cyan-400">skills/</span>         <span class="text-gray-500"># User-defined skills (JS)</span>
+├── <span class="text-cyan-400">cron/</span>           <span class="text-gray-500"># Cron job system</span>
+├── <span class="text-cyan-400">timer/</span>          <span class="text-gray-500"># Timer and alarm system</span>
+├── <span class="text-cyan-400">js/</span>             <span class="text-gray-500"># JavaScript runtime bridge</span>
+├── <span class="text-cyan-400">database/</span>       <span class="text-gray-500"># GORM database models</span>
+└── <span class="text-cyan-400">main.go</span>         <span class="text-gray-500"># Entry point</span></code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Providers Section -->
+    <section id="providers" class="py-20 px-4 bg-gray-900/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Supported Providers</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Choose from a wide range of LLM providers via LangChainGo</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-green-500/50 transition-colors">
+                    <div class="text-2xl mb-2">🔗</div>
+                    <h3 class="font-semibold">OpenAI</h3>
+                    <p class="text-xs text-gray-500 mt-1">GPT-4, GPT-3.5</p>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-purple-500/50 transition-colors">
+                    <div class="text-2xl mb-2">🧠</div>
+                    <h3 class="font-semibold">Anthropic</h3>
+                    <p class="text-xs text-gray-500 mt-1">Claude 3</p>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-blue-500/50 transition-colors">
+                    <div class="text-2xl mb-2">🔵</div>
+                    <h3 class="font-semibold">Google</h3>
+                    <p class="text-xs text-gray-500 mt-1">Gemini Pro</p>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-orange-500/50 transition-colors">
+                    <div class="text-2xl mb-2">🦙</div>
+                    <h3 class="font-semibold">Ollama</h3>
+                    <p class="text-xs text-gray-500 mt-1">Local models</p>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-yellow-500/50 transition-colors">
+                    <div class="text-2xl mb-2">🌫️</div>
+                    <h3 class="font-semibold">Mistral</h3>
+                    <p class="text-xs text-gray-500 mt-1">Mistral AI</p>
+                </div>
+            </div>
+
+            <!-- Channels -->
+            <div class="mt-12">
+                <h3 class="text-xl font-semibold text-center mb-8">Supported Channels</h3>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4">
+                        <span class="text-2xl">✈️</span>
+                        <div>
+                            <h4 class="font-semibold">Telegram</h4>
+                            <p class="text-xs text-gray-500">Full-featured support</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4">
+                        <span class="text-2xl">💬</span>
+                        <div>
+                            <h4 class="font-semibold">WhatsApp</h4>
+                            <p class="text-xs text-gray-500">Messaging integration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Get Started</h2>
+                <p class="text-gray-400">Install and run JGBot in minutes</p>
+            </div>
+
+            <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+                <div class="flex border-b border-gray-800">
+                    <div class="flex-1 px-6 py-4 bg-gray-800/50 border-b-2 border-cyan-500">
+                        <span class="text-cyan-400 font-medium">Quick Setup</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-sm">1</span>
+                                Clone the repository
+                            </h4>
+                            <div class="bg-gray-950 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                                <code class="text-gray-300">git clone https://github.com/JulioGuillermo/JGBot<br>cd JGBot</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-sm">2</span>
+                                Install dependencies
+                            </h4>
+                            <div class="bg-gray-950 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                                <code class="text-gray-300">go mod tidy</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-sm">3</span>
+                                Build the application
+                            </h4>
+                            <div class="bg-gray-950 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                                <code class="text-gray-300">go build</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-sm">4</span>
+                                Run the application
+                            </h4>
+                            <div class="bg-gray-950 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                                <code class="text-gray-300">./JGBot</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-blue-900/20 border border-blue-800/50 rounded-lg">
+                        <p class="text-sm text-blue-300">
+                            <strong>Note:</strong> On the first run, the application generates default configuration files and a new database file.
+                            You can customize the database path in the configuration.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Links -->
+    <section class="py-20 px-4 bg-gray-900/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Documentation</h2>
+                <p class="text-gray-400">Explore detailed guides to master JGBot</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="doc/CUSTOM_SKILL.md" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Custom Skills</h3>
+                    <p class="text-sm text-gray-400">Learn how to create powerful JavaScript-based skills to extend JGBot's functionality.</p>
+                </a>
+                <a href="doc/AVAILABLE_SKILLS.md" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Available Skills</h3>
+                    <p class="text-sm text-gray-400">Discover built-in skills like memories, web search, and more.</p>
+                </a>
+                <a href="doc/SESSION.md" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Session Configuration</h3>
+                    <p class="text-sm text-gray-400">Configure per-session behavior, tools, skills, and providers.</p>
+                </a>
+                <a href="doc/SCHEDULED_TASKS.md" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Scheduled Tasks</h3>
+                    <p class="text-sm text-gray-400">Set up cron jobs and timers for automated tasks.</p>
+                </a>
+                <a href="doc/CONF.md" class="block bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors group">
+                    <h3 class="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Configuration</h3>
+                    <p class="text-sm text-gray-400">Full configuration reference for JGBot.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <img src="img/logo.png" alt="JGBot" class="w-8 h-8">
+                    <span class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center text-sm text-gray-500">
+                <p>Open source • Built with Go • Powered by LangChainGo</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
