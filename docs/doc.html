@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JGBot Documentation</title>
+    <meta name="description" content="JGBot Documentation">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/doc.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="img/logo.png">
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="img/logo.png" alt="JGBot" class="w-12 h-12">
+                        <span class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="index.html" class="text-gray-300 hover:text-cyan-400 transition-colors">Home</a>
+                    <a href="index.html#features" class="text-gray-300 hover:text-cyan-400 transition-colors">Features</a>
+                    <a href="index.html#installation" class="text-gray-300 hover:text-cyan-400 transition-colors">Installation</a>
+                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-gray-950 font-semibold px-4 py-2 rounded-lg transition-colors">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-sm text-gray-400 mb-8">
+                <a href="index.html" class="hover:text-cyan-400 transition-colors">Home</a>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                <span class="text-gray-300" id="docTitle">Documentation</span>
+            </nav>
+
+            <!-- Doc Navigation -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-800">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <h1 class="text-2xl font-bold" id="pageTitle">Loading...</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-400">Quick Nav:</span>
+                    <select id="docSelect" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-cyan-500">
+                        <option value="">Select a document...</option>
+                        <option value="CUSTOM_SKILL.md">Custom Skills</option>
+                        <option value="AVAILABLE_SKILLS.md">Available Skills</option>
+                        <option value="SESSION.md">Session Configuration</option>
+                        <option value="SCHEDULED_TASKS.md">Scheduled Tasks</option>
+                        <option value="CONF.md">Configuration</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Doc Content -->
+            <article class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 md:p-10" id="docContent">
+                <div class="flex items-center justify-center py-20" x-data="{ loading: true }">
+                    <div x-show="loading" class="flex flex-col items-center gap-4">
+                        <div class="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-gray-400">Loading documentation...</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Footer Navigation -->
+            <div class="mt-8 pt-6 border-t border-gray-800 flex flex-wrap justify-between gap-4" id="docNav">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-gray-800 bg-gray-900/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Brand -->
+                <div class="flex flex-col items-center md:items-start">
+                    <div class="flex items-center gap-3 mb-4">
+                        <a href="index.html" class="flex items-center gap-3">
+                            <img src="img/logo.png" alt="JGBot" class="w-10 h-10">
+                            <span class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
+                        </a>
+                    </div>
+                    <p class="text-sm text-gray-400 text-center md:text-left">Modular AI Chatbot Framework with multi-channel support and custom skills.</p>
+                </div>
+
+                <!-- Links -->
+                <div class="flex flex-col items-center">
+                    <h4 class="font-semibold mb-4 text-gray-200">Documentation</h4>
+                    <div class="flex flex-col gap-2 text-sm text-gray-400">
+                        <a href="doc.html#CUSTOM_SKILL" class="hover:text-cyan-400 transition-colors">Custom Skills</a>
+                        <a href="doc.html#AVAILABLE_SKILLS" class="hover:text-cyan-400 transition-colors">Available Skills</a>
+                        <a href="doc.html#SESSION" class="hover:text-cyan-400 transition-colors">Session Config</a>
+                        <a href="doc.html#SCHEDULED_TASKS" class="hover:text-cyan-400 transition-colors">Scheduled Tasks</a>
+                        <a href="doc.html#CONF" class="hover:text-cyan-400 transition-colors">Configuration</a>
+                    </div>
+                </div>
+
+                <!-- Social -->
+                <div class="flex flex-col items-center md:items-end">
+                    <h4 class="font-semibold mb-4 text-gray-200">Connect</h4>
+                    <div class="flex items-center gap-4">
+                        <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="text-gray-400 hover:text-white transition-colors" title="GitHub">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+                <p>Open source • Built with Go • Powered by LangChainGo</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/doc.js"></script>
+</body>
+</html>
