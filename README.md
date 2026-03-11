@@ -7,12 +7,18 @@ A modular, AI-powered chatbot framework featuring multi-channel support, a custo
 - **Multi-Channel Support**: Seamless integration with Telegram and WhatsApp.
 - **Custom Skills**: Extend functionality using JavaScript-based skills and tools.
 - **AI Agents**: Robust conversation handling powered by LangChainGo, supporting multiple LLM providers.
+- **Sub-Agents**: Create specialized AI agents with custom prompts and tool sets for specific tasks.
 - **Cron Jobs**: Schedule recurring tasks and messages with flexible cron expressions.
 - **Timers & Alarms**: Set one-time timeouts or specific alarms to trigger bot actions.
 - **Message Reactions**: Built-in support for reacting to messages with emojis.
 - **Database Integration**: Reliable data persistence using SQLite with GORM.
 - **Virtual File System (VFS)**: Isolated file storage for sessions, including private and shared access.
 - **HTTP Client**: Built-in, fluent HTTP functionality for external API interactions.
+- **Memory System**: Persistent text storage for remembering user preferences, facts, and data across conversations and restarts.
+- **Web Access**: Built-in skills for web searches and URL content fetching.
+- **Hot-Reloading**: Session configuration changes are applied in real-time without restarting the bot.
+- **Admin Tools**: Administrative capabilities including cross-session messaging and session listing.
+- **Per-Session Configuration**: Fine-grained control over tools, skills, providers, and behavior for each conversation.
 - **Modular & Extensible**: Designed for easy customization and growth.
 
 
@@ -95,10 +101,12 @@ export default await main();
 ### Core Components
 
 1. **Agent System**: Manages AI-driven logic and conversation flows.
-2. **Channel Controller**: Abstracts communication with different platforms (Telegram, WhatsApp).
-3. **Session Manager**: Maintains state and history for individual conversations.
-4. **Skill System**: Discovers, loads, and executes custom JavaScript skills.
-5. **Database**: Handles persistent storage for sessions and configurations.
+2. **Sub-Agent System**: Creates specialized AI agents with custom prompts and tool configurations.
+3. **Channel Controller**: Abstracts communication with different platforms (Telegram, WhatsApp).
+4. **Session Manager**: Maintains state and history for individual conversations.
+5. **Skill System**: Discovers, loads, and executes custom JavaScript skills.
+6. **Database**: Handles persistent storage for sessions and configurations.
+7. **Admin Tools**: Provides administrative capabilities for session management.
 
 ### Directory Structure
 
@@ -138,6 +146,26 @@ JGBot supports a wide range of LLM providers via LangChainGo:
 - **Google**: Integration with Gemini Pro.
 - **Ollama**: For running local models.
 - **Mistral**: Support for Mistral AI models.
+
+## Built-in Tools
+
+JGBot provides several native tools that can be enabled/disabled per session:
+
+- **message_reaction**: React to messages with emojis.
+- **javascript**: Execute raw JavaScript for advanced logic.
+- **skills**: Access the custom skill system.
+- **cron**: Schedule recurring tasks and messages.
+- **timer**: Set one-time alarms and timeouts.
+- **send_message** (admin): Send messages to other sessions.
+- **list_sessions** (admin): List all configured sessions.
+
+### Memory & Web Skills
+
+- **memories**: Persistent text storage for user preferences and facts.
+- **web**: Web search and URL content fetching capabilities.
+
+> [!NOTE]
+> Tools marked as "(admin)" require administrator permissions. See [SESSION.md](doc/SESSION.md) for configuration details.
 
 ## Contributing
 

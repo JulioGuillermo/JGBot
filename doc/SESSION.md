@@ -83,6 +83,8 @@ When a new interaction is detected from a previously unknown origin (e.g., a new
 - **`historySize`** (integer): The number of previous messages included in the context for the LLM.
 - **`provider`** (string): The name of the LLM provider to use (must match a provider in `config.json`).
 - **`agentMaxIters`** (integer): The maximum number of tool-use iterations the agent can perform per response.
+  - **Default**: `10`
+  - **Use case**: Prevent infinite loops or limit resource usage for complex tasks.
 
 #### Response Triggering
 - **`respond.always`** (boolean): If `true`, the bot evaluates every message.
@@ -95,6 +97,8 @@ When a new interaction is detected from a previously unknown origin (e.g., a new
   - `timer`: Enables setting one-time alarms and timeouts.
   - `javascript`: Raw JavaScript execution for advanced logic.
   - `skills`: Access to the custom skill system.
+  - `send_message`: (admin only) Send messages to other sessions.
+  - `list_sessions`: (admin only) List all configured sessions.
 - **`skills`**: A list of available custom skills. You can enable/disable them individually for each session.
 
 ## The Hot-Reload Workflow
