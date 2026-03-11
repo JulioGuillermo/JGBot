@@ -6,10 +6,11 @@
     <title>JGBot - Modular AI Chatbot Framework</title>
     <meta name="description" content="A modular, AI-powered chatbot framework featuring multi-channel support, custom skills, and extensible architecture.">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="icon" href="img/logo.png">
 </head>
-<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+<body class="bg-gray-950 text-gray-100 font-sans antialiased" x-data="scrollSpy()" x-init="init()">
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,10 +20,10 @@
                     <span class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
                 </div>
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="#features" class="text-gray-300 hover:text-cyan-400 transition-colors">Features</a>
-                    <a href="#architecture" class="text-gray-300 hover:text-cyan-400 transition-colors">Architecture</a>
-                    <a href="#providers" class="text-gray-300 hover:text-cyan-400 transition-colors">Providers</a>
-                    <a href="#installation" class="text-gray-300 hover:text-cyan-400 transition-colors">Installation</a>
+                    <a href="#features" :class="activeSection === 'features' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Features</a>
+                    <a href="#architecture" :class="activeSection === 'architecture' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Architecture</a>
+                    <a href="#providers" :class="activeSection === 'providers' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Providers</a>
+                    <a href="#installation" :class="activeSection === 'installation' ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'" class="transition-colors">Installation</a>
                     <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-gray-950 font-semibold px-4 py-2 rounded-lg transition-colors">
                         GitHub
                     </a>
@@ -89,7 +90,7 @@
     {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"OpenRouter"</span>, <span class="text-cyan-400">"Type"</span>: <span class="text-green-400">"openai"</span>, <span class="text-cyan-400">"BaseUrl"</span>: <span class="text-green-400">"https://openrouter.ai/api/v1"</span>, <span class="text-cyan-400">"ApiKey"</span>: <span class="text-green-400">"YOUR_API_KEY"</span>}
   ]
 }</code></pre>
-                        <pre x-show="activeTab === 'config'" class="text-gray-300"><code>{
+                        <pre x-show="activeTab === 'config'" class="text-gray-300" x-cloak><code>{
   <span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"My User"</span>,
   <span class="text-cyan-400">"ID"</span>: <span class="text-green-400">"Telegram:123456789"</span>,
   <span class="text-cyan-400">"Allowed"</span>: <span class="text-yellow-300">true</span>,
@@ -109,7 +110,7 @@
     {<span class="text-cyan-400">"Name"</span>: <span class="text-green-400">"web"</span>, <span class="text-cyan-400">"Enabled"</span>: <span class="text-yellow-300">true</span>}
   ]
 }</code></pre>
-                        <pre x-show="activeTab === 'skill'" class="text-gray-300"><code><span class="text-purple-400">const</span> args = <span class="text-cyan-400">GetArgs</span>();
+                        <pre x-show="activeTab === 'skill'" class="text-gray-300" x-cloak><code><span class="text-purple-400">const</span> args = <span class="text-cyan-400">GetArgs</span>();
 
 <span class="text-purple-400">async function</span> <span class="text-yellow-300">main</span>() {
   <span class="text-purple-400">const</span> { input } = args;
@@ -211,7 +212,7 @@
                 <p class="text-gray-400 max-w-2xl mx-auto">A modular design built for extensibility and maintainability</p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 <!-- Core Component 1 -->
                 <div class="text-center">
                     <div class="w-20 h-20 mx-auto bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20">
@@ -249,11 +250,24 @@
                 <div class="text-center">
                     <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-green-500/20">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Database</h3>
-                    <p class="text-sm text-gray-400">SQLite with GORM for persistence</p>
+                    <h3 class="text-lg font-semibold mb-2">Cron System</h3>
+                    <p class="text-sm text-gray-400">Schedule recurring tasks</p>
+                </div>
+
+                <!-- Core Component 5 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-orange-500/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="13" r="8" stroke-width="2"/>
+                            <path stroke-linecap="round" stroke-width="2" d="M12 9v4l2 2"/>
+                            <path stroke-linecap="round" stroke-width="2" d="M9 2h6"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Timer System</h3>
+                    <p class="text-sm text-gray-400">One-time alarms & timeouts</p>
                 </div>
             </div>
 
@@ -292,28 +306,38 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-green-500/50 transition-colors">
-                    <div class="text-2xl mb-2">🔗</div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#10A37F] transition-colors">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                        <img src="img/openai.svg" alt="OpenAI" class="w-8 h-8">
+                    </div>
                     <h3 class="font-semibold">OpenAI</h3>
                     <p class="text-xs text-gray-500 mt-1">GPT-4, GPT-3.5</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-purple-500/50 transition-colors">
-                    <div class="text-2xl mb-2">🧠</div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FF6C2F] transition-colors">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                        <img src="img/anthropic.svg" alt="Anthropic" class="w-8 h-8">
+                    </div>
                     <h3 class="font-semibold">Anthropic</h3>
                     <p class="text-xs text-gray-500 mt-1">Claude 3</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-blue-500/50 transition-colors">
-                    <div class="text-2xl mb-2">🔵</div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#4285F4] transition-colors">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                        <img src="img/google.svg" alt="Google" class="w-8 h-8">
+                    </div>
                     <h3 class="font-semibold">Google</h3>
                     <p class="text-xs text-gray-500 mt-1">Gemini Pro</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-orange-500/50 transition-colors">
-                    <div class="text-2xl mb-2">🦙</div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FFFFFF] transition-colors">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                        <img src="img/ollama.svg" alt="Ollama" class="w-8 h-8">
+                    </div>
                     <h3 class="font-semibold">Ollama</h3>
                     <p class="text-xs text-gray-500 mt-1">Local models</p>
                 </div>
-                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-yellow-500/50 transition-colors">
-                    <div class="text-2xl mb-2">🌫️</div>
+                <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-[#FFDA00] transition-colors">
+                    <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
+                        <img src="img/mistral.svg" alt="Mistral" class="w-8 h-8">
+                    </div>
                     <h3 class="font-semibold">Mistral</h3>
                     <p class="text-xs text-gray-500 mt-1">Mistral AI</p>
                 </div>
@@ -323,18 +347,18 @@
             <div class="mt-12">
                 <h3 class="text-xl font-semibold text-center mb-8">Supported Channels</h3>
                 <div class="flex flex-wrap justify-center gap-6">
-                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4">
-                        <span class="text-2xl">✈️</span>
+                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 hover:border-[#229ED9] transition-colors">
+                        <img src="img/telegram.svg" alt="Telegram" class="w-8 h-8">
                         <div>
                             <h4 class="font-semibold">Telegram</h4>
-                            <p class="text-xs text-gray-500">Full-featured support</p>
+                            <p class="text-xs text-gray-500">Messaging, reactions, typing status, rich text</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4">
-                        <span class="text-2xl">💬</span>
+                    <div class="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 hover:border-[#25D366] transition-colors">
+                        <img src="img/whatsapp.svg" alt="WhatsApp" class="w-8 h-8">
                         <div>
                             <h4 class="font-semibold">WhatsApp</h4>
-                            <p class="text-xs text-gray-500">Messaging integration</p>
+                            <p class="text-xs text-gray-500">Messaging, reactions, typing status, rich text</p>
                         </div>
                     </div>
                 </div>
@@ -446,25 +470,45 @@
     <!-- Footer -->
     <footer class="py-12 px-4 border-t border-gray-800">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="flex items-center gap-3">
-                    <img src="img/logo.png" alt="JGBot" class="w-8 h-8">
-                    <span class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Brand -->
+                <div class="flex flex-col items-center md:items-start">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="img/logo.png" alt="JGBot" class="w-10 h-10">
+                        <span class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">JGBot</span>
+                    </div>
+                    <p class="text-sm text-gray-400 text-center md:text-left">A modular, AI-powered chatbot framework with multi-channel support and custom skills.</p>
                 </div>
 
-                <div class="flex items-center gap-6">
-                    <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="text-gray-400 hover:text-white transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-                        </svg>
-                    </a>
+                <!-- Links -->
+                <div class="flex flex-col items-center">
+                    <h4 class="font-semibold mb-4">Documentation</h4>
+                    <div class="flex flex-col gap-2 text-sm text-gray-400">
+                        <a href="doc/CUSTOM_SKILL.md" class="hover:text-cyan-400 transition-colors">Custom Skills</a>
+                        <a href="doc/SESSION.md" class="hover:text-cyan-400 transition-colors">Session Config</a>
+                        <a href="doc/SCHEDULED_TASKS.md" class="hover:text-cyan-400 transition-colors">Scheduled Tasks</a>
+                        <a href="doc/CONF.md" class="hover:text-cyan-400 transition-colors">Configuration</a>
+                    </div>
+                </div>
+
+                <!-- Social -->
+                <div class="flex flex-col items-center md:items-end">
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex items-center gap-4">
+                        <a href="https://github.com/JulioGuillermo/JGBot" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-8 text-center text-sm text-gray-500">
+            <div class="pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
                 <p>Open source • Built with Go • Powered by LangChainGo</p>
             </div>
         </div>
     </footer>
+    <script src="js/scrollspy.js"></script>
 </body>
 </html>
