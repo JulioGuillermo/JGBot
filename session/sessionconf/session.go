@@ -34,12 +34,40 @@ func (s *SessionCtl) GetConfigOrigin(origin string) *sc.SessionConf {
 	return s.Config.GetOrigin(origin)
 }
 
-func (s *SessionCtl) AddUnconfig(name string, id string, origin string) {
-	s.Unconfig.SetSession(sc.NewSessionConf(name, id, origin))
+func (s *SessionCtl) AddUnconfig(name, id, origin, channel string) *sc.SessionConf {
+	session := s.getNewConfig(name, id, origin, channel)
+	s.Unconfig.SetSession(session)
+	return &session
 }
 
-func (s *SessionCtl) AddConfig(name string, id string, origin string) {
-	s.Config.SetSession(sc.NewSessionConf(name, id, origin))
+func (s *SessionCtl) AddConfig(name, id, origin, channel string) *sc.SessionConf {
+	session := s.getNewConfig(name, id, origin, channel)
+	s.Config.SetSession(session)
+	return &session
+}
+
+func (s *SessionCtl) getNewConfig(name, id, origin, channel string) sc.SessionConf {
+	session := sc.NewSessionConf(name, id, origin)
+
+	conf := getDefConfig(channel)
+	if conf == nil {
+		return session
+	}
+
+	session.Allowed = conf.Allowed
+	session.Respond = sc.Respond(conf.Respond)
+	session.HistorySize = conf.HistorySize
+	session.Provider = conf.Provider
+	session.SystemPromptFile = conf.SystemPromptFile
+	session.AgentMaxIters = conf.AgentMaxIters
+	if len(conf.Tools) > 0 {
+		session.Tools = convertTools(conf.Tools)
+	}
+	if len(conf.Skills) > 0 {
+		session.Skills = convertSkills(conf.Skills)
+	}
+
+	return session
 }
 
 func (s *SessionCtl) onConfigChange() {

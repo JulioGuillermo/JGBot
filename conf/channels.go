@@ -4,6 +4,8 @@ type Channel struct {
 	Enabled           bool
 	AutoEnableSession bool
 	Config            map[string]string
+
+	DefConf *DefConf
 }
 
 type Channels struct {

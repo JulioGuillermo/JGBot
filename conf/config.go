@@ -11,6 +11,8 @@ type Config struct {
 	Channels Channels
 
 	Providers []Provider
+
+	DefConf *DefConf
 }
 
 func newConfig() *Config {
