@@ -2,8 +2,8 @@ package session
 
 import (
 	"JGBot/agent"
-	"JGBot/channels"
 	"JGBot/channels/channelctl"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/ctxs"
 	"JGBot/log"
 	"JGBot/session/sessionconf"
@@ -134,8 +134,8 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		},
 	}
 
-	s.channelCtl.Status(channel, chatID, channels.Writing)
-	defer s.channelCtl.Status(channel, chatID, channels.Normal)
+	s.channelCtl.Status(channel, chatID, channelsdomain.Writing)
+	defer s.channelCtl.Status(channel, chatID, channelsdomain.Normal)
 
 	err = s.agent.Respond(respCtx)
 	if err == nil {
