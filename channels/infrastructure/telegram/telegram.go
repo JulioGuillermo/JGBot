@@ -1,7 +1,7 @@
-package telegramchannel
+package telegram
 
 import (
-	"JGBot/channels"
+	"JGBot/channels/domain"
 	"JGBot/log"
 	"context"
 
@@ -40,9 +40,9 @@ func NewTelegramCtl(botToken string) (*TelegramCtl, error) {
 	return ctl, nil
 }
 
-func (ctl *TelegramCtl) Status(chatID int64, status channels.Status) error {
+func (ctl *TelegramCtl) Status(chatID int64, status domain.Status) error {
 	switch status {
-	case channels.Writing:
+	case domain.Writing:
 		_, err := ctl.client.SendChatAction(ctl.ctx, &bot.SendChatActionParams{
 			ChatID: chatID,
 			Action: models.ChatActionTyping,
@@ -53,7 +53,7 @@ func (ctl *TelegramCtl) Status(chatID int64, status channels.Status) error {
 }
 
 func (ctl *TelegramCtl) SendMessage(chatID int64, message string) error {
-	ctl.Status(chatID, channels.Normal)
+	ctl.Status(chatID, domain.Normal)
 
 	_, err := ctl.client.SendMessage(ctl.ctx, &bot.SendMessageParams{
 		ChatID:    chatID,
@@ -64,7 +64,7 @@ func (ctl *TelegramCtl) SendMessage(chatID int64, message string) error {
 }
 
 func (ctl *TelegramCtl) ReactMessage(chatID int64, messageID int, reaction string) error {
-	ctl.Status(chatID, channels.Normal)
+	ctl.Status(chatID, domain.Normal)
 
 	log.Info("Reacting to message", "chatID", chatID, "messageID", messageID, "reaction", reaction)
 	_, err := ctl.client.SetMessageReaction(ctl.ctx, &bot.SetMessageReactionParams{

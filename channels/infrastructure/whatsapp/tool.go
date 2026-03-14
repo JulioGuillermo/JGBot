@@ -1,4 +1,4 @@
-package whatsappchannel
+package whatsapp
 
 import "go.mau.fi/whatsmeow/proto/waE2E"
 

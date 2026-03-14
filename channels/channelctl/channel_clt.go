@@ -1,24 +1,24 @@
 package channelctl
 
 import (
-	"JGBot/channels"
-	"JGBot/channels/telegramchannel"
-	"JGBot/channels/whatsappchannel"
+	"JGBot/channels/domain"
+	"JGBot/channels/infrastructure/telegram"
+	"JGBot/channels/infrastructure/whatsapp"
 	"JGBot/conf"
 	"fmt"
 )
 
 type ChannelCtl struct {
-	channels map[string]channels.Channel
+	channels map[string]domain.Channel
 }
 
 func InitChannelCtl() (*ChannelCtl, error) {
 	ctl := &ChannelCtl{
-		channels: make(map[string]channels.Channel),
+		channels: make(map[string]domain.Channel),
 	}
 
 	if conf.Conf.Channels.Telegram.Enabled {
-		channel, err := telegramchannel.NewTelegramChannel()
+		channel, err := telegram.NewTelegramChannel()
 		if err != nil {
 			return nil, err
 		}
@@ -26,7 +26,7 @@ func InitChannelCtl() (*ChannelCtl, error) {
 	}
 
 	if conf.Conf.Channels.Whatsapp.Enabled {
-		channel, err := whatsappchannel.NewWhatsAppChannel()
+		channel, err := whatsapp.NewWhatsAppChannel()
 		if err != nil {
 			return nil, err
 		}
@@ -36,7 +36,7 @@ func InitChannelCtl() (*ChannelCtl, error) {
 	return ctl, nil
 }
 
-func (ctl *ChannelCtl) OnMessage(handler channels.OnMessageHandler) {
+func (ctl *ChannelCtl) OnMessage(handler domain.MessageHandler) {
 	for _, channel := range ctl.channels {
 		channel.OnMessage(handler)
 	}
@@ -50,7 +50,7 @@ func (ctl *ChannelCtl) AutoEnableSession(channel string) bool {
 	return ch.AutoEnableSession()
 }
 
-func (ctl *ChannelCtl) Status(channel string, chatID uint, status channels.Status) error {
+func (ctl *ChannelCtl) Status(channel string, chatID uint, status domain.Status) error {
 	if ctl == nil {
 		return nil
 	}
@@ -60,7 +60,7 @@ func (ctl *ChannelCtl) Status(channel string, chatID uint, status channels.Statu
 		return fmt.Errorf("Not channel found with this name: %s", channel)
 	}
 
-	return ch.Status(chatID, status)
+	return ch.SendStatus(chatID, status)
 }
 
 func (ctl *ChannelCtl) SendMessage(channel string, chatID uint, message string) error {
@@ -78,7 +78,7 @@ func (ctl *ChannelCtl) ReactMessage(channel string, chatID uint, messageID uint,
 		return fmt.Errorf("Not channel found with this name: %s", channel)
 	}
 
-	return ch.ReactMessage(chatID, messageID, reaction)
+	return ch.SendMessageReaction(chatID, messageID, reaction)
 }
 
 func (ctl *ChannelCtl) Close() {

@@ -1,4 +1,4 @@
-package telegramchannel
+package telegram
 
 import "JGBot/conf"
 

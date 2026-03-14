@@ -1,8 +1,8 @@
-package telegramchannel
+package telegram
 
 import (
-	"JGBot/channels"
-	"JGBot/channels/telegramchannel/telegramdb"
+	"JGBot/channels/domain"
+	"JGBot/channels/infrastructure/telegram/telegramdb"
 	"JGBot/formatter"
 	"JGBot/log"
 	"fmt"
@@ -13,7 +13,7 @@ import (
 type TelegramChannel struct {
 	Ctl               *TelegramCtl
 	autoEnableSession bool
-	onMsg             channels.OnMessageHandler
+	onMsg             domain.MessageHandler
 }
 
 func NewTelegramChannel() (*TelegramChannel, error) {
@@ -36,6 +36,77 @@ func NewTelegramChannel() (*TelegramChannel, error) {
 	ch.Ctl = ctl
 
 	return ch, nil
+}
+
+func (ch *TelegramChannel) GetName() string {
+	return "Telegram"
+}
+
+func (ch *TelegramChannel) OnMessage(handler domain.MessageHandler) {
+	ch.onMsg = handler
+}
+
+func (ch *TelegramChannel) SendStatus(chatID uint, status domain.Status) error {
+	chat, err := telegramdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.Status(chat.ChatID, status)
+	if err != nil {
+		log.Error("Fail to send status to chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	return nil
+}
+
+func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
+	message = formatter.FormatMD2TelegramHTML(message)
+
+	chat, err := telegramdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.SendMessage(chat.ChatID, message)
+	if err != nil {
+		log.Error("Fail to send message to chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	return nil
+}
+
+func (ch *TelegramChannel) SendMessageReaction(chatID uint, messageID uint, reaction string) error {
+	chat, err := telegramdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	msg, err := telegramdb.GetMessage(messageID)
+	if err != nil {
+		log.Error("Fail to find the message", "messageID", messageID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.ReactMessage(chat.ChatID, msg.MessageID, reaction)
+	if err != nil {
+		log.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
+		return err
+	}
+	return nil
+}
+
+func (ch *TelegramChannel) AutoEnableSession() bool {
+	return ch.autoEnableSession
+}
+
+func (ch *TelegramChannel) Close() {
+	ch.Ctl.Close()
 }
 
 func (ch *TelegramChannel) handler(msg *models.Message) {
@@ -91,75 +162,4 @@ func (ch *TelegramChannel) handler(msg *models.Message) {
 			message.Text,
 		)
 	}
-}
-
-func (ch *TelegramChannel) GetName() string {
-	return "Telegram"
-}
-
-func (ch *TelegramChannel) OnMessage(handler channels.OnMessageHandler) {
-	ch.onMsg = handler
-}
-
-func (ch *TelegramChannel) Status(chatID uint, status channels.Status) error {
-	chat, err := telegramdb.GetChat(chatID)
-	if err != nil {
-		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	err = ch.Ctl.Status(chat.ChatID, status)
-	if err != nil {
-		log.Error("Fail to send status to chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	return nil
-}
-
-func (ch *TelegramChannel) SendMessage(chatID uint, message string) error {
-	message = formatter.FormatMD2TelegramHTML(message)
-
-	chat, err := telegramdb.GetChat(chatID)
-	if err != nil {
-		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	err = ch.Ctl.SendMessage(chat.ChatID, message)
-	if err != nil {
-		log.Error("Fail to send message to chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	return nil
-}
-
-func (ch *TelegramChannel) ReactMessage(chatID uint, messageID uint, reaction string) error {
-	chat, err := telegramdb.GetChat(chatID)
-	if err != nil {
-		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	msg, err := telegramdb.GetMessage(messageID)
-	if err != nil {
-		log.Error("Fail to find the message", "messageID", messageID, "error", err)
-		return err
-	}
-
-	err = ch.Ctl.ReactMessage(chat.ChatID, msg.MessageID, reaction)
-	if err != nil {
-		log.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
-		return err
-	}
-	return nil
-}
-
-func (ch *TelegramChannel) AutoEnableSession() bool {
-	return ch.autoEnableSession
-}
-
-func (ch *TelegramChannel) Close() {
-	ch.Ctl.Close()
 }

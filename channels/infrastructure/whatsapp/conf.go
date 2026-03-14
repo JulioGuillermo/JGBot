@@ -1,4 +1,4 @@
-package whatsappchannel
+package whatsapp
 
 import "JGBot/conf"
 

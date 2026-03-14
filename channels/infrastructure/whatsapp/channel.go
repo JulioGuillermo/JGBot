@@ -1,8 +1,8 @@
-package whatsappchannel
+package whatsapp
 
 import (
-	"JGBot/channels"
-	"JGBot/channels/whatsappchannel/whatsappdb"
+	"JGBot/channels/domain"
+	"JGBot/channels/infrastructure/whatsapp/whatsappdb"
 	"JGBot/formatter"
 	"JGBot/log"
 	"fmt"
@@ -13,7 +13,7 @@ import (
 type WhatsAppChannel struct {
 	Ctl               *WhatsAppCtl
 	autoEnableSession bool
-	onMsg             channels.OnMessageHandler
+	onMsg             domain.MessageHandler
 }
 
 func NewWhatsAppChannel() (*WhatsAppChannel, error) {
@@ -36,6 +36,77 @@ func NewWhatsAppChannel() (*WhatsAppChannel, error) {
 	ch.Ctl = ctl
 
 	return ch, nil
+}
+
+func (ch *WhatsAppChannel) GetName() string {
+	return "WhatsApp"
+}
+
+func (ch *WhatsAppChannel) OnMessage(handler domain.MessageHandler) {
+	ch.onMsg = handler
+}
+
+func (ch *WhatsAppChannel) SendStatus(chatID uint, status domain.Status) error {
+	chat, err := whatsappdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.Status(*chat.ToJID(), status)
+	if err != nil {
+		log.Error("Fail to send status to chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	return nil
+}
+
+func (ch *WhatsAppChannel) SendMessage(chatID uint, message string) error {
+	message = formatter.FormatMD2WhatsApp(message)
+
+	chat, err := whatsappdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.SendMessage(*chat.ToJID(), message)
+	if err != nil {
+		log.Error("Fail to send message to chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	return nil
+}
+
+func (ch *WhatsAppChannel) SendMessageReaction(chatID uint, messageID uint, reaction string) error {
+	chat, err := whatsappdb.GetChat(chatID)
+	if err != nil {
+		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
+		return err
+	}
+
+	msg, err := whatsappdb.GetMessage(messageID)
+	if err != nil {
+		log.Error("Fail to find the message", "messageID", messageID, "error", err)
+		return err
+	}
+
+	err = ch.Ctl.ReactMessage(*chat.ToJID(), *msg.Sender.ToJID(), msg.MessageID, reaction)
+	if err != nil {
+		log.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
+		return err
+	}
+	return nil
+}
+
+func (ch *WhatsAppChannel) AutoEnableSession() bool {
+	return ch.autoEnableSession
+}
+
+func (ch *WhatsAppChannel) Close() {
+	ch.Ctl.Close()
 }
 
 func (ch *WhatsAppChannel) handler(msg *events.Message) {
@@ -82,75 +153,4 @@ func (ch *WhatsAppChannel) handler(msg *events.Message) {
 			message.Text,
 		)
 	}
-}
-
-func (ch *WhatsAppChannel) GetName() string {
-	return "WhatsApp"
-}
-
-func (ch *WhatsAppChannel) OnMessage(handler channels.OnMessageHandler) {
-	ch.onMsg = handler
-}
-
-func (ch *WhatsAppChannel) Status(chatID uint, status channels.Status) error {
-	chat, err := whatsappdb.GetChat(chatID)
-	if err != nil {
-		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	err = ch.Ctl.Status(*chat.ToJID(), status)
-	if err != nil {
-		log.Error("Fail to send status to chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	return nil
-}
-
-func (ch *WhatsAppChannel) SendMessage(chatID uint, message string) error {
-	message = formatter.FormatMD2WhatsApp(message)
-
-	chat, err := whatsappdb.GetChat(chatID)
-	if err != nil {
-		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	err = ch.Ctl.SendMessage(*chat.ToJID(), message)
-	if err != nil {
-		log.Error("Fail to send message to chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	return nil
-}
-
-func (ch *WhatsAppChannel) ReactMessage(chatID uint, messageID uint, reaction string) error {
-	chat, err := whatsappdb.GetChat(chatID)
-	if err != nil {
-		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
-		return err
-	}
-
-	msg, err := whatsappdb.GetMessage(messageID)
-	if err != nil {
-		log.Error("Fail to find the message", "messageID", messageID, "error", err)
-		return err
-	}
-
-	err = ch.Ctl.ReactMessage(*chat.ToJID(), *msg.Sender.ToJID(), msg.MessageID, reaction)
-	if err != nil {
-		log.Error("Fail to react message", "chatID", chatID, "messageID", messageID, "error", err)
-		return err
-	}
-	return nil
-}
-
-func (ch *WhatsAppChannel) AutoEnableSession() bool {
-	return ch.autoEnableSession
-}
-
-func (ch *WhatsAppChannel) Close() {
-	ch.Ctl.Close()
 }
