@@ -1,15 +1,15 @@
 package channelctl
 
 import (
-	"JGBot/channels/application"
-	"JGBot/channels/domain"
+	channelsapplication "JGBot/channels/application"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/channels/infrastructure/telegram"
 	"JGBot/channels/infrastructure/whatsapp"
 	"JGBot/conf"
 )
 
-func NewChannelCtl() (domain.ChannelController, error) {
-	controller := application.NewChannelController()
+func NewChannelCtl() (channelsdomain.ChannelController, error) {
+	controller := channelsapplication.NewChannelController()
 
 	if conf.Conf.Channels.Telegram.Enabled {
 		channel, err := telegram.NewTelegramChannel()

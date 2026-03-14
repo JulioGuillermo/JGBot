@@ -1,4 +1,4 @@
-package domain
+package channelsdomain
 
 type ChannelController interface {
 	SetChannels(channels []Channel)

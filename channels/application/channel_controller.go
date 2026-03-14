@@ -1,32 +1,32 @@
-package application
+package channelsapplication
 
-import "JGBot/channels/domain"
+import channelsdomain "JGBot/channels/domain"
 
 type ChannelController struct {
-	channels map[string]domain.Channel
+	channels map[string]channelsdomain.Channel
 }
 
-func NewChannelController() domain.ChannelController {
+func NewChannelController() channelsdomain.ChannelController {
 	return &ChannelController{
-		channels: make(map[string]domain.Channel),
+		channels: make(map[string]channelsdomain.Channel),
 	}
 }
 
-func (ctl *ChannelController) SetChannels(channels []domain.Channel) {
+func (ctl *ChannelController) SetChannels(channels []channelsdomain.Channel) {
 	for _, channel := range channels {
 		ctl.channels[channel.GetName()] = channel
 	}
 }
 
-func (ctl *ChannelController) GetChannel(name string) (domain.Channel, error) {
+func (ctl *ChannelController) GetChannel(name string) (channelsdomain.Channel, error) {
 	channel, ok := ctl.channels[name]
 	if !ok {
-		return nil, domain.ErrChannelNotFound
+		return nil, channelsdomain.ErrChannelNotFound
 	}
 	return channel, nil
 }
 
-func (ctl *ChannelController) SetChannel(channel domain.Channel) {
+func (ctl *ChannelController) SetChannel(channel channelsdomain.Channel) {
 	ctl.channels[channel.GetName()] = channel
 }
 
@@ -34,7 +34,7 @@ func (ctl *ChannelController) DelChannel(name string) {
 	delete(ctl.channels, name)
 }
 
-func (ctl *ChannelController) OnMessage(handler domain.MessageHandler) {
+func (ctl *ChannelController) OnMessage(handler channelsdomain.MessageHandler) {
 	for _, channel := range ctl.channels {
 		channel.OnMessage(handler)
 	}

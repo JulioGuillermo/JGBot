@@ -1,7 +1,7 @@
 package whatsapp
 
 import (
-	"JGBot/channels/domain"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/log"
 	"JGBot/tools"
 	"context"
@@ -75,9 +75,9 @@ func (ctl *WhatsAppCtl) sendMsg(chat types.JID, message *waE2E.Message) error {
 	return err
 }
 
-func (ctl *WhatsAppCtl) Status(chat types.JID, status domain.Status) error {
+func (ctl *WhatsAppCtl) Status(chat types.JID, status channelsdomain.Status) error {
 	switch status {
-	case domain.Writing:
+	case channelsdomain.Writing:
 		return ctl.client.SendChatPresence(ctl.ctx, chat, types.ChatPresenceComposing, types.ChatPresenceMediaText)
 	default:
 		return ctl.client.SendChatPresence(ctl.ctx, chat, types.ChatPresencePaused, types.ChatPresenceMediaText)
@@ -85,7 +85,7 @@ func (ctl *WhatsAppCtl) Status(chat types.JID, status domain.Status) error {
 }
 
 func (ctl *WhatsAppCtl) SendMessage(chat types.JID, message string) error {
-	ctl.Status(chat, domain.Normal)
+	ctl.Status(chat, channelsdomain.Normal)
 
 	return ctl.sendMsg(
 		chat,
@@ -96,7 +96,7 @@ func (ctl *WhatsAppCtl) SendMessage(chat types.JID, message string) error {
 }
 
 func (ctl *WhatsAppCtl) ReactMessage(chat types.JID, sender types.JID, messageID string, reaction string) error {
-	ctl.Status(chat, domain.Normal)
+	ctl.Status(chat, channelsdomain.Normal)
 
 	return ctl.sendMsg(
 		chat,

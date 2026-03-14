@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"JGBot/channels/domain"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/channels/infrastructure/telegram/telegramdb"
 	"JGBot/formatter"
 	"JGBot/log"
@@ -13,7 +13,7 @@ import (
 type TelegramChannel struct {
 	Ctl               *TelegramCtl
 	autoEnableSession bool
-	onMsg             domain.MessageHandler
+	onMsg             channelsdomain.MessageHandler
 }
 
 func NewTelegramChannel() (*TelegramChannel, error) {
@@ -42,11 +42,11 @@ func (ch *TelegramChannel) GetName() string {
 	return "Telegram"
 }
 
-func (ch *TelegramChannel) OnMessage(handler domain.MessageHandler) {
+func (ch *TelegramChannel) OnMessage(handler channelsdomain.MessageHandler) {
 	ch.onMsg = handler
 }
 
-func (ch *TelegramChannel) SendStatus(chatID uint, status domain.Status) error {
+func (ch *TelegramChannel) SendStatus(chatID uint, status channelsdomain.Status) error {
 	chat, err := telegramdb.GetChat(chatID)
 	if err != nil {
 		log.Error("Fail to find the chat", "chatID", chatID, "error", err)

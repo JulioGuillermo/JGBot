@@ -1,7 +1,7 @@
 package channelctl
 
 import (
-	"JGBot/channels/domain"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/channels/infrastructure/telegram"
 	"JGBot/channels/infrastructure/whatsapp"
 	"JGBot/conf"
@@ -9,12 +9,12 @@ import (
 )
 
 type ChannelCtl struct {
-	channels map[string]domain.Channel
+	channels map[string]channelsdomain.Channel
 }
 
 func InitChannelCtl() (*ChannelCtl, error) {
 	ctl := &ChannelCtl{
-		channels: make(map[string]domain.Channel),
+		channels: make(map[string]channelsdomain.Channel),
 	}
 
 	if conf.Conf.Channels.Telegram.Enabled {
@@ -36,7 +36,7 @@ func InitChannelCtl() (*ChannelCtl, error) {
 	return ctl, nil
 }
 
-func (ctl *ChannelCtl) OnMessage(handler domain.MessageHandler) {
+func (ctl *ChannelCtl) OnMessage(handler channelsdomain.MessageHandler) {
 	for _, channel := range ctl.channels {
 		channel.OnMessage(handler)
 	}
@@ -50,7 +50,7 @@ func (ctl *ChannelCtl) AutoEnableSession(channel string) bool {
 	return ch.AutoEnableSession()
 }
 
-func (ctl *ChannelCtl) Status(channel string, chatID uint, status domain.Status) error {
+func (ctl *ChannelCtl) Status(channel string, chatID uint, status channelsdomain.Status) error {
 	if ctl == nil {
 		return nil
 	}

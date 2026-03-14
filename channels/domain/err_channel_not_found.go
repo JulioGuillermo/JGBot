@@ -1,4 +1,4 @@
-package domain
+package channelsdomain
 
 var ErrChannelNotFound = &ChannelNotFoundError{}
 

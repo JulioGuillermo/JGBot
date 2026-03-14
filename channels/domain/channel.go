@@ -1,4 +1,4 @@
-package domain
+package channelsdomain
 
 type Channel interface {
 	GetName() string

@@ -1,7 +1,6 @@
 package ctxs
 
 import (
-	"JGBot/channels"
 	"JGBot/channels/channelctl"
 	"JGBot/session/sessionconf"
 	"JGBot/session/sessionconf/sc"
@@ -51,7 +50,7 @@ func (c *RespondCtx) Copy() *RespondCtx {
 	}
 }
 
-func (c *RespondCtx) Status(status channels.Status) {
+func (c *RespondCtx) Status(status domain.Status) {
 	c.ChannelCtl.Status(
 		c.Channel,
 		c.ChatID,

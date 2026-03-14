@@ -1,7 +1,7 @@
 package whatsapp
 
 import (
-	"JGBot/channels/domain"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/channels/infrastructure/whatsapp/whatsappdb"
 	"JGBot/formatter"
 	"JGBot/log"
@@ -13,7 +13,7 @@ import (
 type WhatsAppChannel struct {
 	Ctl               *WhatsAppCtl
 	autoEnableSession bool
-	onMsg             domain.MessageHandler
+	onMsg             channelsdomain.MessageHandler
 }
 
 func NewWhatsAppChannel() (*WhatsAppChannel, error) {
@@ -42,11 +42,11 @@ func (ch *WhatsAppChannel) GetName() string {
 	return "WhatsApp"
 }
 
-func (ch *WhatsAppChannel) OnMessage(handler domain.MessageHandler) {
+func (ch *WhatsAppChannel) OnMessage(handler channelsdomain.MessageHandler) {
 	ch.onMsg = handler
 }
 
-func (ch *WhatsAppChannel) SendStatus(chatID uint, status domain.Status) error {
+func (ch *WhatsAppChannel) SendStatus(chatID uint, status channelsdomain.Status) error {
 	chat, err := whatsappdb.GetChat(chatID)
 	if err != nil {
 		log.Error("Fail to find the chat", "chatID", chatID, "error", err)
