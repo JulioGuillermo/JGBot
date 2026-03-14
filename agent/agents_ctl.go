@@ -90,12 +90,19 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	}
 
 	log.Info("AGENT RESPONDED", "result", result)
-	return ctx.OnResponse(removeThink(result), "assistant", "")
+	return ctx.OnResponse(RemoveThink(result), "assistant", "")
+}
+
+func RemoveThink(text string) string {
+	text = removeThink(text)
+	text = strings.TrimPrefix(text, "</think>")
+	return strings.TrimSpace(text)
 }
 
 func removeThink(text string) string {
 	const Start = "<think>"
 	const End = "</think>"
+
 	if !strings.HasPrefix(text, Start) {
 		return text
 	}
@@ -110,6 +117,5 @@ func removeThink(text string) string {
 		return ""
 	}
 
-	text = text[idx:]
-	return strings.TrimSpace(text)
+	return text[idx:]
 }

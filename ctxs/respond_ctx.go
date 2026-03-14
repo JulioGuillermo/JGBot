@@ -51,6 +51,9 @@ func (c *RespondCtx) Copy() *RespondCtx {
 }
 
 func (c *RespondCtx) Status(status channelsdomain.Status) {
+	if c.ChannelCtl == nil {
+		return
+	}
 	channel, _ := c.ChannelCtl.GetChannel(c.Channel)
 	if channel == nil {
 		return

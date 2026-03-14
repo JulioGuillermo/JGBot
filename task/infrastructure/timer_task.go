@@ -18,6 +18,10 @@ func (t *TimerTask) Task() *taskdomain.Task {
 	return t.TimerTask
 }
 
+func (t *TimerTask) GetSchedule() string {
+	return t.Schedule.String()
+}
+
 func (t *TimerTask) SetSchedule() {
 	switch t.Type {
 	case taskdomain.ALARM:

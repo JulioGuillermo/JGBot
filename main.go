@@ -9,7 +9,8 @@ import (
 	"JGBot/log"
 	"JGBot/session"
 	"JGBot/skill"
-	"JGBot/timer"
+	taskdomain "JGBot/task/domain"
+	taskports "JGBot/task/ports"
 	"fmt"
 	"os"
 	"os/signal"
@@ -33,7 +34,7 @@ func main() {
 
 	log.Info("Initializing cron and timer...")
 	cron.InitCronCtl()
-	timer.InitTimerCtl()
+	taskports.InitTimerService()
 
 	log.Info("Loading skills...")
 	err = skill.InitSkills()
@@ -65,11 +66,24 @@ func main() {
 		log.Error("Fail to initialize session", "error", err)
 		os.Exit(1)
 	}
-	timer.Timer.OnActivation = session.OnAutoActivation
+	taskports.TimerService.OnActivation = func(t *taskdomain.Task, s string) {
+		session.OnAutoActivation(
+			t.TaskOriginInfo.Origin,
+			t.TaskOriginInfo.Channel,
+			t.TaskOriginInfo.ChatID,
+			t.TaskOriginInfo.ChatName,
+			t.TaskOriginInfo.SenderID,
+			t.TaskOriginInfo.MessageID,
+			t.TaskInfo.Name,
+			s,
+			t.TaskInfo.Description,
+			t.TaskInfo.Message,
+		)
+	}
 	cron.Cron.OnActivation = session.OnAutoActivation
 
 	log.Info("Loading timers and cron jobs...")
-	timer.Timer.Load()
+	taskports.TimerService.LoadTimers()
 	cron.Cron.Load()
 
 	log.Info("System ready and running...")

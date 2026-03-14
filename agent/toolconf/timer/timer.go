@@ -3,7 +3,8 @@ package timer
 import (
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
-	"JGBot/timer"
+	taskdomain "JGBot/task/domain"
+	taskports "JGBot/task/ports"
 	"context"
 	"fmt"
 	"strings"
@@ -21,7 +22,7 @@ func (c *TimerInitializerConf) listTimers(rCtx *ctxs.RespondCtx, args TimerArgs)
 		origin = args.Session
 	}
 
-	jobs := timer.Timer.ListTimers(origin)
+	jobs := taskports.TimerService.ListTimers(origin)
 	if len(jobs) == 0 {
 		return "Active timers:\nTimer list is empty."
 	}
@@ -36,11 +37,12 @@ func (c *TimerInitializerConf) listTimers(rCtx *ctxs.RespondCtx, args TimerArgs)
 func (c *TimerInitializerConf) readTimer(rCtx *ctxs.RespondCtx, args TimerArgs) string {
 	origin := rCtx.GetOrigin(args.Session)
 
-	job := timer.Timer.GetTimer(origin, args.Name)
+	job := taskports.TimerService.GetTimer(origin, args.Name)
 	if job == nil {
 		return fmt.Sprintf("Fail to read timer %s: not found", args.Name)
 	}
-	return fmt.Sprintf("Name: %s\nDescription: %s\nSchedule: (%s)", job.Name, job.Description, job.Time.String())
+	task := job.Task()
+	return fmt.Sprintf("Name: %s\nDescription: %s\nSchedule: (%s)", task.Name, task.Description, job.GetSchedule())
 }
 
 func (c *TimerInitializerConf) addTimer(rCtx *ctxs.RespondCtx, args TimerArgs) string {
@@ -48,9 +50,43 @@ func (c *TimerInitializerConf) addTimer(rCtx *ctxs.RespondCtx, args TimerArgs) s
 
 	switch args.Type {
 	case "timeout":
-		err = timer.Timer.AddTimeout(ctx, args.Name, args.Description, args.Message, args.TimerTime.ToTime())
+		err = taskports.TimerService.AddTimeout(
+			&taskdomain.Task{
+				TaskOriginInfo: taskdomain.TaskOriginInfo{
+					Origin:    ctx.Origin,
+					Channel:   ctx.Channel,
+					ChatID:    ctx.ChatID,
+					ChatName:  ctx.ChatName,
+					SenderID:  ctx.Message.SenderID,
+					MessageID: ctx.Message.MessageID,
+				},
+				TaskInfo: taskdomain.TaskInfo{
+					Name:        args.Name,
+					Description: args.Description,
+					Message:     args.Message,
+				},
+			},
+			taskdomain.TimerTime(args.TimerTime),
+		)
 	case "alarm":
-		err = timer.Timer.AddAlarm(ctx, args.Name, args.Description, args.Message, args.TimerTime.ToTime())
+		err = taskports.TimerService.AddAlarm(
+			&taskdomain.Task{
+				TaskOriginInfo: taskdomain.TaskOriginInfo{
+					Origin:    ctx.Origin,
+					Channel:   ctx.Channel,
+					ChatID:    ctx.ChatID,
+					ChatName:  ctx.ChatName,
+					SenderID:  ctx.Message.SenderID,
+					MessageID: ctx.Message.MessageID,
+				},
+				TaskInfo: taskdomain.TaskInfo{
+					Name:        args.Name,
+					Description: args.Description,
+					Message:     args.Message,
+				},
+			},
+			taskdomain.TimerTime(args.TimerTime),
+		)
 	default:
 		return fmt.Sprintf("Fail to add timer %s: invalid type %s, must be 'timeout' or 'alarm'", args.Name, args.Type)
 	}
@@ -65,7 +101,7 @@ func (c *TimerInitializerConf) addTimer(rCtx *ctxs.RespondCtx, args TimerArgs) s
 func (c *TimerInitializerConf) removeTimer(rCtx *ctxs.RespondCtx, args TimerArgs) string {
 	origin := rCtx.GetOrigin(args.Session)
 
-	err := timer.Timer.RemoveTimer(origin, args.Name)
+	err := taskports.TimerService.RemoveTimer(origin, args.Name)
 	if err != nil {
 		return fmt.Sprintf("Fail to remove timer %s: %s", args.Name, err.Error())
 	}
