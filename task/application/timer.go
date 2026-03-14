@@ -50,7 +50,7 @@ func (s *TimerService) GetTimer(origin, name string) taskdomain.TimerTask {
 func (s *TimerService) RemoveTimer(origin, name string) error {
 	timer := s.GetTimer(origin, name)
 	if timer == nil {
-		return errors.New("timer with name " + name + " not found")
+		return errors.New("timer with name `" + name + "` not found")
 	}
 	defer s.SaveTimers()
 
@@ -84,7 +84,6 @@ func (s *TimerService) addTimer(
 		timerType,
 		timerTime,
 	)
-
 	if err != nil {
 		return err
 	}
@@ -119,7 +118,7 @@ func (s *TimerService) AddAlarm(
 }
 
 func (s *TimerService) ListTimers(origin string) []*taskdomain.Task {
-	var timers []*taskdomain.Task
+	timers := []*taskdomain.Task{}
 	for _, timer := range s.Timers {
 		task := timer.Task()
 		if task.Origin == origin {

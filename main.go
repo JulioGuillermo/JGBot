@@ -4,7 +4,6 @@ import (
 	"JGBot/agent"
 	"JGBot/channels/infrastructure/channelctl"
 	"JGBot/conf"
-	"JGBot/cron"
 	"JGBot/database"
 	"JGBot/log"
 	"JGBot/session"
@@ -33,7 +32,7 @@ func main() {
 	}
 
 	log.Info("Initializing cron and timer...")
-	cron.InitCronCtl()
+	taskports.InitCronService()
 	taskports.InitTimerService()
 
 	log.Info("Loading skills...")
@@ -66,6 +65,20 @@ func main() {
 		log.Error("Fail to initialize session", "error", err)
 		os.Exit(1)
 	}
+	taskports.CronService.OnActivation = func(t *taskdomain.Task, s string) {
+		session.OnAutoActivation(
+			t.TaskOriginInfo.Origin,
+			t.TaskOriginInfo.Channel,
+			t.TaskOriginInfo.ChatID,
+			t.TaskOriginInfo.ChatName,
+			t.TaskOriginInfo.SenderID,
+			t.TaskOriginInfo.MessageID,
+			t.TaskInfo.Name,
+			s,
+			t.TaskInfo.Description,
+			t.TaskInfo.Message,
+		)
+	}
 	taskports.TimerService.OnActivation = func(t *taskdomain.Task, s string) {
 		session.OnAutoActivation(
 			t.TaskOriginInfo.Origin,
@@ -80,11 +93,16 @@ func main() {
 			t.TaskInfo.Message,
 		)
 	}
-	cron.Cron.OnActivation = session.OnAutoActivation
 
 	log.Info("Loading timers and cron jobs...")
-	taskports.TimerService.LoadTimers()
-	cron.Cron.Load()
+	err = taskports.CronService.LoadCrons()
+	if err != nil {
+		log.Error("Fail to load cron jobs", "error", err)
+	}
+	err = taskports.TimerService.LoadTimers()
+	if err != nil {
+		log.Error("Fail to load cron jobs", "error", err)
+	}
 
 	log.Info("System ready and running...")
 

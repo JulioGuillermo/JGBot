@@ -2,8 +2,9 @@ package cron
 
 import (
 	"JGBot/agent/tools"
-	"JGBot/cron"
 	"JGBot/ctxs"
+	taskdomain "JGBot/task/domain"
+	taskports "JGBot/task/ports"
 	"context"
 	"fmt"
 	"strings"
@@ -18,7 +19,7 @@ func (c *CronInitializerConf) Name() string {
 func (c *CronInitializerConf) listCronJobs(ctx *ctxs.RespondCtx, args CronArgs) string {
 	origin := ctx.GetOrigin(args.Session)
 
-	jobs := cron.Cron.ListJobs(origin)
+	jobs := taskports.CronService.ListJob(origin)
 	if len(jobs) == 0 {
 		return "Active cron jobs:\nCron jobs list is empty."
 	}
@@ -33,11 +34,12 @@ func (c *CronInitializerConf) listCronJobs(ctx *ctxs.RespondCtx, args CronArgs) 
 func (c *CronInitializerConf) readCronJob(ctx *ctxs.RespondCtx, args CronArgs) string {
 	origin := ctx.GetOrigin(args.Session)
 
-	job := cron.Cron.GetJob(origin, args.Name)
+	job := taskports.CronService.GetJob(origin, args.Name)
 	if job == nil {
 		return fmt.Sprintf("Fail to read cron job %s: not found", args.Name)
 	}
-	return fmt.Sprintf("Name: %s\nDescription: %s\nSchedule: (%s)", job.Name, job.Description, job.Schedule.String())
+	task := job.Task()
+	return fmt.Sprintf("Name: %s\nDescription: %s\nSchedule: (%s)", task.Name, task.Description, job.GetSchedule())
 }
 
 func (c *CronInitializerConf) addCronJob(rCtx *ctxs.RespondCtx, args CronArgs) string {
@@ -49,7 +51,24 @@ func (c *CronInitializerConf) addCronJob(rCtx *ctxs.RespondCtx, args CronArgs) s
 		return "Error: Session controller not initialized."
 	}
 
-	err = cron.Cron.AddJob(ctx, args.Name, args.Description, args.Message, args.Schedule.ToCron())
+	err = taskports.CronService.AddJob(
+		&taskdomain.Task{
+			TaskOriginInfo: taskdomain.TaskOriginInfo{
+				Origin:    ctx.Origin,
+				Channel:   ctx.Channel,
+				ChatID:    ctx.ChatID,
+				ChatName:  ctx.ChatName,
+				SenderID:  ctx.Message.SenderID,
+				MessageID: ctx.Message.MessageID,
+			},
+			TaskInfo: taskdomain.TaskInfo{
+				Name:        args.Name,
+				Description: args.Description,
+				Message:     args.Message,
+			},
+		},
+		taskdomain.CronArgs(args.Schedule),
+	)
 	if err != nil {
 		return fmt.Sprintf("Fail to add cron job %s: %s", args.Name, err.Error())
 	}
@@ -59,7 +78,7 @@ func (c *CronInitializerConf) addCronJob(rCtx *ctxs.RespondCtx, args CronArgs) s
 func (c *CronInitializerConf) removeCronJob(ctx *ctxs.RespondCtx, args CronArgs) string {
 	origin := ctx.GetOrigin(args.Session)
 
-	err := cron.Cron.RemoveJob(origin, args.Name)
+	err := taskports.CronService.RemoveJob(origin, args.Name)
 	if err != nil {
 		return fmt.Sprintf("Fail to remove cron job %s: %s", args.Name, err.Error())
 	}
