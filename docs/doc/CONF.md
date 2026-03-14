@@ -75,6 +75,49 @@ The `Channels` object contains settings for each supported communication platfor
 - **`Config.DBPath`** (string): Path to the separate database used for WhatsApp session data.
   - **Default**: `"db/whatsapp.db"`
 
+#### Channel Default Configuration (DefConf)
+
+Each channel can have a default configuration that applies to all new sessions from that channel. This overrides the global default configuration.
+
+```json
+"Telegram": {
+  "Enabled": true,
+  "AutoEnableSession": false,
+  "Config": {
+    "Token": "your_telegram_bot_token"
+  },
+  "DefConf": {
+    "allowed": true,
+    "historySize": 50,
+    "provider": "openai",
+    "agentMaxIters": 10,
+    "respond": {
+      "always": true,
+      "match": ".*"
+    },
+    "systemPromptFile": "",
+    "tools": [
+      { "name": "message_reaction", "enabled": true },
+      { "name": "javascript", "enabled": false },
+      { "name": "skills", "enabled": false },
+      { "name": "subagent", "enabled": false },
+      { "name": "cron", "enabled": false }
+    ],
+    "skills": []
+  }
+}
+```
+
+- **`DefConf`** (object, optional): Default configuration for sessions from this channel.
+  - **`allowed`** (boolean): Default allowed status for new sessions.
+  - **`historySize`** (integer): Default history size.
+  - **`provider`** (string): Default LLM provider name.
+  - **`agentMaxIters`** (integer): Default max agent iterations.
+  - **`respond`** (object): Default respond settings.
+  - **`systemPromptFile`** (string): Path to default system prompt file.
+  - **`tools`** (array): Default enabled tools.
+  - **`skills`** (array): Default enabled skills.
+
 ### LLM Providers Configuration
 
 The `Providers` array allows you to configure multiple Large Language Model (LLM) backends.
@@ -128,6 +171,60 @@ The `Providers` array allows you to configure multiple Large Language Model (LLM
   "Model": "llama3"
 }
 ```
+
+### Global Default Configuration (DefConf)
+
+You can define a global default configuration that applies to all new sessions unless overridden by a channel-specific configuration.
+
+```json
+{
+  "Database": "path/to/database.db",
+  "LogLevel": "Info",
+  "Channels": { ... },
+  "Providers": [ ... ],
+  "DefConf": {
+    "allowed": false,
+    "historySize": 50,
+    "provider": "openai",
+    "agentMaxIters": 3,
+    "respond": {
+      "always": true,
+      "match": ""
+    },
+    "systemPromptFile": "",
+    "tools": [
+      { "name": "message_reaction", "enabled": true },
+      { "name": "javascript", "enabled": false },
+      { "name": "skills", "enabled": false },
+      { "name": "subagent", "enabled": false },
+      { "name": "cron", "enabled": false }
+    ],
+    "skills": []
+  }
+}
+```
+
+- **`DefConf`** (object, optional): Global default configuration for new sessions.
+  - **`allowed`** (boolean): Default allowed status for new sessions.
+  - **`historySize`** (integer): Default number of messages to include in LLM context.
+  - **`provider`** (string): Default LLM provider name.
+  - **`agentMaxIters`** (integer): Default maximum tool-use iterations per response.
+  - **`respond`** (object): Default response triggering settings.
+    - **`always`** (boolean): If `true`, respond to every message.
+    - **`match`** (string): Regex pattern - only respond if message matches.
+  - **`systemPromptFile`** (string): Path to default system prompt file.
+  - **`tools`** (array): Default tool list with enabled/disabled status.
+  - **`skills`** (array): Default skill list with enabled/disabled status.
+
+### Default Configuration Priority
+
+When a new session is created, the configuration is applied in the following order:
+
+1. **Channel-specific DefConf** (highest priority) - defined in `Channels.Telegram.DefConf` or `Channels.Whatsapp.DefConf`
+2. **Global DefConf** - defined in the root `DefConf` object
+3. **Hardcoded defaults** (lowest priority) - `allowed: false`, `historySize: 50`, etc.
+
+This allows you to set sensible defaults globally while still being able to customize defaults per channel (e.g., enable more features for Telegram sessions but fewer for WhatsApp).
 
 ## Persistent Task Storage
  

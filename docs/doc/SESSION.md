@@ -126,3 +126,15 @@ JGBot continuously monitors `config/session.json`. This allows for seamless admi
 - **Resource Management**: Large `historySize` values consume more tokens and memory. Aim for a balance (typically 20–50).
 - **Organization**: Use clear semantic names for sessions to simplify management as the number of chats grows.
 
+## Default Configuration from config.json
+
+New sessions don't start with empty configuration - they inherit defaults from `config/config.json`:
+
+1. **Channel-specific defaults**: If the channel (Telegram/WhatsApp) has a `DefConf` defined, those values are used.
+2. **Global defaults**: If no channel-specific defaults exist, the global `DefConf` is used.
+3. **Hardcoded defaults**: If neither exists, values like `allowed: false`, `historySize: 50`, `agentMaxIters: 3` are applied.
+
+This means you can set up sensible defaults for all new sessions in `config/config.json` without having to manually configure each new session. For example, you can enable specific tools or set a default provider that will apply to every new chat automatically.
+
+See [CONF.md](CONF.md) for more details on how to configure these defaults.
+
