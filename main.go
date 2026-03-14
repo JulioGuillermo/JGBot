@@ -2,7 +2,7 @@ package main
 
 import (
 	"JGBot/agent"
-	"JGBot/channels/channelctl"
+	"JGBot/channels/infrastructure/channelctl"
 	"JGBot/conf"
 	"JGBot/cron"
 	"JGBot/database"
@@ -50,7 +50,7 @@ func main() {
 	}
 
 	log.Info("Initializing channels...")
-	channelCtl, err := channelctl.InitChannelCtl()
+	channelCtl, err := channelctl.NewChannelCtl()
 	if err != nil {
 		log.Error("Fail to initialize channels", "error", err)
 		os.Exit(1)

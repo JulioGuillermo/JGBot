@@ -26,8 +26,13 @@ func (s *SessionCtl) OnAutoActivation(
 ) {
 	msgContent := fmt.Sprintf("CRON EXECUTION: %s\n\nSCHEDULE: %s\n\nDESCRIPTION: %s\n\nMESSAGE: %s", name, schedule, description, message)
 
+	channelObj, err := s.channelCtl.GetChannel(channel)
+	if err != nil {
+		return
+	}
+
 	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
-	if sessionConf == nil && s.channelCtl.AutoEnableSession(channel) {
+	if sessionConf == nil && channelObj.AutoEnableSession() {
 		log.Warn("Auto enable session", "origin", origin)
 		sessionConf = s.sessionCtl.AddConfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin, channel)
 	} else if sessionConf == nil {
@@ -78,18 +83,18 @@ func (s *SessionCtl) OnAutoActivation(
 			if text == "" {
 				return nil
 			}
-			return s.channelCtl.SendMessage(channel, chatID, text)
+			return channelObj.SendMessage(chatID, text)
 		},
 		OnReact: func(msg uint, reaction string) error {
-			return s.channelCtl.ReactMessage(channel, chatID, msg, reaction)
+			return channelObj.SendMessageReaction(chatID, msg, reaction)
 		},
 		GetHistory: func() ([]*sessiondb.SessionMessage, error) {
 			return sessiondb.GetHistory(channel, chatID, sessionConf.HistorySize)
 		},
 	}
 
-	s.channelCtl.Status(channel, chatID, channelsdomain.Writing)
-	defer s.channelCtl.Status(channel, chatID, channelsdomain.Normal)
+	channelObj.SendStatus(chatID, channelsdomain.Writing)
+	defer channelObj.SendStatus(chatID, channelsdomain.Normal)
 
 	err = s.agent.Respond(respCtx)
 	if err == nil {
@@ -97,9 +102,9 @@ func (s *SessionCtl) OnAutoActivation(
 	}
 	if errors.Is(err, agents.ErrNotFinished) {
 		log.Error("(AUTO ACT) Agent Max Iter Error", "err", err)
-		s.channelCtl.SendMessage(channel, chatID, "(AUTO ACT) [MAX ITER] I need a break 🤒...")
+		channelObj.SendMessage(chatID, "(AUTO ACT) [MAX ITER] I need a break 🤒...")
 		return
 	}
 	log.Error("Agent respond error", "err", err)
-	s.channelCtl.SendMessage(channel, chatID, "(AUTO ACT) [ERROR] I probably made a mistake 😵‍💫...")
+	channelObj.SendMessage(chatID, "(AUTO ACT) [ERROR] I probably made a mistake 😵‍💫...")
 }

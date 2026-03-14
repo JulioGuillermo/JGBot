@@ -2,7 +2,7 @@ package admin
 
 import (
 	"JGBot/agent/tools"
-	"JGBot/channels/channelctl"
+	channelsdomain "JGBot/channels/domain"
 	"JGBot/ctxs"
 	"JGBot/session/sessionconf"
 	"context"
@@ -26,7 +26,7 @@ func (c *AdminSendMessageInitializerConf) Name() string {
 	return "send_message"
 }
 
-func (c *AdminSendMessageInitializerConf) sendMessage(sCtl *sessionconf.SessionCtl, cCtl *channelctl.ChannelCtl, origin, message string) string {
+func (c *AdminSendMessageInitializerConf) sendMessage(sCtl *sessionconf.SessionCtl, cCtl channelsdomain.ChannelController, origin, message string) string {
 	if origin == "" || message == "" {
 		return "Error: Session (Origin) and Message are required for send_message."
 	}
@@ -55,7 +55,12 @@ func (c *AdminSendMessageInitializerConf) sendMessage(sCtl *sessionconf.SessionC
 		return fmt.Sprintf("Error: Invalid chat ID in session: %s.", err.Error())
 	}
 
-	err = cCtl.SendMessage(channel, uint(chatID), message)
+	channelObj, err := cCtl.GetChannel(channel)
+	if err != nil {
+		return fmt.Sprintf("Error: Channel %s not found: %s.", channel, err.Error())
+	}
+
+	err = channelObj.SendMessage(uint(chatID), message)
 	if err != nil {
 		return fmt.Sprintf("Error: Fail to send message: %s.", err.Error())
 	}

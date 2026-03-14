@@ -2,7 +2,6 @@ package session
 
 import (
 	"JGBot/agent"
-	"JGBot/channels/channelctl"
 	channelsdomain "JGBot/channels/domain"
 	"JGBot/ctxs"
 	"JGBot/log"
@@ -16,12 +15,12 @@ import (
 )
 
 type SessionCtl struct {
-	channelCtl *channelctl.ChannelCtl
+	channelCtl channelsdomain.ChannelController
 	agent      *agent.AgentsCtl
 	sessionCtl *sessionconf.SessionCtl
 }
 
-func NewSessionCtl(channelCtl *channelctl.ChannelCtl, agent *agent.AgentsCtl) (*SessionCtl, error) {
+func NewSessionCtl(channelCtl channelsdomain.ChannelController, agent *agent.AgentsCtl) (*SessionCtl, error) {
 	sessiondb.Migrate()
 
 	sessionCtl, err := sessionconf.NewSessionCtl()
@@ -48,8 +47,13 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		return
 	}
 
+	channelObj, err := s.channelCtl.GetChannel(channel)
+	if err != nil {
+		return
+	}
+
 	sessionConf := s.sessionCtl.GetConfigOrigin(origin)
-	if sessionConf == nil && s.channelCtl.AutoEnableSession(channel) {
+	if sessionConf == nil && channelObj.AutoEnableSession() {
 		log.Warn("Auto enable session", "origin", origin)
 		sessionConf = s.sessionCtl.AddConfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin, channel)
 	} else if sessionConf == nil {
@@ -66,9 +70,9 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		err := sessiondb.ClearHistory(channel, chatID)
 		if err != nil {
 			log.Error("Clear history error", "err", err)
-			s.channelCtl.SendMessage(channel, chatID, fmt.Sprintf("Fail to clear history: %s", err.Error()))
+			channelObj.SendMessage(chatID, fmt.Sprintf("Fail to clear history: %s", err.Error()))
 		} else {
-			s.channelCtl.SendMessage(channel, chatID, "History cleared")
+			channelObj.SendMessage(chatID, "History cleared")
 		}
 		return
 	}
@@ -124,18 +128,18 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 			if text == "" {
 				return nil
 			}
-			return s.channelCtl.SendMessage(channel, chatID, text)
+			return channelObj.SendMessage(chatID, text)
 		},
 		OnReact: func(msg uint, reaction string) error {
-			return s.channelCtl.ReactMessage(channel, chatID, msg, reaction)
+			return channelObj.SendMessageReaction(chatID, msg, reaction)
 		},
 		GetHistory: func() ([]*sessiondb.SessionMessage, error) {
 			return sessiondb.GetHistory(channel, chatID, sessionConf.HistorySize)
 		},
 	}
 
-	s.channelCtl.Status(channel, chatID, channelsdomain.Writing)
-	defer s.channelCtl.Status(channel, chatID, channelsdomain.Normal)
+	channelObj.SendStatus(chatID, channelsdomain.Writing)
+	defer channelObj.SendStatus(chatID, channelsdomain.Normal)
 
 	err = s.agent.Respond(respCtx)
 	if err == nil {
@@ -143,11 +147,11 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 	}
 	if errors.Is(err, agents.ErrNotFinished) {
 		log.Error("Agent Max Iter Error", "err", err)
-		s.channelCtl.SendMessage(channel, chatID, "[MAX ITER] I need a break 🤒...")
+		channelObj.SendMessage(chatID, "[MAX ITER] I need a break 🤒...")
 		return
 	}
 	log.Error("Agent respond error", "err", err)
-	s.channelCtl.SendMessage(channel, chatID, "[ERROR] I probably made a mistake 😵‍💫...")
+	channelObj.SendMessage(chatID, "[ERROR] I probably made a mistake 😵‍💫...")
 }
 
 func (s *SessionCtl) IsAdmin(adminPermission string, message string) (bool, string) {

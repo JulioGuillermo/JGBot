@@ -1,7 +1,6 @@
 package ctxs
 
 import (
-	"JGBot/channels/channelctl"
 	channelsdomain "JGBot/channels/domain"
 	"JGBot/session/sessionconf"
 	"JGBot/session/sessionconf/sc"
@@ -25,7 +24,7 @@ type RespondCtx struct {
 	Message     *sessiondb.SessionMessage
 	IsAdmin     bool
 	SessionCtl  *sessionconf.SessionCtl
-	ChannelCtl  *channelctl.ChannelCtl
+	ChannelCtl  channelsdomain.ChannelController
 	OnResponse  OnResponse
 	OnReact     OnReact
 	GetHistory  GetHistory
@@ -52,8 +51,11 @@ func (c *RespondCtx) Copy() *RespondCtx {
 }
 
 func (c *RespondCtx) Status(status channelsdomain.Status) {
-	c.ChannelCtl.Status(
-		c.Channel,
+	channel, _ := c.ChannelCtl.GetChannel(c.Channel)
+	if channel == nil {
+		return
+	}
+	channel.SendStatus(
 		c.ChatID,
 		status,
 	)

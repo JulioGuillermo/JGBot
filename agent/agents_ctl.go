@@ -8,7 +8,6 @@ import (
 	"JGBot/agent/toolconf"
 	"JGBot/agent/toolconf/tools_conf"
 	"JGBot/agent/tools"
-	"JGBot/channels/channelctl"
 	channelsdomain "JGBot/channels/domain"
 	"JGBot/ctxs"
 	"JGBot/log"
@@ -24,7 +23,7 @@ type AgentsCtl struct {
 	ctx        context.Context
 	toolsConf  map[string]tools_conf.ToolInitializerConf
 	sessionCtl *sessionconf.SessionCtl
-	channelCtl *channelctl.ChannelCtl
+	channelCtl channelsdomain.ChannelController
 }
 
 func NewAgentsCtl() (*AgentsCtl, error) {
@@ -38,7 +37,7 @@ func NewAgentsCtl() (*AgentsCtl, error) {
 	return agent, nil
 }
 
-func (a *AgentsCtl) SetDependencies(sessionCtl *sessionconf.SessionCtl, channelCtl *channelctl.ChannelCtl) {
+func (a *AgentsCtl) SetDependencies(sessionCtl *sessionconf.SessionCtl, channelCtl channelsdomain.ChannelController) {
 	a.sessionCtl = sessionCtl
 	a.channelCtl = channelCtl
 }
