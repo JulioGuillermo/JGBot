@@ -48,25 +48,7 @@ func (s *SessionCtl) AddConfig(name, id, origin, channel string) *sc.SessionConf
 
 func (s *SessionCtl) getNewConfig(name, id, origin, channel string) sc.SessionConf {
 	session := sc.NewSessionConf(name, id, origin)
-
-	conf := getDefConfig(channel)
-	if conf == nil {
-		return session
-	}
-
-	session.Allowed = conf.Allowed
-	session.Respond = sc.Respond(conf.Respond)
-	session.HistorySize = conf.HistorySize
-	session.Provider = conf.Provider
-	session.SystemPromptFile = conf.SystemPromptFile
-	session.AgentMaxIters = conf.AgentMaxIters
-	if len(conf.Tools) > 0 {
-		session.Tools = convertTools(conf.Tools)
-	}
-	if len(conf.Skills) > 0 {
-		session.Skills = convertSkills(conf.Skills)
-	}
-
+	session.ApplyDefConf(channel)
 	return session
 }
 

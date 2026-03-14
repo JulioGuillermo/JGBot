@@ -1,6 +1,8 @@
 package sc
 
-import "JGBot/skill"
+import (
+	"JGBot/skill"
+)
 
 type SessionConf struct {
 	Name   string

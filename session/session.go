@@ -56,7 +56,8 @@ func (s *SessionCtl) OnNewMessage(channel string, origin string, chatID uint, ch
 		log.Info("Not config session", "origin", origin)
 		s.sessionCtl.AddUnconfig(chatName, fmt.Sprintf("%s:%d", channel, chatID), origin, channel)
 		return
-	} else if !sessionConf.Allowed {
+	}
+	if !sessionConf.Allowed {
 		log.Info("Session not allowed", "origin", origin)
 		return
 	}
