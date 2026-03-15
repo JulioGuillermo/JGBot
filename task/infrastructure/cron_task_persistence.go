@@ -5,11 +5,18 @@ import (
 	"JGBot/tools"
 )
 
-type CronTaskPersistence struct{}
+type CronTaskPersistence struct {
+	FilePath string
+}
 
 func (p *CronTaskPersistence) LoadCrons() ([]taskdomain.CronTask, error) {
+	filePath := p.FilePath
+	if filePath == "" {
+		filePath = taskdomain.CRON_FILE
+	}
+
 	var crons []*CronTask
-	err := tools.ReadJSONFile(taskdomain.CRON_FILE, &crons)
+	err := tools.ReadJSONFile(filePath, &crons)
 	if err != nil {
 		return nil, err
 	}
@@ -23,5 +30,9 @@ func (p *CronTaskPersistence) LoadCrons() ([]taskdomain.CronTask, error) {
 }
 
 func (p *CronTaskPersistence) SaveCrons(crons []taskdomain.CronTask) error {
-	return tools.WriteJSONFile(taskdomain.CRON_FILE, crons)
+	filePath := p.FilePath
+	if filePath == "" {
+		filePath = taskdomain.CRON_FILE
+	}
+	return tools.WriteJSONFile(filePath, crons)
 }

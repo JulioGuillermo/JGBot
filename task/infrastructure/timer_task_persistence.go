@@ -6,11 +6,17 @@ import (
 )
 
 type TimerTaskPersistence struct {
+	FilePath string
 }
 
 func (p *TimerTaskPersistence) LoadTimers() ([]taskdomain.TimerTask, error) {
+	filePath := p.FilePath
+	if filePath == "" {
+		filePath = taskdomain.TIMER_FILE
+	}
+
 	var Timers []*TimerTask
-	err := tools.ReadJSONFile(taskdomain.TIMER_FILE, &Timers)
+	err := tools.ReadJSONFile(filePath, &Timers)
 	if err != nil {
 		return nil, err
 	}
@@ -24,5 +30,10 @@ func (p *TimerTaskPersistence) LoadTimers() ([]taskdomain.TimerTask, error) {
 }
 
 func (p *TimerTaskPersistence) SaveTimers(timers []taskdomain.TimerTask) error {
-	return tools.WriteJSONFile(taskdomain.TIMER_FILE, timers)
+	filePath := p.FilePath
+	if filePath == "" {
+		filePath = taskdomain.TIMER_FILE
+	}
+
+	return tools.WriteJSONFile(filePath, timers)
 }
