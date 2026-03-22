@@ -1,10 +1,11 @@
 # JGBot
 
-A modular, AI-powered chatbot framework featuring multi-channel support, a custom skill system, and an extensible architecture.
+A modular, AI-powered chatbot framework featuring multi-channel support, a custom skill system, and an extensible architecture based on **Hexagonal Architecture (Ports and Adapters)**.
 
 ## Features
 
 - **Multi-Channel Support**: Seamless integration with Telegram and WhatsApp.
+- **Hexagonal Architecture**: Clear separation of concerns between domain logic, application services, and infrastructure adapters.
 - **Custom Skills**: Extend functionality using JavaScript-based skills and tools.
 - **AI Agents**: Robust conversation handling powered by LangChainGo, supporting multiple LLM providers.
 - **Sub-Agents**: Create specialized AI agents with custom prompts and tool sets for specific tasks.
@@ -98,35 +99,46 @@ export default await main();
 
 ## Architecture
 
+JGBot follows **Hexagonal Architecture** principles to ensure maintainability and testability.
+
 ### Core Components
 
-1. **Agent System**: Manages AI-driven logic and conversation flows.
-2. **Sub-Agent System**: Creates specialized AI agents with custom prompts and tool configurations.
-3. **Channel Controller**: Abstracts communication with different platforms (Telegram, WhatsApp).
-4. **Session Manager**: Maintains state and history for individual conversations.
-5. **Skill System**: Discovers, loads, and executes custom JavaScript skills.
-6. **Database**: Handles persistent storage for sessions and configurations.
-7. **Admin Tools**: Provides administrative capabilities for session management.
+1. **Domain Layer**: Contains the core business logic, entities, and repository interfaces. Located in `*/domain/` directories.
+2. **Application Layer**: Orchestrates domain logic and manages use cases. Located in `*/application/` directories.
+3. **Infrastructure Layer**: Implements adapters for external systems like databases, message brokers, or APIs. Located in `*/infrastructure/` directories.
+
+### Key Interfaces
+
+- **SessionStore**: Abstraction for session configuration and message history, used by the Agent system.
+- **ChannelController**: Standardized interface for managing different communication channels.
+- **AgentService**: Interface for AI interaction, allowing for different agent implementations.
 
 ### Directory Structure
 
 ```
 JGBot/
-├── agent/          # AI agent and tool implementations
-├── channels/       # Channel-specific logic (Telegram, WhatsApp)
-├── conf/           # Configuration management
-├── config/         # Persistent configuration files (sessions, cron, timers)
-├── cron/           # Cron job system implementation
-├── database/       # Database models and GORM setup
-├── doc/            # Detailed documentation
-├── js/             # JavaScript runtime and Go-JS bridge
-├── plugins/        # Future plugin system
-├── session/        # Session logic and lifecycle
-├── skill/          # Skill loader and executor
-├── skills/         # Directory for user-defined skills
-├── timer/          # Timer and alarm system implementation
-├── main.go         # Entry point
-└── go.mod          # Go module definitions
+├── agent/            # AI agent and tool implementations
+│   └── domain/       # Agent-specific domain types and interfaces
+├── channels/         # Multi-channel communication system
+│   ├── domain/       # Channel entities and controller interface
+│   ├── application/  # Channel orchestration
+│   └── infrastructure/ # Platform adapters (Telegram, WhatsApp)
+├── conf/             # Configuration management
+├── config/           # Persistent configuration files (sessions, cron, timers)
+├── cron/             # Cron job system implementation
+├── database/         # Shared database connection and global models
+├── doc/              # Detailed documentation
+├── js/               # JavaScript runtime and Go-JS bridge
+├── log/              # Structured logging utility
+├── session/          # Session lifecycle management
+│   ├── domain/       # Session entities, config, and message history interfaces
+│   ├── application/  # Session services and activation logic
+│   └── infrastructure/ # Persistence (GORM), Config (JSON), and Agent adapters
+├── skill/            # Skill loader and executor
+├── skills/           # Directory for user-defined skills
+├── timer/            # Timer and alarm system implementation
+├── main.go           # Entry point
+└── go.mod            # Go module definitions
 ```
 
 ## Supported Channels
@@ -184,4 +196,3 @@ We welcome contributions!
   - [Scheduled Tasks Guide (Cron & Timers)](doc/SCHEDULED_TASKS.md)
   - [Configuration Guide](doc/CONF.md)
 - Review existing GitHub issues or create a new one for bugs and feature requests.
-
