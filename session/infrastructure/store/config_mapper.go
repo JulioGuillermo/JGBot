@@ -52,6 +52,7 @@ func (r *FileConfigRepository) toDomain(confJSON *sessionConfig) *sessiondomain.
 		Provider:         confJSON.Provider,
 		SystemPromptFile: confJSON.SystemPromptFile,
 		AgentMaxIters:    confJSON.AgentMaxIters,
+		ShowThink:        confJSON.ShowThink,
 		Tools:            tools,
 		Skills:           skills,
 	}
@@ -98,6 +99,9 @@ func applyDefConfig(c *sessiondomain.SessionConfiguration, config *conf.DefConf)
 	}
 	if config.AgentMaxIters != nil {
 		c.AgentMaxIters = *config.AgentMaxIters
+	}
+	if config.ShowThink != nil {
+		c.ShowThink = *config.ShowThink
 	}
 	applyDefTools(c, config)
 	applyDefSkills(c, config)

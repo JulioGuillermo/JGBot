@@ -52,8 +52,10 @@ type SessionConfiguration struct {
 
 	SystemPromptFile string
 	AgentMaxIters    int
-	Tools            []Tool
-	Skills           []Skill
+	ShowThink        bool
+
+	Tools  []Tool
+	Skills []Skill
 }
 
 func NewSessionConfiguration(name, id, origin, channel string) *SessionConfiguration {
@@ -76,6 +78,7 @@ func NewSessionConfiguration(name, id, origin, channel string) *SessionConfigura
 		Allowed:       false,
 		HistorySize:   50,
 		AgentMaxIters: 3,
+		ShowThink:     false,
 		Respond: Respond{
 			Always: true,
 		},

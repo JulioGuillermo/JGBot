@@ -24,6 +24,7 @@ type DefConf struct {
 	Provider         *string
 	SystemPromptFile *string
 	AgentMaxIters    *int
+	ShowThink        *bool
 
 	Tools  *[]Tool
 	Skills *[]Skill

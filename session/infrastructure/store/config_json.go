@@ -22,6 +22,7 @@ type sessionConfig struct {
 	Provider         string  `json:"Provider"`
 	SystemPromptFile string  `json:"SystemPromptFile"`
 	AgentMaxIters    int     `json:"AgentMaxIters"`
+	ShowThink        bool    `json:"ShowThink"`
 	Tools            []Tool  `json:"Tools"`
 	Skills           []Skill `json:"Skills"`
 }
@@ -80,6 +81,7 @@ func newSessionConfig(name, id, origin, channel string) sessionConfig {
 		Provider:         domainConf.Provider,
 		SystemPromptFile: domainConf.SystemPromptFile,
 		AgentMaxIters:    domainConf.AgentMaxIters,
+		ShowThink:        domainConf.ShowThink,
 		Tools:            tools,
 		Skills:           skills,
 	}
