@@ -4,7 +4,6 @@ import (
 	"JGBot/conf"
 	sessiondomain "JGBot/session/domain"
 	"JGBot/tools"
-	"regexp"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -17,23 +16,6 @@ type FileConfigRepository struct {
 	configs       []sessionConfig
 	unconfigs     []sessionConfig
 	configWatcher *tools.FileWatcher
-}
-
-// sessionConfig represents the session configuration stored in JSON
-type sessionConfig struct {
-	Name   string `json:"Name"`
-	ID     string `json:"ID"`
-	Origin string `json:"Origin"`
-	Admin  string `json:"Admin"`
-
-	Allowed bool `json:"Allowed"`
-	Respond struct {
-		Always bool   `json:"Always"`
-		Match  string `json:"Match"`
-	} `json:"Respond"`
-
-	HistorySize   int `json:"HistorySize"`
-	AgentMaxIters int `json:"AgentMaxIters"`
 }
 
 // Ensure FileConfigRepository implements sessiondomain.ConfigurationRepository
@@ -100,16 +82,11 @@ func (r *FileConfigRepository) GetConfig(origin string) *sessiondomain.SessionCo
 	return nil
 }
 
-func (r *FileConfigRepository) GetConfigByChannel(channel string, chatID uint) *sessiondomain.SessionConfiguration {
-	// Not implemented in legacy code either
-	return nil
-}
-
 func (r *FileConfigRepository) CreateConfig(chatName, sessionID, origin, channel string) *sessiondomain.SessionConfiguration {
 	// Remove from unconfigs if present
 	r.removeUnconfig(origin)
 
-	conf := newSessionConfig(chatName, sessionID, origin)
+	conf := newSessionConfig(chatName, sessionID, origin, channel)
 	r.configs = append(r.configs, conf)
 	r.save()
 	return r.toDomain(&r.configs[len(r.configs)-1])
@@ -119,7 +96,7 @@ func (r *FileConfigRepository) CreateUnconfig(chatName, sessionID, origin, chann
 	// Remove from configs if present
 	r.removeConfig(origin)
 
-	conf := newSessionConfig(chatName, sessionID, origin)
+	conf := newSessionConfig(chatName, sessionID, origin, channel)
 	r.unconfigs = append(r.unconfigs, conf)
 	r.save()
 	return r.toDomain(&r.unconfigs[len(r.unconfigs)-1])
@@ -140,46 +117,5 @@ func (r *FileConfigRepository) removeUnconfig(origin string) {
 			r.unconfigs = append(r.unconfigs[:i], r.unconfigs[i+1:]...)
 			return
 		}
-	}
-}
-
-// newSessionConfig creates a new sessionConfig with default values
-func newSessionConfig(name, id, origin string) sessionConfig {
-	return sessionConfig{
-		Name:   name,
-		ID:     id,
-		Origin: origin,
-		Admin:  "",
-
-		Allowed:       false,
-		HistorySize:   50,
-		AgentMaxIters: 3,
-	}
-}
-
-// toDomain converts sessionConfig to sessiondomain.SessionConfiguration
-func (r *FileConfigRepository) toDomain(conf *sessionConfig) *sessiondomain.SessionConfiguration {
-	if conf == nil {
-		return nil
-	}
-	shouldRespond := func(msg string) bool {
-		if conf.Respond.Always {
-			return true
-		}
-		re, err := regexp.Compile(conf.Respond.Match)
-		if err != nil {
-			return false
-		}
-		return re.MatchString(msg)
-	}
-	return &sessiondomain.SessionConfiguration{
-		Origin:        conf.Origin,
-		Channel:       "",
-		ChatID:        conf.ID,
-		ChatName:      conf.Name,
-		HistorySize:   conf.HistorySize,
-		Admin:         conf.Admin,
-		Allowed:       conf.Allowed,
-		ShouldRespond: shouldRespond,
 	}
 }

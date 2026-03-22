@@ -14,7 +14,6 @@ import (
 	"JGBot/log"
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/tmc/langchaingo/llms"
 )
@@ -23,7 +22,7 @@ type AgentsCtl struct {
 	ctx          context.Context
 	toolsConf    map[string]tools_conf.ToolInitializerConf
 	sessionStore agentdomain.SessionStore
-	channelCtl  channelsdomain.ChannelController
+	channelCtl   channelsdomain.ChannelController
 }
 
 func NewAgentsCtl() (*AgentsCtl, error) {
@@ -90,32 +89,5 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	}
 
 	log.Info("AGENT RESPONDED", "result", result)
-	return ctx.OnResponse(RemoveThink(result), "assistant", "")
-}
-
-func removeThink(text string) string {
-	const Start = "\n<think>\n"
-	const End = "\n</think>\n"
-
-	if !strings.HasPrefix(text, Start) {
-		return text
-	}
-
-	idx := strings.Index(text, End)
-	if idx == -1 {
-		return text
-	}
-
-	idx += len(End)
-	if idx >= len(text) {
-		return ""
-	}
-
-	return text[idx:]
-}
-
-func RemoveThink(text string) string {
-	text = removeThink(text)
-	text = strings.TrimPrefix(text, "\n<think>\n")
-	return strings.TrimSpace(text)
+	return ctx.OnResponse(result, "assistant", "")
 }

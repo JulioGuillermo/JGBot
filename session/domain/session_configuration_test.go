@@ -21,8 +21,8 @@ func TestSessionConfiguration(t *testing.T) {
 				HistorySize: 50,
 				Admin:       "full",
 				Allowed:     true,
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: Respond{
+					Always: true,
 				},
 			},
 		},
@@ -36,8 +36,9 @@ func TestSessionConfiguration(t *testing.T) {
 				HistorySize: 10,
 				Admin:       "",
 				Allowed:     false,
-				ShouldRespond: func(msg string) bool {
-					return false
+				Respond: Respond{
+					Always: false,
+					Match:  "^!",
 				},
 			},
 		},
@@ -49,9 +50,6 @@ func TestSessionConfiguration(t *testing.T) {
 
 			if tt.cfg.Origin == "" {
 				t.Error("Origin should not be empty")
-			}
-			if tt.cfg.ShouldRespond == nil {
-				t.Error("ShouldRespond should not be nil")
 			}
 		})
 	}
@@ -69,8 +67,8 @@ func TestSessionConfigurationShouldRespond(t *testing.T) {
 		{
 			name: "always respond",
 			cfg: &SessionConfiguration{
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: Respond{
+					Always: true,
 				},
 			},
 			message: "any message",
@@ -79,8 +77,9 @@ func TestSessionConfigurationShouldRespond(t *testing.T) {
 		{
 			name: "never respond",
 			cfg: &SessionConfiguration{
-				ShouldRespond: func(msg string) bool {
-					return false
+				Respond: Respond{
+					Always: false,
+					Match:  "",
 				},
 			},
 			message: "any message",
@@ -89,8 +88,9 @@ func TestSessionConfigurationShouldRespond(t *testing.T) {
 		{
 			name: "respond on prefix",
 			cfg: &SessionConfiguration{
-				ShouldRespond: func(msg string) bool {
-					return len(msg) > 0 && msg[0] == '/'
+				Respond: Respond{
+					Always: false,
+					Match:  "^/",
 				},
 			},
 			message: "/help",
@@ -99,8 +99,9 @@ func TestSessionConfigurationShouldRespond(t *testing.T) {
 		{
 			name: "not respond on prefix",
 			cfg: &SessionConfiguration{
-				ShouldRespond: func(msg string) bool {
-					return len(msg) > 0 && msg[0] == '/'
+				Respond: Respond{
+					Always: false,
+					Match:  "^/",
 				},
 			},
 			message: "hello",

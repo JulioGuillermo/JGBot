@@ -34,22 +34,14 @@ func (m *MockMessageRepository) ClearHistory(channel string, chatID uint) error 
 
 // MockConfigurationRepository is a mock implementation of sessiondomain.ConfigurationRepository
 type MockConfigurationRepository struct {
-	GetConfigFunc          func(origin string) *sessiondomain.SessionConfiguration
-	GetConfigByChannelFunc func(channel string, chatID uint) *sessiondomain.SessionConfiguration
-	CreateConfigFunc       func(chatName, sessionID, origin, channel string) *sessiondomain.SessionConfiguration
-	CreateUnconfigFunc     func(chatName, sessionID, origin, channel string) *sessiondomain.SessionConfiguration
+	GetConfigFunc      func(origin string) *sessiondomain.SessionConfiguration
+	CreateConfigFunc   func(chatName, sessionID, origin, channel string) *sessiondomain.SessionConfiguration
+	CreateUnconfigFunc func(chatName, sessionID, origin, channel string) *sessiondomain.SessionConfiguration
 }
 
 func (m *MockConfigurationRepository) GetConfig(origin string) *sessiondomain.SessionConfiguration {
 	if m.GetConfigFunc != nil {
 		return m.GetConfigFunc(origin)
-	}
-	return nil
-}
-
-func (m *MockConfigurationRepository) GetConfigByChannel(channel string, chatID uint) *sessiondomain.SessionConfiguration {
-	if m.GetConfigByChannelFunc != nil {
-		return m.GetConfigByChannelFunc(channel, chatID)
 	}
 	return nil
 }

@@ -115,8 +115,8 @@ func TestOnNewMessage_WithConfig(t *testing.T) {
 				HistorySize: 50,
 				Admin:       "",
 				Allowed:     true,
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: sessiondomain.Respond{
+					Always: true,
 				},
 			}
 		},
@@ -184,8 +184,8 @@ func TestOnNewMessage_ResetCommand(t *testing.T) {
 			return &sessiondomain.SessionConfiguration{
 				Origin:  "telegram",
 				Allowed: true,
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: sessiondomain.Respond{
+					Always: true,
 				},
 			}
 		},
@@ -222,8 +222,8 @@ func TestOnNewMessage_ShouldNotRespond(t *testing.T) {
 			return &sessiondomain.SessionConfiguration{
 				Origin:  "telegram",
 				Allowed: true,
-				ShouldRespond: func(msg string) bool {
-					return false // Should not respond
+				Respond: sessiondomain.Respond{
+					Always: false,
 				},
 			}
 		},
@@ -269,8 +269,8 @@ func TestOnNewMessage_MaxIterationsError(t *testing.T) {
 			return &sessiondomain.SessionConfiguration{
 				Origin:  "telegram",
 				Allowed: true,
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: sessiondomain.Respond{
+					Always: true,
 				},
 			}
 		},
@@ -315,8 +315,8 @@ func TestOnNewMessage_GeneralError(t *testing.T) {
 			return &sessiondomain.SessionConfiguration{
 				Origin:  "telegram",
 				Allowed: true,
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: sessiondomain.Respond{
+					Always: true,
 				},
 			}
 		},
@@ -423,8 +423,8 @@ func TestOnAutoActivation(t *testing.T) {
 			return &sessiondomain.SessionConfiguration{
 				Origin:  "telegram",
 				Allowed: true,
-				ShouldRespond: func(msg string) bool {
-					return true
+				Respond: sessiondomain.Respond{
+					Always: true,
 				},
 			}
 		},

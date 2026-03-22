@@ -3,6 +3,7 @@ package provider
 import (
 	toolargs "JGBot/agent/tool_args"
 	"context"
+	"fmt"
 
 	"github.com/tmc/langchaingo/llms"
 )
@@ -13,6 +14,11 @@ type ProviderWrapper struct {
 
 func (p *ProviderWrapper) GenerateContent(ctx context.Context, messages []llms.MessageContent, opts ...llms.CallOption) (*llms.ContentResponse, error) {
 	// return p.model.GenerateContent(ctx, messages, opts...)
+	for _, m := range messages {
+		for _, c := range m.Parts {
+			fmt.Println(c)
+		}
+	}
 	resp, err := p.model.GenerateContent(ctx, messages, opts...)
 	if err != nil {
 		return nil, err
