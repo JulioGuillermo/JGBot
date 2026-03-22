@@ -1,23 +1,28 @@
 package test
 
 import (
+	"JGBot/js/exec"
 	"JGBot/js/runners"
 	"testing"
 )
 
 func TestJS(t *testing.T) {
 	output, err := runners.RunCode(`// Test JS
-		import { log } from "JGBot/js/log"
+		// import { log } from "JGBot/js/log"
 console.log("Hello World")
 export default { a: 1 }
-`)
+`,
+		exec.TypeModule(),
+	)
 
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
-	if output.Logs != "··· LOG START ···\n\"Hello World\"\n··· LOG END ···\n" {
-		t.Error("Wrong logs")
+	expectedLog := " - JS LOG >>> Hello World\n"
+	if output.Logs != expectedLog {
+		t.Errorf("Wrong logs\nEXPECTED:\n%s\nGOT:\n%s\n", expectedLog, output.Logs)
 	}
 
 	if output.Result != `{"a":1}` {
