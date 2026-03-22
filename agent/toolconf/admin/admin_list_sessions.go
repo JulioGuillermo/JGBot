@@ -3,7 +3,6 @@ package admin
 import (
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
-	"JGBot/session/sessionconf"
 	"context"
 	"fmt"
 	"strings"
@@ -21,8 +20,8 @@ func (c *AdminListSessionsInitializerConf) Name() string {
 	return "list_sessions"
 }
 
-func (c *AdminListSessionsInitializerConf) listSessions(sCtl *sessionconf.SessionCtl) string {
-	sessions := sCtl.Config.Sessions
+func (c *AdminListSessionsInitializerConf) listSessions(rCtx *ctxs.RespondCtx) string {
+	sessions := rCtx.SessionStore.GetConfigs()
 	if len(sessions) == 0 {
 		return "The list of sessions is empty."
 	}
@@ -49,7 +48,7 @@ func (c *AdminListSessionsInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx
 				return "Error: You do not have administrator permissions.", nil
 			}
 
-			return c.listSessions(rCtx.SessionCtl), nil
+			return c.listSessions(rCtx), nil
 		},
 	}
 }

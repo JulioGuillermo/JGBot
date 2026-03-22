@@ -1,9 +1,9 @@
 package subagent
 
 import (
+	agentdomain "JGBot/agent/domain"
 	"JGBot/agent/handler"
 	"JGBot/agent/input"
-	"JGBot/session/sessiondb"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -65,7 +65,7 @@ func (a *SubAgent) initExecutor() {
 	)
 }
 
-func (a *SubAgent) Run(history []*sessiondb.SessionMessage, message *sessiondb.SessionMessage) (string, error) {
+func (a *SubAgent) Run(history []*agentdomain.SessionMessage, message *agentdomain.SessionMessage) (string, error) {
 	bytes, _ := json.Marshal(history)
 	return chains.Predict(
 		a.Ctx,

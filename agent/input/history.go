@@ -1,9 +1,9 @@
 package input
 
 import (
+	agentdomain "JGBot/agent/domain"
 	toolargs "JGBot/agent/tool_args"
 	"JGBot/agent/tools"
-	"JGBot/session/sessiondb"
 	"encoding/json"
 	"errors"
 	"strings"
@@ -11,8 +11,7 @@ import (
 	"github.com/tmc/langchaingo/llms"
 )
 
-type HistoryInput struct {
-}
+type HistoryInput struct{}
 
 func NewHistoryInput() *HistoryInput {
 	return &HistoryInput{}
@@ -28,7 +27,7 @@ func (HistoryInput) FormatMessages(values map[string]any) ([]llms.ChatMessage, e
 		return nil, errors.New("HistoryInput: ChatHistory must be a json string")
 	}
 
-	var history []*sessiondb.SessionMessage
+	var history []*agentdomain.SessionMessage
 	err := json.Unmarshal([]byte(data), &history)
 	if err != nil {
 		return nil, err

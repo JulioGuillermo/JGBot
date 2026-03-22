@@ -1,6 +1,7 @@
 package agent
 
 import (
+	agentdomain "JGBot/agent/domain"
 	"JGBot/agent/handler"
 	"JGBot/agent/prompt"
 	"JGBot/agent/provider"
@@ -11,7 +12,6 @@ import (
 	channelsdomain "JGBot/channels/domain"
 	"JGBot/ctxs"
 	"JGBot/log"
-	"JGBot/session/sessionconf"
 	"context"
 	"fmt"
 	"strings"
@@ -20,10 +20,10 @@ import (
 )
 
 type AgentsCtl struct {
-	ctx        context.Context
-	toolsConf  map[string]tools_conf.ToolInitializerConf
-	sessionCtl *sessionconf.SessionCtl
-	channelCtl channelsdomain.ChannelController
+	ctx          context.Context
+	toolsConf    map[string]tools_conf.ToolInitializerConf
+	sessionStore agentdomain.SessionStore
+	channelCtl  channelsdomain.ChannelController
 }
 
 func NewAgentsCtl() (*AgentsCtl, error) {
@@ -37,8 +37,8 @@ func NewAgentsCtl() (*AgentsCtl, error) {
 	return agent, nil
 }
 
-func (a *AgentsCtl) SetDependencies(sessionCtl *sessionconf.SessionCtl, channelCtl channelsdomain.ChannelController) {
-	a.sessionCtl = sessionCtl
+func (a *AgentsCtl) SetDependencies(sessionStore agentdomain.SessionStore, channelCtl channelsdomain.ChannelController) {
+	a.sessionStore = sessionStore
 	a.channelCtl = channelCtl
 }
 
@@ -93,15 +93,9 @@ func (a *AgentsCtl) Respond(ctx *ctxs.RespondCtx) error {
 	return ctx.OnResponse(RemoveThink(result), "assistant", "")
 }
 
-func RemoveThink(text string) string {
-	text = removeThink(text)
-	text = strings.TrimPrefix(text, "</think>")
-	return strings.TrimSpace(text)
-}
-
 func removeThink(text string) string {
-	const Start = "<think>"
-	const End = "</think>"
+	const Start = "\n<think>\n"
+	const End = "\n</think>\n"
 
 	if !strings.HasPrefix(text, Start) {
 		return text
@@ -118,4 +112,10 @@ func removeThink(text string) string {
 	}
 
 	return text[idx:]
+}
+
+func RemoveThink(text string) string {
+	text = removeThink(text)
+	text = strings.TrimPrefix(text, "\n<think>\n")
+	return strings.TrimSpace(text)
 }

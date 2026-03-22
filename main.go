@@ -6,7 +6,7 @@ import (
 	"JGBot/conf"
 	"JGBot/database"
 	"JGBot/log"
-	"JGBot/session"
+	sessionapplication "JGBot/session/application"
 	"JGBot/skill"
 	taskdomain "JGBot/task/domain"
 	taskports "JGBot/task/ports"
@@ -43,7 +43,7 @@ func main() {
 	}
 
 	log.Info("Initializing agent...")
-	agent, err := agent.NewAgentsCtl()
+	agentCtl, err := agent.NewAgentsCtl()
 	if err != nil {
 		log.Error("Fail to initialize agent", "error", err)
 		os.Exit(1)
@@ -56,42 +56,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	log.Info("Initializing session ctl...")
-	session, err := session.NewSessionCtl(
-		channelCtl,
-		agent,
-	)
-	if err != nil || session == nil {
+	log.Info("Initializing session (hex arch)...")
+	sessionService, err := sessionapplication.NewHexSessionService(channelCtl, agentCtl)
+	if err != nil || sessionService == nil {
 		log.Error("Fail to initialize session", "error", err)
 		os.Exit(1)
 	}
+
+	taskHandler := sessionapplication.GetTaskHandler(sessionService)
+
 	taskports.CronService.OnActivation = func(t *taskdomain.Task, s string) {
-		session.OnAutoActivation(
-			t.TaskOriginInfo.Origin,
-			t.TaskOriginInfo.Channel,
-			t.TaskOriginInfo.ChatID,
-			t.TaskOriginInfo.ChatName,
-			t.TaskOriginInfo.SenderID,
-			t.TaskOriginInfo.MessageID,
-			t.TaskInfo.Name,
-			s,
-			t.TaskInfo.Description,
-			t.TaskInfo.Message,
-		)
+		taskHandler.OnActivation(t.ToActivationContext(s))
 	}
 	taskports.TimerService.OnActivation = func(t *taskdomain.Task, s string) {
-		session.OnAutoActivation(
-			t.TaskOriginInfo.Origin,
-			t.TaskOriginInfo.Channel,
-			t.TaskOriginInfo.ChatID,
-			t.TaskOriginInfo.ChatName,
-			t.TaskOriginInfo.SenderID,
-			t.TaskOriginInfo.MessageID,
-			t.TaskInfo.Name,
-			s,
-			t.TaskInfo.Description,
-			t.TaskInfo.Message,
-		)
+		taskHandler.OnActivation(t.ToActivationContext(s))
 	}
 
 	log.Info("Loading timers and cron jobs...")

@@ -1,6 +1,7 @@
 package agent
 
 import (
+	agentdomain "JGBot/agent/domain"
 	"JGBot/agent/handler"
 	"JGBot/agent/subagent"
 	"JGBot/agent/toolconf/admin"
@@ -11,12 +12,25 @@ import (
 	lcTools "github.com/tmc/langchaingo/tools"
 )
 
+// getToolConf is a helper to find a tool configuration by name
+func getToolConf(conf *agentdomain.SessionConfig, name string) *agentdomain.ToolConfig {
+	if conf == nil {
+		return nil
+	}
+	for _, t := range conf.Tools {
+		if t.Name == name {
+			return &t
+		}
+	}
+	return nil
+}
+
 func (a *AgentsCtl) AddTools(agent *subagent.SubAgent, handler *handler.AgentHandler, provider llms.Model, ctx *ctxs.RespondCtx) {
 	tools := a.GetTools(ctx, handler)
 
 	agent.AddTools(tools...)
 
-	if conf := ctx.SessionConf.GetToolConf("subagent"); conf != nil && conf.Enabled {
+	if conf := getToolConf(ctx.SessionConf, "subagent"); conf != nil && conf.Enabled {
 		a.AddSubAgentTool(agent, handler, tools, provider, ctx)
 	}
 }

@@ -47,8 +47,8 @@ func (c *CronInitializerConf) addCronJob(rCtx *ctxs.RespondCtx, args CronArgs) s
 	if err != nil {
 		return err.Error()
 	}
-	if ctx.SessionCtl == nil {
-		return "Error: Session controller not initialized."
+	if ctx.SessionStore == nil {
+		return "Error: Session store not initialized."
 	}
 
 	err = taskports.CronService.AddJob(

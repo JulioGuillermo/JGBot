@@ -1,10 +1,10 @@
 package skill
 
 import (
+	agentdomain "JGBot/agent/domain"
 	"JGBot/agent/tools"
 	"JGBot/ctxs"
 	"JGBot/log"
-	"JGBot/session/sessionconf/sc"
 	"JGBot/skill"
 	"JGBot/skill/skillexec"
 	"context"
@@ -33,19 +33,19 @@ func (c *SkillInitializerConf) readSkill(rCtx *ctxs.RespondCtx, name string) str
 		return "Error: name is required for read"
 	}
 
-	skillConf := rCtx.SessionConf.GetSkillConf(name)
+	skillConf := getSkillConf(rCtx.SessionConf, name)
 	if skillConf == nil || !skillConf.Enabled {
 		return fmt.Sprintf("Skill %s not available", name)
 	}
 
-	skill, ok := skill.Skills[skillConf.Name]
+	sk, ok := skill.Skills[skillConf.Name]
 	if !ok {
 		return fmt.Sprintf("Skill %s not found", name)
 	}
-	if skill.HasTool {
-		return fmt.Sprintf("Skill %s has a skill tool\n\n%s", name, skill.Content)
+	if sk.HasTool {
+		return fmt.Sprintf("Skill %s has a skill tool\n\n%s", name, sk.Content)
 	}
-	return skill.Content
+	return sk.Content
 }
 
 func (c *SkillInitializerConf) execSkill(rCtx *ctxs.RespondCtx, name string, args skillexec.SkillArgs) (string, error) {
@@ -53,7 +53,7 @@ func (c *SkillInitializerConf) execSkill(rCtx *ctxs.RespondCtx, name string, arg
 		return "Error: name is required for exec", nil
 	}
 
-	skillConf := rCtx.SessionConf.GetSkillConf(name)
+	skillConf := getSkillConf(rCtx.SessionConf, name)
 	if skillConf == nil || !skillConf.Enabled {
 		return "", fmt.Errorf("Skill %s not available", name)
 	}
@@ -87,7 +87,24 @@ func (c *SkillInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool
 	}
 }
 
-func GetSkillsPrompt(conf *sc.SessionConf) string {
+// getSkillConf is a helper to find a skill configuration by name
+func getSkillConf(conf *agentdomain.SessionConfig, name string) *agentdomain.SkillConfig {
+	if conf == nil {
+		return nil
+	}
+	for _, s := range conf.Skills {
+		if s.Name == name {
+			return &s
+		}
+	}
+	return nil
+}
+
+func GetSkillsPrompt(conf *agentdomain.SessionConfig) string {
+	if conf == nil {
+		return "No skills available."
+	}
+
 	var sb strings.Builder
 	sb.WriteString("**Available skills:**\n")
 	sb.WriteString("You have access to the following skills, you can read them using the `skill` tool with the `read` action and the `name` of the skill or exec them using the `skill` tool with the `exec` action and the `name` of the skill and the `args` of the skill:\n")
@@ -96,16 +113,16 @@ func GetSkillsPrompt(conf *sc.SessionConf) string {
 			continue
 		}
 
-		skill, ok := skill.Skills[skillConf.Name]
+		sk, ok := skill.Skills[skillConf.Name]
 		if !ok {
 			log.Warn("Skill not found", "skill", skillConf.Name)
 			continue
 		}
 
-		if skill.HasTool {
-			fmt.Fprintf(&sb, "- %s: [SkillTool available to exec through the skill tool] %s\n", skill.Name, skill.Description)
+		if sk.HasTool {
+			fmt.Fprintf(&sb, "- %s: [SkillTool available to exec through the skill tool] %s\n", sk.Name, sk.Description)
 		} else {
-			fmt.Fprintf(&sb, "- %s: %s\n", skill.Name, skill.Description)
+			fmt.Fprintf(&sb, "- %s: %s\n", sk.Name, sk.Description)
 		}
 	}
 	return sb.String()

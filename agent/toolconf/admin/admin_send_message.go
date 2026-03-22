@@ -2,9 +2,7 @@ package admin
 
 import (
 	"JGBot/agent/tools"
-	channelsdomain "JGBot/channels/domain"
 	"JGBot/ctxs"
-	"JGBot/session/sessionconf"
 	"context"
 	"fmt"
 	"strconv"
@@ -26,27 +24,27 @@ func (c *AdminSendMessageInitializerConf) Name() string {
 	return "send_message"
 }
 
-func (c *AdminSendMessageInitializerConf) sendMessage(sCtl *sessionconf.SessionCtl, cCtl channelsdomain.ChannelController, origin, message string) string {
-	if origin == "" || message == "" {
+func (c *AdminSendMessageInitializerConf) sendMessage(rCtx *ctxs.RespondCtx, args AdminSendMessageArgs) string {
+	if args.Session == "" || args.Message == "" {
 		return "Error: Session (Origin) and Message are required for send_message."
 	}
 
-	if cCtl == nil {
+	if rCtx.ChannelCtl == nil {
 		return "Error: Channel controller not initialized."
 	}
 
-	if sCtl == nil {
-		return "Error: Session controller not initialized."
+	if rCtx.SessionStore == nil {
+		return "Error: Session store not initialized."
 	}
 
-	sessionConf := sCtl.GetConfigOrigin(origin)
+	sessionConf := rCtx.SessionStore.GetConfig(args.Session)
 	if sessionConf == nil {
-		return fmt.Sprintf("Error: Session with origin %s not found.", origin)
+		return fmt.Sprintf("Error: Session with origin %s not found.", args.Session)
 	}
 
 	parts := strings.Split(sessionConf.ID, ":")
 	if len(parts) != 2 {
-		return fmt.Sprintf("Error: Invalid session ID format for %s: %s.", origin, sessionConf.ID)
+		return fmt.Sprintf("Error: Invalid session ID format for %s: %s.", args.Session, sessionConf.ID)
 	}
 
 	channel := parts[0]
@@ -55,17 +53,17 @@ func (c *AdminSendMessageInitializerConf) sendMessage(sCtl *sessionconf.SessionC
 		return fmt.Sprintf("Error: Invalid chat ID in session: %s.", err.Error())
 	}
 
-	channelObj, err := cCtl.GetChannel(channel)
+	channelObj, err := rCtx.ChannelCtl.GetChannel(channel)
 	if err != nil {
 		return fmt.Sprintf("Error: Channel %s not found: %s.", channel, err.Error())
 	}
 
-	err = channelObj.SendMessage(uint(chatID), message)
+	err = channelObj.SendMessage(uint(chatID), args.Message)
 	if err != nil {
 		return fmt.Sprintf("Error: Fail to send message: %s.", err.Error())
 	}
 
-	return fmt.Sprintf("Success: Message sent to %s (%s).", sessionConf.Name, origin)
+	return fmt.Sprintf("Success: Message sent to %s (%s).", sessionConf.Name, args.Session)
 }
 
 func (c *AdminSendMessageInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx) tools.Tool {
@@ -78,7 +76,7 @@ func (c *AdminSendMessageInitializerConf) ToolInitializer(rCtx *ctxs.RespondCtx)
 				return "Error: You do not have administrator permissions.", nil
 			}
 
-			return c.sendMessage(rCtx.SessionCtl, rCtx.ChannelCtl, args.Session, args.Message), nil
+			return c.sendMessage(rCtx, args), nil
 		},
 	}
 }
