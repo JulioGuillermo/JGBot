@@ -211,7 +211,7 @@ func (s *SessionService) respond(
 			return nil
 		}
 		text, thinkings := sessiondomain.ExtractReasoning(text)
-		if thinkings != "" {
+		if sessionConf.ShowThink && thinkings != "" {
 			text = fmt.Sprintf(
 				"```thinking\n%s\n```\n\n%s",
 				thinkings,
